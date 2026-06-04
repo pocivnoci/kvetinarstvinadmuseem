@@ -1,0 +1,7 @@
+# Zdrojové originály fotek/videí — nepatří na produkci (jen do nich vybíráme)
+public/images/_zdroj
+
+# Build / deps (Vercel si je vytvoří sám)
+node_modules
+.next
+.DS_Store

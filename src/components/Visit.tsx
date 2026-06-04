@@ -1,0 +1,167 @@
+import { CONTACT, VISIT } from "@/lib/constants";
+
+export function Visit() {
+  return (
+    <section
+      id="kontakt"
+      style={{
+        paddingTop: "var(--space-6)",
+        paddingBottom: "var(--space-6)",
+        background: "var(--shell)",
+      }}
+      aria-label="Kontakt a otevírací doba"
+    >
+      <div className="container">
+        <div className="text-center mb-14">
+          <span className="eyebrow">{VISIT.eyebrow}</span>
+          <h2 style={{ marginTop: "1rem" }}>{VISIT.title}</h2>
+        </div>
+
+        <div
+          className="grid gap-8"
+          style={{
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            borderTop: "1px solid var(--sage)",
+            borderBottom: "1px solid var(--sage)",
+            padding: "var(--space-4) 0",
+          }}
+        >
+          {/* Address */}
+          <VisitColumn heading="Kde">
+            <p
+              style={{
+                fontFamily: "var(--font-display)",
+                fontStyle: "italic",
+                fontSize: "1.4rem",
+                color: "var(--ink)",
+                marginBottom: "0.6rem",
+              }}
+            >
+              {CONTACT.address}
+            </p>
+            <p style={{ color: "var(--ink-soft)" }}>
+              {CONTACT.postal} {CONTACT.city}
+            </p>
+            <p
+              style={{
+                color: "var(--gilt-deep)",
+                fontSize: "0.9rem",
+                marginTop: "0.6rem",
+              }}
+            >
+              {CONTACT.nearestStop}
+            </p>
+          </VisitColumn>
+
+          {/* Hours */}
+          <VisitColumn heading="Otevřeno">
+            <div
+              className="flex items-center gap-2"
+              style={{ marginBottom: "0.8rem" }}
+            >
+              <span className="open-dot" aria-hidden="true" />
+              <span
+                style={{
+                  fontFamily: "var(--font-ui)",
+                  fontSize: "0.85rem",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: "var(--sage-deep)",
+                }}
+              >
+                Právě otevřeno
+              </span>
+            </div>
+            <ul
+              style={{
+                listStyle: "none",
+                margin: 0,
+                padding: 0,
+                fontFamily: "var(--font-ui)",
+                fontSize: "0.95rem",
+                color: "var(--ink-soft)",
+                lineHeight: 1.9,
+              }}
+            >
+              <li style={{ whiteSpace: "pre" }}>{CONTACT.hours.weekdays}</li>
+              <li style={{ whiteSpace: "pre" }}>{CONTACT.hours.saturday}</li>
+              <li style={{ whiteSpace: "pre" }}>{CONTACT.hours.sunday}</li>
+            </ul>
+          </VisitColumn>
+
+          {/* Contact */}
+          <VisitColumn heading="Napište nám">
+            <a
+              href={CONTACT.phoneHref}
+              style={{
+                display: "block",
+                fontFamily: "var(--font-display)",
+                fontStyle: "italic",
+                fontSize: "1.3rem",
+                color: "var(--ink)",
+                marginBottom: "0.6rem",
+                borderBottom: "1px solid var(--gilt)",
+                paddingBottom: "0.2rem",
+                width: "fit-content",
+              }}
+            >
+              {CONTACT.phone}
+            </a>
+            <a
+              href={CONTACT.emailHref}
+              style={{
+                display: "block",
+                color: "var(--ink-soft)",
+                marginBottom: "0.6rem",
+                borderBottom: "1px solid transparent",
+                width: "fit-content",
+              }}
+            >
+              {CONTACT.email}
+            </a>
+            <a
+              href={CONTACT.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "var(--font-ui)",
+                fontSize: "0.85rem",
+                letterSpacing: "0.08em",
+                color: "var(--sage-deep)",
+              }}
+            >
+              {CONTACT.instagram} →
+            </a>
+          </VisitColumn>
+        </div>
+
+        <div className="text-center mt-12">
+          <a href={CONTACT.phoneHref} className="btn btn-primary">
+            Domluvit konzultaci
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function VisitColumn({
+  heading,
+  children,
+}: {
+  heading: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div
+        className="eyebrow"
+        style={{ marginBottom: "1.2rem" }}
+      >
+        {heading}
+      </div>
+      {children}
+    </div>
+  );
+}
