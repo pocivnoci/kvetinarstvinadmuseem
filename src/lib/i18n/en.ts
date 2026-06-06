@@ -283,6 +283,8 @@ export const en: Dictionary = {
     visitWrite: "Get in touch",
     visitOpenNow: "Open now",
     visitConsult: "Book a consultation",
+    getDirections: "Get directions",
+    mapTitle: "Map — Květiny nad museem, Vinohradská 6, Prague 2",
     footerEmailLabel: "Email",
     footerThanks: "Thank you ✓",
     whatsappAria: "Message us on WhatsApp",

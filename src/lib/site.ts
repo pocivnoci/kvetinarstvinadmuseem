@@ -17,4 +17,8 @@ export const SITE = {
   whatsappNumber: "420770401834",
 
   geo: { latitude: 50.0786, longitude: 14.4324 },
+
+  // Dotaz pro Google Maps (keyless embed + navigace) — bez API klíče a billingu.
+  mapsQuery: "Květiny nad museem, Vinohradská 6, 120 00 Praha 2",
 } as const;
+

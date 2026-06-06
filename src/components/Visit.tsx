@@ -1,7 +1,11 @@
 import type { Dictionary } from "@/lib/i18n";
+import { SITE } from "@/lib/site";
 
 export function Visit({ t }: { t: Dictionary }) {
   const { CONTACT, VISIT, UI } = t;
+  const q = encodeURIComponent(SITE.mapsQuery);
+  const mapEmbed = `https://maps.google.com/maps?q=${q}&z=16&hl=${t.locale}&output=embed`;
+  const directions = `https://www.google.com/maps/dir/?api=1&destination=${q}`;
   return (
     <section
       id="kontakt"
@@ -136,9 +140,42 @@ export function Visit({ t }: { t: Dictionary }) {
           </VisitColumn>
         </div>
 
-        <div className="text-center mt-12">
+        {/* Mapa — keyless Google embed (bez API klíče / billingu) */}
+        <div
+          className="mt-12"
+          style={{
+            position: "relative",
+            borderRadius: "10px",
+            overflow: "hidden",
+            border: "1px solid rgba(184, 146, 77, 0.3)",
+            boxShadow: "0 18px 44px -26px rgba(26, 24, 20, 0.5)",
+            background: "var(--sage-pale)",
+          }}
+        >
+          <iframe
+            title={UI.mapTitle}
+            aria-label={UI.mapTitle}
+            src={mapEmbed}
+            width="100%"
+            height="400"
+            style={{ border: 0, display: "block" }}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-3 mt-12">
           <a href={CONTACT.phoneHref} className="btn btn-primary">
             {UI.visitConsult}
+            <span aria-hidden="true">→</span>
+          </a>
+          <a
+            href={directions}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-ghost"
+          >
+            {UI.getDirections}
             <span aria-hidden="true">→</span>
           </a>
         </div>

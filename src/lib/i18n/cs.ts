@@ -290,6 +290,8 @@ export const cs = {
     visitWrite: "Napište nám",
     visitOpenNow: "Právě otevřeno",
     visitConsult: "Domluvit konzultaci",
+    getDirections: "Najít cestu",
+    mapTitle: "Mapa — Květiny nad museem, Vinohradská 6, Praha 2",
     footerEmailLabel: "E-mail",
     footerThanks: "Děkujeme ✓",
     whatsappAria: "Napište nám na WhatsApp",
