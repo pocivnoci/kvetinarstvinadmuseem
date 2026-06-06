@@ -32,17 +32,17 @@ export const NAV_LINKS = [
 ];
 
 export const SEO = {
-  title: "Květiny nad museem — Rodinné květinářství v Praze",
+  title: "Květiny nad museem — Květinářství Praha Vinohrady",
   description:
-    "Rodinné květinářství krok nad Národním muzeem. Kytice, vazby na míru, vázy a dárky — vázané ručně. Doručení po Praze.",
+    "Rodinné květinářství na Vinohradech u Národního muzea a Václavského náměstí. Kytice už od 200 Kč, vazby na míru, svatební i smuteční floristika, donáška po Praze.",
   url: "https://kvetinynadmuseem.cz",
   ogImage: "/images/og.jpg",
 };
 
 export const HERO = {
-  eyebrow: "Rodinné květinářství · Praha",
+  eyebrow: "Rodinné květinářství · Praha — Vinohrady",
   title: "Květiny nad museem.",
-  lede: "Rodinné květinářství krok nad Národním muzeem. Kytice na všední den i na velké chvíle, vazby na míru a dárky — vázané ručně a s citem.",
+  lede: "Rodinné květinářství krok nad Národním muzeem, pár minut od Václavského náměstí. Kytice už od 200 Kč, vazby na míru i svatební a smuteční floristika — vázané ručně a s citem. Donáška po Praze.",
   ctaPrimary: { label: "Objednat kytici", href: "#kytice" },
   ctaGhost: { label: "Najít nás", href: "#kontakt" },
   video: {
@@ -53,7 +53,7 @@ export const HERO = {
   slides: [
     { src: "/images/hero/hero-1.jpg", alt: "Lavice plná čerstvých zabalených kytic v krámku", caption: "Čerstvé kytice každý den" },
     { src: "/images/hero/hero-2.jpg", alt: "Bohatá vazba z fialových a růžových květů zblízka", caption: "Vázané ručně, s citem" },
-    { src: "/images/hero/hero-3.jpg", alt: "Stojan plný připravených kytic k odnesení", caption: "Z chladící vitríny rovnou s sebou" },
+    { src: "/images/hero/hero-3.jpg", alt: "Čerstvé ručně vázané kytice připravené k odnesení", caption: "Čerstvé, ručně vázané" },
     { src: "/images/hero/hero-4.jpg", alt: "Výloha květinářství Květiny nad museem z ulice", caption: "Krok nad Národním muzeem" },
     { src: "/images/hero/hero-5.jpg", alt: "Interiér krámku plný čerstvých květin ve vědrech", caption: "Rodinný krámek na Vinohradech" },
   ],
@@ -61,13 +61,13 @@ export const HERO = {
 
 export const BRAND_STRIP = {
   eyebrow: "Co u nás najdete",
-  body: "Jsme rodinné květinářství. Kytice, vazby na míru, dárky, sušené dekorace i vázy — od jedné růže po výzdobu celé oslavy. Vázáno ručně, tak aby to vydrželo.",
+  body: "Jsme rodinné květinářství na Vinohradech, kousek od Václavského náměstí. Kytice, vazby na míru, dárky, sušené dekorace i vázy — od jedné růže za 200 Kč po výzdobu celé oslavy. Vázáno ručně, tak aby to vydrželo.",
 };
 
 export const WALLPAPER = {
   eyebrow: "Rodinné květinářství",
   title: "Kytice od rodiny, ne od pásu.",
-  body: "Květiny vybíráme každý den u prověřených velkoobchodů — abyste si mohli vybrat i mimo sezónu. Kvalitní kytice má svou cenu a my si za ní stojíme.",
+  body: "Květiny vybíráme každý den u prověřených velkoobchodů — abyste si mohli vybrat i mimo sezónu. Poradíme vám napříč rozpočtem: od drobné kytice do ruky za 200 Kč po velkou vazbu na míru.",
   cta: { label: "Prohlédnout kytice", href: "#kytice" },
 };
 
@@ -81,9 +81,9 @@ export const SEASONS: {
 }[] = [
   {
     key: "spring",
-    eyebrow: "01 · Z vitríny",
+    eyebrow: "01 · Hned s sebou",
     title: "Kytice",
-    body: "Hotové kytice z chladící vitríny — rovnou s sebou. Vázané ručně, čerstvé celý den. Pro chvíle, kdy spěcháte, ale chcete, aby se to poznalo.",
+    body: "Čerstvé kytice vázané ručně každý den — připravené hned k odnesení, nebo je uvážeme na počkání. Od drobné kytice za 200 Kč po velkou vazbu. Pro chvíle, kdy spěcháte, ale chcete, aby se to poznalo.",
   },
   {
     key: "summer",
@@ -106,29 +106,29 @@ export const SEASONS: {
 ];
 
 export const SIGNATURE = {
-  eyebrow: "Tři rukopisy",
-  title: "Jak vážeme",
-  body: "Tři přístupy, podle nálady a příležitosti. Žádný z nich není správnější než druhý — záleží, komu kytice patří.",
+  eyebrow: "Od drobné pozornosti po velkou vazbu",
+  title: "Kytice pro každou příležitost",
+  body: "Od malé kytice do ruky po velkou vazbu na míru. Řekněte příležitost a rozpočet — zbytek je na nás. Vážeme ručně, často na počkání.",
   cards: [
     {
-      title: "Klasická",
-      subtitle: "Pivoňky · Růže · Eustoma",
-      body: "Vyvážená, kulatá, čitelná na první pohled. Pro lidi, kterým slušelo všechno už v babičce.",
-      priceFrom: "890 Kč",
+      title: "Pro radost",
+      subtitle: "Malá kytice · drobná pozornost",
+      body: "Malá ručně vázaná kytice nebo pár jednotlivých květin do ruky. Jen tak pro radost, na cestu domů nebo k narozeninám.",
+      priceFrom: "200 Kč",
       accent: "var(--shell-deep)" as const,
     },
     {
-      title: "Bohatá",
-      subtitle: "Jiřinky · Hortenzie · Trávy",
-      body: "Více objemu, více textury, více ticha mezi květy. Vazba, která zaplní celý stůl.",
-      priceFrom: "1 290 Kč",
+      title: "Kytice na míru",
+      subtitle: "Podle barvy, velikosti a rozpočtu",
+      body: "Kytici uvážeme přesně podle vás — barva, velikost i cena. Na počkání během chvíle, nebo s předstihem na velkou příležitost.",
+      priceFrom: "590 Kč",
       accent: "var(--terracotta)" as const,
     },
     {
-      title: "Jemná",
-      subtitle: "Bílé růže · Sasanky · Listy",
-      body: "Tichá. Bílá s nádechem zeleně. Pro chvíle, kdy slova překážejí.",
-      priceFrom: "990 Kč",
+      title: "Svatby & smuteční vazby",
+      subtitle: "Floristika na míru",
+      body: "Svatební kytice a výzdoba i smuteční vazby a věnce. Konzultace, návrh a realizace — diskrétně a s předstihem.",
+      priceFrom: "Dle domluvy",
       accent: "var(--sage-pale)" as const,
     },
   ],
@@ -137,7 +137,7 @@ export const SIGNATURE = {
 export const PROSTOR = {
   eyebrow: "Prostor",
   title: "Krok nad muzeem.",
-  body: "Plná vitrína, čerstvé kytice ve vědrech a vůně, kterou cítíte už ode dveří. Stavte se — nebo si jen vezměte jednu růži cestou domů.",
+  body: "Plno čerstvých kytic ve vědrech a vůně, kterou cítíte už ode dveří. Stavte se — nebo si jen vezměte jednu růži cestou domů.",
   images: [
     {
       src: "/images/shop-1.jpg",
@@ -160,7 +160,7 @@ export const ABOUT = {
   body: [
     "Roky jsem vázala kytice v různých pražských květinářstvích. Naučila jsem se řemeslo a poznala spoustu květin — ale pořád mi něco nesedělo. Kytice se skládaly narychlo, vybíraly se podle ceny a často šlo hlavně o to, aby to bylo rychle z ruky.",
     "Chtěla jsem to dělat jinak. Mít vlastní krámek, kde si vyberete podle toho, co se vám líbí, ne podle cenovky. Kde se kytice váže v klidu a s citem — a kde vám radši poradím poctivě, než abych prodala to nejlevnější.",
-    "Tak vznikly Květiny nad museem — malé rodinné květinářství krok nad Národním muzeem. Dělám ho po svém. A je to konečně ono.",
+    "Tak vznikly Květiny nad museem — malé rodinné květinářství krok nad Národním muzeem a kousek od Václavského náměstí. Najdete u nás kytice od 200 Kč i velké vazby na míru. Dělám ho po svém. A je to konečně ono.",
   ],
   pullQuote:
     "Roky jsem vázala květiny pro někoho jiného. Tohle je první krámek, který dělám doopravdy po svém.",
@@ -183,8 +183,42 @@ export const GALLERY = {
     { src: "/images/gallery/g-5.jpg", alt: "Vazba v růžových tónech", caption: "Růžové ladění", tone: "var(--shell-warm)" },
     { src: "/images/gallery/g-6.jpg", alt: "Keramické vázy v krámku", caption: "Vázy a keramika", tone: "var(--stone)" },
     { src: "/images/gallery/g-7.jpg", alt: "Květinový věnec na dveřích", caption: "Věnce na přání", tone: "var(--gilt)" },
-    { src: "/images/gallery/g-8.jpg", alt: "Čerstvé kytice připravené ve vědrech", caption: "Z vitríny", tone: "var(--terracotta)" },
+    { src: "/images/gallery/g-8.jpg", alt: "Čerstvé kytice připravené ve vědrech", caption: "Čerstvé kytice", tone: "var(--terracotta)" },
   ],
+};
+
+export const REVIEWS = {
+  eyebrow: "Recenze",
+  title: "Co říkají zákazníci",
+  body: "Pár ohlasů od lidí, kteří u nás nakoupili. Děkujeme za každou kytici i milá slova.",
+  // Odkaz na Google profil — po ověření doplň přesnou URL z Map Google
+  // (Vyhledat podnik → Sdílet → zkopírovat odkaz).
+  googleUrl:
+    "https://www.google.com/maps/search/?api=1&query=Kv%C4%9Btiny%20nad%20museem%20Vinohradsk%C3%A1%206%20Praha",
+  googleLabel: "Recenze na Googlu",
+  // ⚠️ UKÁZKOVÉ RECENZE — nahradit skutečnými z Google profilu.
+  // Každá: author (jméno), rating (1–5), text, date (text). Sociální důkaz
+  // funguje jen když je pravdivý — nepublikovat smyšlené ohlasy jako reálné.
+  items: [
+    {
+      author: "Markéta H.",
+      rating: 5,
+      text: "Krásné kytice a moc milý přístup. Vázali mi kytici na počkání přesně podle představ. Určitě se vrátím.",
+      date: "před 2 týdny",
+    },
+    {
+      author: "Jan Novák",
+      rating: 5,
+      text: "Konečně květinářství kousek od práce u muzea, kde poradí a nevnucují. Kytice vydržela krásně přes týden.",
+      date: "před měsícem",
+    },
+    {
+      author: "Petra S.",
+      rating: 5,
+      text: "Objednávala jsem svatební kytici a byla nádherná. Skvělá komunikace a cit pro detail. Vřele doporučuji.",
+      date: "před měsícem",
+    },
+  ] as { author: string; rating: number; text: string; date: string }[],
 };
 
 export const VISIT = {
@@ -194,7 +228,7 @@ export const VISIT = {
 
 export const FOOTER = {
   blurb:
-    "Rodinné květinářství krok nad Národním muzeem. Kytice, vazby na míru, vázy a dárky — a doručení po Praze.",
+    "Rodinné květinářství na Vinohradech, krok nad Národním muzeem a kousek od Václavského náměstí. Kytice už od 200 Kč, vazby na míru, vázy a dárky — s donáškou po Praze.",
   columns: [
     {
       heading: "Prodej",

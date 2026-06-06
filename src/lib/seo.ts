@@ -36,6 +36,14 @@ export const FAQ: { q: string; a: string }[] = [
     q: "Máte květiny jen v sezóně?",
     a: "Ne. Díky odběru u prověřených velkoobchodů nabízíme širokou nabídku po celý rok — najdete u nás pivoňky i mimo jejich krátkou sezónu a růže po celý rok.",
   },
+  {
+    q: "Máte i levnější kytice, třeba od 200 Kč?",
+    a: "Ano. Začínáme u malých ručně vázaných kytic a jednotlivých květin už od 200 Kč — a vyjdeme vám vstříc napříč rozpočtem až po velké vazby na míru.",
+  },
+  {
+    q: "Jste blízko Václavského náměstí a centra Prahy?",
+    a: "Ano. Najdete nás na adrese Vinohradská 6 na Vinohradech, pár minut pěšky od Václavského náměstí, Národního muzea a stanice metra Muzeum (linky A a C).",
+  },
 ];
 
 const SERVICES = [
@@ -76,7 +84,22 @@ export function buildJsonLd() {
       longitude: GEO.longitude,
     },
     hasMap: "https://maps.google.com/?q=Květiny+nad+museem+Vinohradská+6+Praha",
-    areaServed: { "@type": "City", name: "Praha" },
+    areaServed: [
+      { "@type": "City", name: "Praha" },
+      { "@type": "Place", name: "Praha 2 — Vinohrady" },
+      { "@type": "Place", name: "Václavské náměstí, Praha" },
+      { "@type": "Place", name: "Nové Město, Praha" },
+      { "@type": "Place", name: "Národní muzeum, Praha" },
+    ],
+    knowsAbout: [
+      "kytice",
+      "kytice od 200 Kč",
+      "vazby na míru",
+      "svatební floristika",
+      "smuteční vazby a věnce",
+      "rozvoz a donáška květin po Praze",
+      "řezané a sušené květiny",
+    ],
     knowsLanguage: ["cs", "en"],
     openingHoursSpecification: [
       {
@@ -94,10 +117,28 @@ export function buildJsonLd() {
       },
     ],
     sameAs: [CONTACT.instagramUrl],
-    makesOffer: SERVICES.map((name) => ({
-      "@type": "Offer",
-      itemOffered: { "@type": "Service", name },
-    })),
+    makesOffer: [
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Product",
+          name: "Ručně vázaná kytice",
+          description:
+            "Ručně vázané kytice od drobné pozornosti po velkou vazbu na míru.",
+        },
+        priceCurrency: "CZK",
+        priceSpecification: {
+          "@type": "PriceSpecification",
+          minPrice: 200,
+          priceCurrency: "CZK",
+        },
+        availability: "https://schema.org/InStock",
+      },
+      ...SERVICES.map((name) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name },
+      })),
+    ],
     slogan: SHOP.tagline,
   };
 

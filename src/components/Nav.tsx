@@ -39,13 +39,13 @@ export function Nav() {
             : "1px solid transparent",
         }}
       >
-        <div className="container flex items-center justify-between py-5">
+        <div className="container flex items-center justify-between py-4 md:py-5">
           <a href="#" className="flex items-center" aria-label={SHOP.name}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo.svg"
               alt={SHOP.name}
-              className="h-9 md:h-11 w-auto transition-[filter] duration-500"
+              className="h-14 md:h-[4.5rem] w-auto transition-[filter] duration-500"
               style={{ filter: scrolled ? "none" : "invert(1)" }}
             />
           </a>

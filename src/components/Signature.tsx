@@ -177,12 +177,14 @@ function SignatureCard({
           }}
         >
           <div>
-            <div
-              className="eyebrow"
-              style={{ fontSize: "0.65rem", marginBottom: "0.25rem" }}
-            >
-              Od
-            </div>
+            {/^\d/.test(card.priceFrom) && (
+              <div
+                className="eyebrow"
+                style={{ fontSize: "0.65rem", marginBottom: "0.25rem" }}
+              >
+                Od
+              </div>
+            )}
             <div
               style={{
                 fontFamily: "var(--font-display)",
