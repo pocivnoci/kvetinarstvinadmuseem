@@ -1,13 +1,26 @@
 import type { MetadataRoute } from "next";
-import { SEO } from "@/lib/constants";
+import { SITE } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const languages = {
+    cs: `${SITE.url}/`,
+    en: `${SITE.url}/en`,
+  };
+
   return [
     {
-      url: SEO.url,
+      url: `${SITE.url}/`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 1,
+      alternates: { languages },
+    },
+    {
+      url: `${SITE.url}/en`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.8,
+      alternates: { languages },
     },
   ];
 }

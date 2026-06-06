@@ -1,6 +1,7 @@
-import { WALLPAPER } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
-export function WallpaperFeature() {
+export function WallpaperFeature({ t }: { t: Dictionary }) {
+  const { WALLPAPER } = t;
   return (
     <section
       className="wallpaper-feature relative"

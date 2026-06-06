@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { BouquetSVG } from "./BouquetSVG";
-import { SEASONS } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
-export function Seasons() {
+export function Seasons({ t }: { t: Dictionary }) {
+  const { SEASONS, UI } = t;
   const wrapRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
 
@@ -50,7 +51,7 @@ export function Seasons() {
         background: "var(--shell)",
         position: "relative",
       }}
-      aria-label="Co u nás najdete — kytice, na míru, příležitosti, dárky"
+      aria-label={UI.seasonsAria}
     >
       <div
         className="sticky top-0 overflow-hidden flex items-center"

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SEO } from "@/lib/constants";
+import { SITE } from "@/lib/site";
 
 /**
  * robots.txt — vědomě VÍTÁME AI crawlery (mnoho webů je blokuje; my chceme
@@ -29,7 +29,7 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: "*", allow: "/" },
       { userAgent: aiBots, allow: "/" },
     ],
-    sitemap: `${SEO.url}/sitemap.xml`,
-    host: SEO.url,
+    sitemap: `${SITE.url}/sitemap.xml`,
+    host: SITE.url,
   };
 }

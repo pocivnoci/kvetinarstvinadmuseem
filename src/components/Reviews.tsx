@@ -1,4 +1,4 @@
-import { REVIEWS } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
 function GoogleG() {
   return (
@@ -23,11 +23,19 @@ function GoogleG() {
   );
 }
 
-function Stars({ rating }: { rating: number }) {
+function Stars({
+  rating,
+  prefix,
+  suffix,
+}: {
+  rating: number;
+  prefix: string;
+  suffix: string;
+}) {
   const full = Math.max(0, Math.min(5, Math.round(rating)));
   return (
     <div
-      aria-label={`Hodnocení ${full} z 5 hvězd`}
+      aria-label={`${prefix} ${full} ${suffix}`}
       style={{
         color: "var(--gilt)",
         letterSpacing: "2px",
@@ -45,7 +53,8 @@ function Stars({ rating }: { rating: number }) {
   );
 }
 
-export function Reviews() {
+export function Reviews({ t }: { t: Dictionary }) {
+  const { REVIEWS, UI } = t;
   return (
     <section
       aria-label={REVIEWS.title}
@@ -123,7 +132,11 @@ export function Reviews() {
               }}
             >
               <div className="flex items-center justify-between">
-                <Stars rating={r.rating} />
+                <Stars
+                  rating={r.rating}
+                  prefix={UI.ratingPrefix}
+                  suffix={UI.ratingSuffix}
+                />
                 <span aria-hidden="true" style={{ opacity: 0.5 }}>
                   <GoogleG />
                 </span>

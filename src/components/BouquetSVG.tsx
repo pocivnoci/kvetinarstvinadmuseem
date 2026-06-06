@@ -1,6 +1,6 @@
 "use client";
 
-import type { SeasonKey } from "@/lib/constants";
+import type { SeasonKey } from "@/lib/i18n/cs";
 
 type Props = {
   variant: SeasonKey;

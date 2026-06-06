@@ -1,6 +1,7 @@
-import { BRAND_STRIP } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
-export function BrandStrip() {
+export function BrandStrip({ t }: { t: Dictionary }) {
+  const { BRAND_STRIP } = t;
   return (
     <section
       style={{

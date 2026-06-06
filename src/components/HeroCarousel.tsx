@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { HERO } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
 const DURATION = 5500;
 
-export function HeroCarousel() {
+export function HeroCarousel({ t }: { t: Dictionary }) {
+  const { HERO, UI } = t;
   const slides = HERO.slides;
   const [active, setActive] = useState(0);
   const [entered, setEntered] = useState(false);
@@ -36,7 +37,7 @@ export function HeroCarousel() {
 
   return (
     <section
-      aria-label="Úvod — rodinné květinářství Květiny nad museem"
+      aria-label={UI.heroSection}
       className="relative w-full overflow-hidden"
       style={{ minHeight: "min(100svh, 920px)", background: "var(--noir)" }}
       onMouseEnter={() => setPaused(true)}
@@ -190,7 +191,7 @@ export function HeroCarousel() {
                   loop
                   playsInline
                   preload="metadata"
-                  aria-label="Záběr z dílny — čerstvé květiny"
+                  aria-label={UI.heroVideoAlt}
                 />
                 {/* gilt inner frame */}
                 <span
@@ -231,7 +232,7 @@ export function HeroCarousel() {
             <div
               className="flex items-center gap-2"
               role="tablist"
-              aria-label="Snímky"
+              aria-label={UI.slides}
               style={{ paddingBottom: "1.6rem" }}
             >
               {slides.map((slide, i) => (

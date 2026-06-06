@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { NAV_LINKS, SHOP } from "@/lib/constants";
+import { altLocalePath, type Dictionary, type Locale } from "@/lib/i18n";
 
-export function Nav() {
+export function Nav({ t, locale }: { t: Dictionary; locale: Locale }) {
+  const { NAV_LINKS, SHOP, UI } = t;
+  const altPath = altLocalePath(locale);
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -71,13 +73,32 @@ export function Nav() {
             ))}
           </ul>
 
-          <a href="#kontakt" className="btn btn-primary hidden md:inline-flex">
-            Objednat
-          </a>
+          <div className="hidden md:flex items-center gap-6">
+            <a
+              href={altPath}
+              aria-label={UI.switchLangAria}
+              className="text-sm tracking-wider transition-colors"
+              style={{
+                fontFamily: "var(--font-ui)",
+                color: linkColor,
+                letterSpacing: "0.08em",
+                textShadow: scrolled ? "none" : "0 1px 8px rgba(0,0,0,0.4)",
+                borderBottom: "1px solid var(--gilt)",
+                paddingBottom: "2px",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = hoverColor)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = linkColor)}
+            >
+              {UI.switchLang}
+            </a>
+            <a href="#kontakt" className="btn btn-primary">
+              {UI.orderShort}
+            </a>
+          </div>
 
           <button
             className="md:hidden flex flex-col gap-1.5 p-2"
-            aria-label={open ? "Zavřít menu" : "Otevřít menu"}
+            aria-label={open ? UI.menuClose : UI.menuOpen}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
           >
@@ -154,7 +175,23 @@ export function Nav() {
             onClick={() => setOpen(false)}
             className="btn btn-primary mt-10 self-start"
           >
-            Objednat kytici
+            {UI.orderBouquet}
+          </a>
+          <a
+            href={altPath}
+            onClick={() => setOpen(false)}
+            aria-label={UI.switchLangAria}
+            className="mt-8 self-start"
+            style={{
+              fontFamily: "var(--font-ui)",
+              fontSize: "0.95rem",
+              letterSpacing: "0.08em",
+              color: "var(--sage-deep)",
+              borderBottom: "1px solid var(--gilt)",
+              paddingBottom: "2px",
+            }}
+          >
+            {UI.switchLang}
           </a>
         </nav>
       </div>

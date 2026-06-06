@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ABOUT } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
-export function About() {
+export function About({ t }: { t: Dictionary }) {
+  const { ABOUT, UI } = t;
   const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
 
@@ -33,7 +34,7 @@ export function About() {
         background: "var(--cream)",
         position: "relative",
       }}
-      aria-label="O nás"
+      aria-label={UI.aboutAria}
     >
       <div className="container">
         <div className="grid grid-cols-1 items-center gap-x-14 gap-y-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">

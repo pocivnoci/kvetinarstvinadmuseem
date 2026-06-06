@@ -1,18 +1,19 @@
-const WA_NUMBER = "420770401834";
-const WA_TEXT = encodeURIComponent(
-  "Dobrý den, chtěl/a bych se zeptat na kytici."
-);
+import { SITE } from "@/lib/site";
+import type { Dictionary } from "@/lib/i18n";
 
-export function WhatsAppFab() {
-  const href = `https://wa.me/${WA_NUMBER}?text=${WA_TEXT}`;
+export function WhatsAppFab({ t }: { t: Dictionary }) {
+  const { UI } = t;
+  const href = `https://wa.me/${SITE.whatsappNumber}?text=${encodeURIComponent(
+    UI.whatsappText
+  )}`;
 
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Napište nám na WhatsApp"
-      title="Napište nám na WhatsApp"
+      aria-label={UI.whatsappAria}
+      title={UI.whatsappAria}
       className="wa-fab"
     >
       <svg

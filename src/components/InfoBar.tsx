@@ -1,14 +1,7 @@
-import { CONTACT } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
-const ITEMS = [
-  { label: "Otevřeno", value: "Po–So 9–18" },
-  { label: "Kde", value: "Vinohradská 6 · metro Muzeum" },
-  { label: "Blízko", value: "5 min od Václavského nám." },
-  { label: "Doručení", value: "po celé Praze" },
-  { label: "Telefon", value: CONTACT.phone, href: CONTACT.phoneHref },
-];
-
-export function InfoBar() {
+export function InfoBar({ t }: { t: Dictionary }) {
+  const ITEMS = t.INFOBAR;
   return (
     <section
       aria-label="Základní informace"

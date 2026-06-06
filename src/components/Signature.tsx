@@ -1,9 +1,12 @@
 "use client";
 
 import { useRef } from "react";
-import { SIGNATURE } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
-export function Signature() {
+type Card = Dictionary["SIGNATURE"]["cards"][number];
+
+export function Signature({ t }: { t: Dictionary }) {
+  const { SIGNATURE, UI } = t;
   return (
     <section
       style={{
@@ -38,7 +41,14 @@ export function Signature() {
           }}
         >
           {SIGNATURE.cards.map((card, i) => (
-            <SignatureCard key={card.title} card={card} index={i} />
+            <SignatureCard
+              key={card.title}
+              card={card}
+              index={i}
+              total={SIGNATURE.cards.length}
+              priceFromLabel={UI.priceFrom}
+              orderLabel={UI.orderShort}
+            />
           ))}
         </div>
       </div>
@@ -49,9 +59,15 @@ export function Signature() {
 function SignatureCard({
   card,
   index,
+  total,
+  priceFromLabel,
+  orderLabel,
 }: {
-  card: (typeof SIGNATURE.cards)[number];
+  card: Card;
   index: number;
+  total: number;
+  priceFromLabel: string;
+  orderLabel: string;
 }) {
   const ref = useRef<HTMLElement>(null);
 
@@ -135,7 +151,7 @@ function SignatureCard({
           }}
         >
           {String(index + 1).padStart(2, "0")} /{" "}
-          {String(SIGNATURE.cards.length).padStart(2, "0")}
+          {String(total).padStart(2, "0")}
         </div>
         <h3
           style={{
@@ -182,7 +198,7 @@ function SignatureCard({
                 className="eyebrow"
                 style={{ fontSize: "0.65rem", marginBottom: "0.25rem" }}
               >
-                Od
+                {priceFromLabel}
               </div>
             )}
             <div
@@ -208,7 +224,7 @@ function SignatureCard({
               paddingBottom: "2px",
             }}
           >
-            Objednat →
+            {orderLabel} →
           </a>
         </div>
       </div>

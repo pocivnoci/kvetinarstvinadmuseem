@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { PROSTOR } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
-export function Prostor() {
+export function Prostor({ t }: { t: Dictionary }) {
+  const { PROSTOR } = t;
   return (
     <section
       style={{

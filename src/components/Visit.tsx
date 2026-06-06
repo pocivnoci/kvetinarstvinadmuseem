@@ -1,6 +1,7 @@
-import { CONTACT, VISIT } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
-export function Visit() {
+export function Visit({ t }: { t: Dictionary }) {
+  const { CONTACT, VISIT, UI } = t;
   return (
     <section
       id="kontakt"
@@ -9,7 +10,7 @@ export function Visit() {
         paddingBottom: "var(--space-6)",
         background: "var(--shell)",
       }}
-      aria-label="Kontakt a otevírací doba"
+      aria-label={UI.visitAria}
     >
       <div className="container">
         <div className="text-center mb-14">
@@ -27,7 +28,7 @@ export function Visit() {
           }}
         >
           {/* Address */}
-          <VisitColumn heading="Kde">
+          <VisitColumn heading={UI.visitWhere}>
             <p
               style={{
                 fontFamily: "var(--font-display)",
@@ -54,7 +55,7 @@ export function Visit() {
           </VisitColumn>
 
           {/* Hours */}
-          <VisitColumn heading="Otevřeno">
+          <VisitColumn heading={UI.visitOpen}>
             <div
               className="flex items-center gap-2"
               style={{ marginBottom: "0.8rem" }}
@@ -69,7 +70,7 @@ export function Visit() {
                   color: "var(--sage-deep)",
                 }}
               >
-                Právě otevřeno
+                {UI.visitOpenNow}
               </span>
             </div>
             <ul
@@ -90,7 +91,7 @@ export function Visit() {
           </VisitColumn>
 
           {/* Contact */}
-          <VisitColumn heading="Napište nám">
+          <VisitColumn heading={UI.visitWrite}>
             <a
               href={CONTACT.phoneHref}
               style={{
@@ -137,7 +138,7 @@ export function Visit() {
 
         <div className="text-center mt-12">
           <a href={CONTACT.phoneHref} className="btn btn-primary">
-            Domluvit konzultaci
+            {UI.visitConsult}
             <span aria-hidden="true">→</span>
           </a>
         </div>

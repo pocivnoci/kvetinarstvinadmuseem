@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GALLERY } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
-export function Gallery() {
+export function Gallery({ t }: { t: Dictionary }) {
+  const { GALLERY, UI } = t;
   const trackRef = useRef<HTMLUListElement>(null);
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -141,13 +142,13 @@ export function Gallery() {
           {/* Arrows */}
           <div className="flex items-center gap-3">
             <CarouselButton
-              label="Předchozí"
+              label={UI.galleryPrev}
               onClick={() => goTo(active - 1)}
               disabled={active === 0}
               dir="prev"
             />
             <CarouselButton
-              label="Další"
+              label={UI.galleryNext}
               onClick={() => goTo(active + 1)}
               disabled={active === count - 1}
               dir="next"
@@ -171,7 +172,7 @@ export function Gallery() {
             key={slide.src}
             className="carousel-slide"
             aria-roledescription="slide"
-            aria-label={`${i + 1} z ${count}`}
+            aria-label={`${i + 1} ${UI.galleryOf} ${count}`}
           >
             <figure
               className="relative w-full h-full overflow-hidden"
@@ -224,13 +225,13 @@ export function Gallery() {
       {/* Dots */}
       <div className="container">
         <div className="flex items-center justify-between gap-4 mt-8">
-          <div className="flex items-center gap-2" role="tablist" aria-label="Snímky">
+          <div className="flex items-center gap-2" role="tablist" aria-label={UI.slides}>
             {GALLERY.slides.map((slide, i) => (
               <button
                 key={slide.src}
                 role="tab"
                 aria-selected={i === active}
-                aria-label={`Přejít na ${slide.caption}`}
+                aria-label={`${UI.galleryGoTo} ${slide.caption}`}
                 onClick={() => goTo(i)}
                 style={{
                   height: "8px",

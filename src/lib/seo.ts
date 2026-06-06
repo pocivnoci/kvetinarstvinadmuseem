@@ -1,105 +1,49 @@
-import { CONTACT, SEO, SHOP } from "./constants";
+import { SITE } from "./site";
+import type { Dictionary } from "./i18n/cs";
 
 /**
  * Strukturovaná data (schema.org) — primárně pro vyhledávače a AI engines
- * (ChatGPT, Perplexity, Google AI Overviews, Claude…), které z nich čerpají
- * ověřitelná fakta o podniku. Vše vychází z CONTACT/SEO, ať to nedrží na dvou
- * místech.
- *
- * Pozn.: geo souřadnice jsou přibližné (Vinohradská 6, u Národního muzea).
- * Pro přesnost je lze doladit podle Google Business profilu.
+ * (ChatGPT, Perplexity, Google AI Overviews, Claude…). Lokalizovaná podle
+ * jazyka stránky; fakta (adresa, telefon, GPS) drží v SITE.
  */
-const GEO = { latitude: 50.0786, longitude: 14.4324 };
+export function buildJsonLd(t: Dictionary, locale: string) {
+  const isCs = locale !== "en";
 
-export const FAQ: { q: string; a: string }[] = [
-  {
-    q: "Kde Květiny nad museem najdu?",
-    a: "Na adrese Vinohradská 6, Praha 2 — Vinohrady, pár kroků od Národního muzea a stanice metra Muzeum (linky A a C).",
-  },
-  {
-    q: "Jaká je otevírací doba?",
-    a: "Otevřeno máme pondělí až sobotu od 9:00 do 18:00. V neděli je zavřeno.",
-  },
-  {
-    q: "Doručujete květiny po Praze?",
-    a: "Ano, kytice i vazby doručujeme po celé Praze. Doručení je nejlepší domluvit telefonicky na +420 770 401 834.",
-  },
-  {
-    q: "Děláte svatby, smuteční vazby a firemní akce?",
-    a: "Ano. Vážeme svatební floristiku, smuteční vazby i výzdobu pro otevření a firemní akce — vše na míru a po domluvě, ideálně s předstihem.",
-  },
-  {
-    q: "Vážete kytice na míru?",
-    a: "Ano. Kytici uvážeme podle barvy, příležitosti i rozpočtu — často během chvíle přímo v krámku.",
-  },
-  {
-    q: "Máte květiny jen v sezóně?",
-    a: "Ne. Díky odběru u prověřených velkoobchodů nabízíme širokou nabídku po celý rok — najdete u nás pivoňky i mimo jejich krátkou sezónu a růže po celý rok.",
-  },
-  {
-    q: "Máte i levnější kytice, třeba od 200 Kč?",
-    a: "Ano. Začínáme u malých ručně vázaných kytic a jednotlivých květin už od 200 Kč — a vyjdeme vám vstříc napříč rozpočtem až po velké vazby na míru.",
-  },
-  {
-    q: "Jste blízko Václavského náměstí a centra Prahy?",
-    a: "Ano. Najdete nás na adrese Vinohradská 6 na Vinohradech, pár minut pěšky od Václavského náměstí, Národního muzea a stanice metra Muzeum (linky A a C).",
-  },
-];
-
-const SERVICES = [
-  "Kytice na všední den i slavnostní příležitosti",
-  "Vazby na míru",
-  "Svatební floristika",
-  "Smuteční vazby",
-  "Výzdoba firemních akcí a otevření",
-  "Dárky, vázy a sušené dekorace",
-  "Doručení po Praze",
-];
-
-export function buildJsonLd() {
   const florist = {
     "@type": "Florist",
-    "@id": `${SEO.url}/#florist`,
-    name: SHOP.name,
-    description: SEO.description,
-    url: SEO.url,
-    image: `${SEO.url}${SEO.ogImage}`,
-    logo: `${SEO.url}/logo.svg`,
-    telephone: CONTACT.phone.replace(/\s/g, ""),
-    email: CONTACT.email,
+    "@id": `${SITE.url}/#florist`,
+    name: t.SHOP.name,
+    description: t.SEO.description,
+    url: SITE.url,
+    image: `${SITE.url}${SITE.ogImage}`,
+    logo: `${SITE.url}/logo.svg`,
+    telephone: SITE.phone.replace(/\s/g, ""),
+    email: SITE.email,
     priceRange: "$$",
     currenciesAccepted: "CZK",
-    paymentAccepted: "Hotovost, platební karta",
+    paymentAccepted: isCs ? "Hotovost, platební karta" : "Cash, credit card",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Vinohradská 6",
-      addressLocality: "Praha",
-      addressRegion: "Praha",
+      addressLocality: isCs ? "Praha" : "Prague",
+      addressRegion: isCs ? "Praha" : "Prague",
       postalCode: "120 00",
       addressCountry: "CZ",
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: GEO.latitude,
-      longitude: GEO.longitude,
+      latitude: SITE.geo.latitude,
+      longitude: SITE.geo.longitude,
     },
     hasMap: "https://maps.google.com/?q=Květiny+nad+museem+Vinohradská+6+Praha",
     areaServed: [
-      { "@type": "City", name: "Praha" },
-      { "@type": "Place", name: "Praha 2 — Vinohrady" },
-      { "@type": "Place", name: "Václavské náměstí, Praha" },
-      { "@type": "Place", name: "Nové Město, Praha" },
-      { "@type": "Place", name: "Národní muzeum, Praha" },
+      { "@type": "City", name: isCs ? "Praha" : "Prague" },
+      { "@type": "Place", name: isCs ? "Praha 2 — Vinohrady" : "Prague 2 — Vinohrady" },
+      { "@type": "Place", name: isCs ? "Václavské náměstí, Praha" : "Wenceslas Square, Prague" },
+      { "@type": "Place", name: isCs ? "Nové Město, Praha" : "Nové Město, Prague" },
+      { "@type": "Place", name: isCs ? "Národní muzeum, Praha" : "National Museum, Prague" },
     ],
-    knowsAbout: [
-      "kytice",
-      "kytice od 200 Kč",
-      "vazby na míru",
-      "svatební floristika",
-      "smuteční vazby a věnce",
-      "rozvoz a donáška květin po Praze",
-      "řezané a sušené květiny",
-    ],
+    knowsAbout: t.SERVICES,
     knowsLanguage: ["cs", "en"],
     openingHoursSpecification: [
       {
@@ -116,15 +60,16 @@ export function buildJsonLd() {
         closes: "18:00",
       },
     ],
-    sameAs: [CONTACT.instagramUrl],
+    sameAs: [SITE.instagramUrl],
     makesOffer: [
       {
         "@type": "Offer",
         itemOffered: {
           "@type": "Product",
-          name: "Ručně vázaná kytice",
-          description:
-            "Ručně vázané kytice od drobné pozornosti po velkou vazbu na míru.",
+          name: isCs ? "Ručně vázaná kytice" : "Hand-tied bouquet",
+          description: isCs
+            ? "Ručně vázané kytice od drobné pozornosti po velkou vazbu na míru."
+            : "Hand-tied bouquets from a small token to a large custom arrangement.",
         },
         priceCurrency: "CZK",
         priceSpecification: {
@@ -134,18 +79,19 @@ export function buildJsonLd() {
         },
         availability: "https://schema.org/InStock",
       },
-      ...SERVICES.map((name) => ({
+      ...t.SERVICES.map((name) => ({
         "@type": "Offer",
         itemOffered: { "@type": "Service", name },
       })),
     ],
-    slogan: SHOP.tagline,
+    slogan: t.SHOP.tagline,
   };
 
   const faqPage = {
     "@type": "FAQPage",
-    "@id": `${SEO.url}/#faq`,
-    mainEntity: FAQ.map((item) => ({
+    "@id": `${SITE.url}/#faq`,
+    inLanguage: isCs ? "cs-CZ" : "en",
+    mainEntity: t.FAQ.map((item) => ({
       "@type": "Question",
       name: item.q,
       acceptedAnswer: { "@type": "Answer", text: item.a },
@@ -154,11 +100,11 @@ export function buildJsonLd() {
 
   const website = {
     "@type": "WebSite",
-    "@id": `${SEO.url}/#website`,
-    url: SEO.url,
-    name: SHOP.name,
-    inLanguage: "cs-CZ",
-    publisher: { "@id": `${SEO.url}/#florist` },
+    "@id": `${SITE.url}/#website`,
+    url: SITE.url,
+    name: t.SHOP.name,
+    inLanguage: isCs ? "cs-CZ" : "en",
+    publisher: { "@id": `${SITE.url}/#florist` },
   };
 
   return {

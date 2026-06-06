@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { CONTACT, FOOTER, SHOP } from "@/lib/constants";
+import type { Dictionary } from "@/lib/i18n";
 
-export function Footer() {
+export function Footer({ t }: { t: Dictionary }) {
+  const { CONTACT, FOOTER, SHOP, UI } = t;
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "sent">("idle");
 
@@ -145,7 +146,7 @@ export function Footer() {
             </p>
             <form onSubmit={onSubmit} className="flex flex-col gap-3">
               <label htmlFor="newsletter-email" className="sr-only">
-                Email
+                {UI.footerEmailLabel}
               </label>
               <input
                 id="newsletter-email"
@@ -175,7 +176,7 @@ export function Footer() {
                   padding: "0.7rem 1.4rem",
                 }}
               >
-                {status === "sent" ? "Děkujeme ✓" : FOOTER.newsletter.cta}
+                {status === "sent" ? UI.footerThanks : FOOTER.newsletter.cta}
               </button>
             </form>
           </div>
