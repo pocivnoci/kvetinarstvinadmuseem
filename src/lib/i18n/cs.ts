@@ -56,9 +56,8 @@ export const cs = {
     instagram: SITE.instagram,
     instagramUrl: SITE.instagramUrl,
     hours: {
-      weekdays: "Po–Pá  9:00 – 18:00",
-      saturday: "So       9:00 – 18:00",
-      sunday: "Ne       zavřeno",
+      weekdays: "Po–Pá  8:00 – 18:00",
+      weekend: "So–Ne    zavřeno",
     },
   },
 
@@ -174,6 +173,42 @@ export const cs = {
       { src: "/images/shop-1.jpg", alt: "Výloha květinářství Květiny nad museem z ulice s lavicí kytic" },
       { src: "/images/shop-2.jpg", alt: "Interiér krámku s čerstvými květinami ve vědrech" },
       { src: "/images/shop-3.jpg", alt: "Pracovní stůl s kyticemi před květinovou tapetou" },
+      { src: "/images/shop-4.jpg", alt: "Černý industriální regál s keramikou a pokojovými rostlinami" },
+      { src: "/images/shop-5.jpg", alt: "Malovaná skříňka se svěžími květinami v krámku" },
+      { src: "/images/shop-6.jpg", alt: "Růžový stůl s vázanými růžemi" },
+      { src: "/images/shop-7.jpg", alt: "Regál s věnci a svícemi" },
+    ],
+  },
+
+  DEKORACE: {
+    eyebrow: "Dárky a dekorace",
+    title: "Věnce, svícny a sušené vazby",
+    body: "Sušené věnce, svícny obtočené květinami a drobné dekorace pro byt i jako dárek. Každý kousek vážeme ručně — tak aby vydržel dlouho po tom, co čerstvá kytice odkvete.",
+    images: [
+      { src: "/images/dekorace/dekorace-1.jpg", alt: "Závěsná dekorace ze sušených bílých květů s perličkami" },
+      { src: "/images/dekorace/dekorace-2.jpg", alt: "Věneček se svící a růžovými květy v košíku" },
+      { src: "/images/dekorace/dekorace-3.jpg", alt: "Sušená vazba v růžových a broskvových tónech ve zlaté váze" },
+      { src: "/images/dekorace/dekorace-4.jpg", alt: "Závěsný věnec ze sušených květin na stojanu" },
+      { src: "/images/dekorace/dekorace-5.jpg", alt: "Svícen obtočený drobnou květinovou vazbou" },
+      { src: "/images/dekorace/dekorace-6.jpg", alt: "Stěna sušených věnců na staré okenici v krámku" },
+      { src: "/images/dekorace/dekorace-7.jpg", alt: "Drobné vazby a věnečky na stolku" },
+      { src: "/images/dekorace/dekorace-8.jpg", alt: "Sušená vazba v bordó a broskvových tónech" },
+    ],
+  },
+
+  ROSTLINY: {
+    eyebrow: "Pro domov",
+    title: "Pokojové rostliny",
+    body: "Ficusy, dracény, kaktusy i drobné sukulenty v květináčích, které ladí s krámkem. Poradíme, která rostlina se hodí do vašeho světla a jak se o ni starat.",
+    images: [
+      { src: "/images/rostliny/rostliny-1.jpg", alt: "Vysoká pokojová rostlina v modrém květináči" },
+      { src: "/images/rostliny/rostliny-2.jpg", alt: "Kaktus v keramickém květináči na pultu" },
+      { src: "/images/rostliny/rostliny-3.jpg", alt: "Zamiokulkas v růžovém květináči" },
+      { src: "/images/rostliny/rostliny-4.jpg", alt: "Slonovinová palma v květovaném květináči" },
+      { src: "/images/rostliny/rostliny-5.jpg", alt: "Dvě dracény v pletených květináčích" },
+      { src: "/images/rostliny/rostliny-6.jpg", alt: "Barevné sukulenty ve zlatých květináčích" },
+      { src: "/images/rostliny/rostliny-7.jpg", alt: "Vzrostlý stromek v bílém květináči" },
+      { src: "/images/rostliny/rostliny-8.jpg", alt: "Croton s červenolistými listy zblízka" },
     ],
   },
 
@@ -205,6 +240,14 @@ export const cs = {
       { src: "/images/gallery/g-6.jpg", alt: "Keramické vázy v krámku", caption: "Vázy a keramika", tone: "var(--stone)" },
       { src: "/images/gallery/g-7.jpg", alt: "Květinový věnec na dveřích", caption: "Věnce na přání", tone: "var(--gilt)" },
       { src: "/images/gallery/g-8.jpg", alt: "Čerstvé kytice připravené ve vědrech", caption: "Čerstvé kytice", tone: "var(--terracotta)" },
+      { src: "/images/gallery/g-9.jpg", alt: "Vazba v levandulových a růžových tónech ve váze", caption: "Levandulové ladění", tone: "var(--dusk-blue)" },
+      { src: "/images/gallery/g-10.jpg", alt: "Kytice sytě růžových gerber na růžovém pozadí", caption: "Sytě růžová", tone: "var(--shell-deep)" },
+      { src: "/images/gallery/g-11.jpg", alt: "Kytice u skleněných dveří krámku", caption: "Kytice od dveří", tone: "var(--sage-pale)" },
+      { src: "/images/gallery/g-12.jpg", alt: "Broskvová vazba s žlutými růžemi", caption: "Broskvové odstíny", tone: "var(--mustard)" },
+      { src: "/images/gallery/g-13.jpg", alt: "Sušené trávy a květiny ve zlaté váze", caption: "Sušená tráva", tone: "var(--gilt)" },
+      { src: "/images/gallery/g-14.jpg", alt: "Modrá hortenzie zabalená v papíru před tapetou", caption: "Modrá hortenzie", tone: "var(--moss)" },
+      { src: "/images/gallery/g-15.jpg", alt: "Kytice v bordó a bílých tónech", caption: "Bordó ladění", tone: "var(--terracotta)" },
+      { src: "/images/gallery/g-16.jpg", alt: "Kytice na okenním parapetu u vchodu", caption: "Kytice u okna", tone: "var(--shell-warm)" },
     ],
   },
 
@@ -235,7 +278,7 @@ export const cs = {
         links: [
           { label: "Kytice", href: "#kytice" },
           { label: "Na míru", href: "#na-miru" },
-          { label: "Dárky a vázy", href: "#kytice" },
+          { label: "Dekorace a rostliny", href: "#doplnky" },
           { label: "Doručení po Praze", href: "#kontakt" },
         ],
       },
@@ -259,7 +302,7 @@ export const cs = {
   },
 
   INFOBAR: [
-    { label: "Otevřeno", value: "Po–So 9–18", href: "" },
+    { label: "Otevřeno", value: "Po–Pá 8–18", href: "" },
     { label: "Kde", value: "Vinohradská 6 · metro Muzeum", href: "" },
     { label: "Blízko", value: "5 min od Václavského nám.", href: "" },
     { label: "Doručení", value: "po celé Praze", href: "" },
@@ -281,6 +324,7 @@ export const cs = {
     galleryOf: "z",
     galleryGoTo: "Přejít na",
     seasonsAria: "Co u nás najdete — kytice, na míru, příležitosti, dárky",
+    doplnkyAria: "Dekorace, věnce a pokojové rostliny",
     aboutAria: "O nás",
     ratingPrefix: "Hodnocení",
     ratingSuffix: "z 5 hvězd",
@@ -302,7 +346,7 @@ export const cs = {
 
   FAQ: [
     { q: "Kde Květiny nad museem najdu?", a: "Na adrese Vinohradská 6, Praha 2 — Vinohrady, pár kroků od Národního muzea a stanice metra Muzeum (linky A a C)." },
-    { q: "Jaká je otevírací doba?", a: "Otevřeno máme pondělí až sobotu od 9:00 do 18:00. V neděli je zavřeno." },
+    { q: "Jaká je otevírací doba?", a: "Otevřeno máme pondělí až pátek od 8:00 do 18:00. O víkendu (sobota, neděle) je zavřeno." },
     { q: "Doručujete květiny po Praze?", a: "Ano, kytice i vazby doručujeme po celé Praze. Doručení je nejlepší domluvit telefonicky na +420 770 401 834." },
     { q: "Děláte svatby, smuteční vazby a firemní akce?", a: "Ano. Vážeme svatební floristiku, smuteční vazby i výzdobu pro otevření a firemní akce — vše na míru a po domluvě, ideálně s předstihem." },
     { q: "Vážete kytice na míru?", a: "Ano. Kytici uvážeme podle barvy, příležitosti i rozpočtu — často během chvíle přímo v krámku." },

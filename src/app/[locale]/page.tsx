@@ -5,6 +5,7 @@ import { BrandStrip } from "@/components/BrandStrip";
 import { WallpaperFeature } from "@/components/WallpaperFeature";
 import { Seasons } from "@/components/Seasons";
 import { Signature } from "@/components/Signature";
+import { Doplnky } from "@/components/Doplnky";
 import { Gallery } from "@/components/Gallery";
 import { Prostor } from "@/components/Prostor";
 import { About } from "@/components/About";
@@ -30,6 +31,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
       <WallpaperFeature t={t} />
       <Seasons t={t} />
       <Signature t={t} />
+      <Doplnky t={t} />
       <Gallery t={t} />
       <Prostor t={t} />
       <About t={t} />

@@ -48,6 +48,22 @@ export function Prostor({ t }: { t: Dictionary }) {
             placeholderColor="var(--sage)"
           />
         </div>
+
+        {/* Additional glimpses from the shop */}
+        {PROSTOR.images.length > 3 && (
+          <div
+            className="grid grid-cols-2 gap-4 md:gap-6 md:grid-cols-4 mt-4 md:mt-6"
+          >
+            {PROSTOR.images.slice(3).map((image) => (
+              <ProstorTile
+                key={image.src}
+                image={image}
+                placeholderColor="var(--sage-pale)"
+                minHeight="220px"
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -57,10 +73,12 @@ function ProstorTile({
   image,
   spanRows,
   placeholderColor,
+  minHeight = "260px",
 }: {
   image: { src: string; alt: string };
   spanRows?: boolean;
   placeholderColor: string;
+  minHeight?: string;
 }) {
   return (
     <figure
@@ -69,7 +87,7 @@ function ProstorTile({
         gridRow: spanRows ? "span 2" : undefined,
         borderRadius: "8px",
         background: placeholderColor,
-        minHeight: "260px",
+        minHeight,
       }}
     >
       <Image

@@ -55,9 +55,8 @@ export const en: Dictionary = {
     instagram: SITE.instagram,
     instagramUrl: SITE.instagramUrl,
     hours: {
-      weekdays: "Mon–Fri  9:00 – 18:00",
-      saturday: "Sat       9:00 – 18:00",
-      sunday: "Sun      closed",
+      weekdays: "Mon–Fri  8:00 – 18:00",
+      weekend: "Sat–Sun  closed",
     },
   },
 
@@ -170,6 +169,42 @@ export const en: Dictionary = {
       { src: "/images/shop-1.jpg", alt: "The Květiny nad museem shopfront from the street with a bench of bouquets" },
       { src: "/images/shop-2.jpg", alt: "The shop interior with fresh flowers in buckets" },
       { src: "/images/shop-3.jpg", alt: "A workbench with bouquets in front of a floral tapestry" },
+      { src: "/images/shop-4.jpg", alt: "A black industrial shelf with ceramics and houseplants" },
+      { src: "/images/shop-5.jpg", alt: "A painted dresser with fresh flowers in the shop" },
+      { src: "/images/shop-6.jpg", alt: "A pink table with tied roses" },
+      { src: "/images/shop-7.jpg", alt: "A shelf with wreaths and candles" },
+    ],
+  },
+
+  DEKORACE: {
+    eyebrow: "Gifts & décor",
+    title: "Wreaths, candle rings and dried arrangements",
+    body: "Dried wreaths, candle rings wrapped in flowers and little décor pieces for the home or as a gift. Each one tied by hand — made to outlast a fresh bouquet by far.",
+    images: [
+      { src: "/images/dekorace/dekorace-1.jpg", alt: "A hanging decoration of dried white flowers with beads" },
+      { src: "/images/dekorace/dekorace-2.jpg", alt: "A small wreath with a candle and pink flowers in a basket" },
+      { src: "/images/dekorace/dekorace-3.jpg", alt: "A dried arrangement in pink and peach tones in a gold vase" },
+      { src: "/images/dekorace/dekorace-4.jpg", alt: "A hanging dried-flower wreath on a stand" },
+      { src: "/images/dekorace/dekorace-5.jpg", alt: "A candle wrapped in a small floral arrangement" },
+      { src: "/images/dekorace/dekorace-6.jpg", alt: "A wall of dried wreaths on an old shutter in the shop" },
+      { src: "/images/dekorace/dekorace-7.jpg", alt: "Small arrangements and wreaths on a table" },
+      { src: "/images/dekorace/dekorace-8.jpg", alt: "A dried arrangement in burgundy and peach tones" },
+    ],
+  },
+
+  ROSTLINY: {
+    eyebrow: "For the home",
+    title: "Houseplants",
+    body: "Ficus, dracaena, cacti and small succulents in pots that match the shop. We'll help you find one that suits your light and how to care for it.",
+    images: [
+      { src: "/images/rostliny/rostliny-1.jpg", alt: "A tall houseplant in a blue pot" },
+      { src: "/images/rostliny/rostliny-2.jpg", alt: "A cactus in a ceramic pot on the counter" },
+      { src: "/images/rostliny/rostliny-3.jpg", alt: "A ZZ plant in a pink pot" },
+      { src: "/images/rostliny/rostliny-4.jpg", alt: "A ponytail palm in a patterned pot" },
+      { src: "/images/rostliny/rostliny-5.jpg", alt: "Two dracaenas in woven pots" },
+      { src: "/images/rostliny/rostliny-6.jpg", alt: "Colourful succulents in gold pots" },
+      { src: "/images/rostliny/rostliny-7.jpg", alt: "A tall tree in a white pot" },
+      { src: "/images/rostliny/rostliny-8.jpg", alt: "A red-leafed croton up close" },
     ],
   },
 
@@ -201,6 +236,14 @@ export const en: Dictionary = {
       { src: "/images/gallery/g-6.jpg", alt: "Ceramic vases in the shop", caption: "Vases & ceramics", tone: "var(--stone)" },
       { src: "/images/gallery/g-7.jpg", alt: "A flower wreath on a door", caption: "Wreaths to order", tone: "var(--gilt)" },
       { src: "/images/gallery/g-8.jpg", alt: "Fresh bouquets ready in buckets", caption: "Fresh bouquets", tone: "var(--terracotta)" },
+      { src: "/images/gallery/g-9.jpg", alt: "An arrangement in lavender and pink tones in a vase", caption: "Lavender tones", tone: "var(--dusk-blue)" },
+      { src: "/images/gallery/g-10.jpg", alt: "A bouquet of vivid pink gerberas against a pink backdrop", caption: "Vivid pink", tone: "var(--shell-deep)" },
+      { src: "/images/gallery/g-11.jpg", alt: "A bouquet by the shop's glass door", caption: "By the door", tone: "var(--sage-pale)" },
+      { src: "/images/gallery/g-12.jpg", alt: "A peach arrangement with yellow roses", caption: "Peach tones", tone: "var(--mustard)" },
+      { src: "/images/gallery/g-13.jpg", alt: "Dried grasses and flowers in a gold vase", caption: "Dried grass", tone: "var(--gilt)" },
+      { src: "/images/gallery/g-14.jpg", alt: "A blue hydrangea wrapped in paper in front of the tapestry", caption: "Blue hydrangea", tone: "var(--moss)" },
+      { src: "/images/gallery/g-15.jpg", alt: "A bouquet in burgundy and white tones", caption: "Burgundy tones", tone: "var(--terracotta)" },
+      { src: "/images/gallery/g-16.jpg", alt: "A bouquet on the windowsill by the entrance", caption: "By the window", tone: "var(--shell-warm)" },
     ],
   },
 
@@ -229,7 +272,7 @@ export const en: Dictionary = {
         links: [
           { label: "Bouquets", href: "#kytice" },
           { label: "Custom", href: "#na-miru" },
-          { label: "Gifts & vases", href: "#kytice" },
+          { label: "Décor & plants", href: "#doplnky" },
           { label: "Delivery in Prague", href: "#kontakt" },
         ],
       },
@@ -253,7 +296,7 @@ export const en: Dictionary = {
   },
 
   INFOBAR: [
-    { label: "Open", value: "Mon–Sat 9–18", href: "" },
+    { label: "Open", value: "Mon–Fri 8–18", href: "" },
     { label: "Where", value: "Vinohradská 6 · metro Muzeum", href: "" },
     { label: "Nearby", value: "5 min from Wenceslas Sq.", href: "" },
     { label: "Delivery", value: "across Prague", href: "" },
@@ -274,6 +317,7 @@ export const en: Dictionary = {
     galleryOf: "of",
     galleryGoTo: "Go to",
     seasonsAria: "What you'll find — bouquets, custom, occasions, gifts",
+    doplnkyAria: "Décor, wreaths and houseplants",
     aboutAria: "About us",
     ratingPrefix: "Rating",
     ratingSuffix: "out of 5 stars",
@@ -295,7 +339,7 @@ export const en: Dictionary = {
 
   FAQ: [
     { q: "Where can I find Květiny nad museem?", a: "At Vinohradská 6, Prague 2 — Vinohrady, a few steps from the National Museum and the Muzeum metro station (lines A and C)." },
-    { q: "What are your opening hours?", a: "We're open Monday to Saturday from 9:00 to 18:00. Closed on Sundays." },
+    { q: "What are your opening hours?", a: "We're open Monday to Friday from 8:00 to 18:00. Closed on weekends." },
     { q: "Do you deliver flowers across Prague?", a: "Yes, we deliver bouquets and arrangements across Prague. Delivery is best arranged by phone at +420 770 401 834." },
     { q: "Do you do weddings, funeral flowers and corporate events?", a: "Yes. We create wedding floristry, funeral arrangements and décor for openings and corporate events — all bespoke and by arrangement, ideally booked ahead." },
     { q: "Do you tie custom bouquets?", a: "Yes. We'll tie a bouquet to your colour, occasion and budget — often within minutes, right in the shop." },

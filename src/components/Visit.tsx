@@ -89,8 +89,7 @@ export function Visit({ t }: { t: Dictionary }) {
               }}
             >
               <li style={{ whiteSpace: "pre" }}>{CONTACT.hours.weekdays}</li>
-              <li style={{ whiteSpace: "pre" }}>{CONTACT.hours.saturday}</li>
-              <li style={{ whiteSpace: "pre" }}>{CONTACT.hours.sunday}</li>
+              <li style={{ whiteSpace: "pre" }}>{CONTACT.hours.weekend}</li>
             </ul>
           </VisitColumn>
 
