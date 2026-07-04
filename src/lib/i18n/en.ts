@@ -125,7 +125,7 @@ export const en: Dictionary = {
     eyebrow: "Family flower shop",
     title: "Flowers from a family, not a factory line.",
     body: "We hand-pick flowers every day from trusted wholesalers — so you can choose even out of season. We'll help across any budget: from a small bouquet in hand for 200 CZK to a large custom arrangement.",
-    cta: { label: "See the bouquets", href: "#kytice" },
+    cta: { label: "See the bouquets", href: "#galerie" },
   },
 
   SEASONS,
@@ -323,6 +323,7 @@ export const en: Dictionary = {
     visitOpen: "Open",
     visitWrite: "Get in touch",
     visitOpenNow: "Open now",
+    visitClosedNow: "Closed now",
     visitConsult: "Book a consultation",
     getDirections: "Get directions",
     mapTitle: "Map — Květiny nad museem, Vinohradská 6, Prague 2",

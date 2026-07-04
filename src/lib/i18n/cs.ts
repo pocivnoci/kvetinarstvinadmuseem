@@ -129,7 +129,7 @@ export const cs = {
     eyebrow: "Rodinné květinářství",
     title: "Kytice od rodiny, ne od pásu.",
     body: "Květiny vybíráme každý den u prověřených velkoobchodů — abyste si mohli vybrat i mimo sezónu. Poradíme vám napříč rozpočtem: od drobné kytice do ruky za 200 Kč po velkou vazbu na míru.",
-    cta: { label: "Prohlédnout kytice", href: "#kytice" },
+    cta: { label: "Prohlédnout kytice", href: "#galerie" },
   },
 
   SEASONS,
@@ -330,6 +330,7 @@ export const cs = {
     visitOpen: "Otevřeno",
     visitWrite: "Napište nám",
     visitOpenNow: "Právě otevřeno",
+    visitClosedNow: "Právě zavřeno",
     visitConsult: "Domluvit konzultaci",
     getDirections: "Najít cestu",
     mapTitle: "Mapa — Květiny nad museem, Vinohradská 6, Praha 2",

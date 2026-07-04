@@ -1,8 +1,19 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import type { Dictionary } from "@/lib/i18n";
 import { SITE } from "@/lib/site";
+import { isShopOpen } from "@/lib/hours";
 
 export function Visit({ t }: { t: Dictionary }) {
   const { CONTACT, VISIT, UI } = t;
+  const [open, setOpen] = useState(() => isShopOpen(new Date()));
+
+  useEffect(() => {
+    const id = window.setInterval(() => setOpen(isShopOpen(new Date())), 30_000);
+    return () => window.clearInterval(id);
+  }, []);
+
   const q = encodeURIComponent(SITE.mapsQuery);
   const mapEmbed = `https://maps.google.com/maps?q=${q}&z=16&hl=${t.locale}&output=embed`;
   const directions = `https://www.google.com/maps/dir/?api=1&destination=${q}`;
@@ -64,17 +75,20 @@ export function Visit({ t }: { t: Dictionary }) {
               className="flex items-center gap-2"
               style={{ marginBottom: "0.8rem" }}
             >
-              <span className="open-dot" aria-hidden="true" />
+              <span
+                className={open ? "open-dot" : "closed-dot"}
+                aria-hidden="true"
+              />
               <span
                 style={{
                   fontFamily: "var(--font-ui)",
                   fontSize: "0.85rem",
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
-                  color: "var(--sage-deep)",
+                  color: open ? "var(--sage-deep)" : "var(--stone)",
                 }}
               >
-                {UI.visitOpenNow}
+                {open ? UI.visitOpenNow : UI.visitClosedNow}
               </span>
             </div>
             <ul

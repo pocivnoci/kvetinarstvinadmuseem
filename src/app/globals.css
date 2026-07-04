@@ -242,6 +242,15 @@ button {
   animation: open-pulse 2.4s var(--ease-growth) infinite;
 }
 
+.closed-dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  background: var(--stone-pale);
+  border: 1px solid var(--stone);
+  border-radius: 50%;
+}
+
 /* Stem grow reveal */
 .stem-grow path {
   stroke-dasharray: 1;
