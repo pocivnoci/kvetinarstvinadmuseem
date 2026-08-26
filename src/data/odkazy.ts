@@ -39,8 +39,14 @@ export type Odkaz = {
   enabled: boolean;
   /** Pořadí odshora, vzestupně. */
   order: number;
-  /** "primary" = zvýrazněná zelená karta. Použij max na jednu položku. */
-  variant?: "primary";
+  /**
+   * Vzhled karty. Bez hodnoty = krémová.
+   *   "accent"  krémová se zlatým proužkem — jemné vyzdvižení, nekřičí
+   *   "wolt"    firemní modrá Woltu
+   *   "primary" plná zelená (--sage-cta)
+   * Zvýrazněné karty používej střídmě, jinak se hierarchie rozpadne.
+   */
+  variant?: "primary" | "wolt" | "accent";
   /**
    * false = nepřipojovat UTM parametry k adrese.
    * Pro krátké redirect adresy (g.page), kde cizí query parametry nedávají
@@ -58,8 +64,8 @@ export const ODKAZY: Odkaz[] = [
     href: "https://wolt.com/cs/cze/prague/venue/kvetiny-nad-museem",
     icon: "wolt",
     enabled: true,
-    order: 1,
-    variant: "primary",
+    order: 2,
+    variant: "wolt",
   },
   {
     id: "telefon",
@@ -68,7 +74,7 @@ export const ODKAZY: Odkaz[] = [
     href: SITE.phoneHref,
     icon: "phone",
     enabled: true,
-    order: 2,
+    order: 4,
   },
   {
     id: "whatsapp",
@@ -86,7 +92,7 @@ export const ODKAZY: Odkaz[] = [
     href: SITE.emailHref,
     icon: "mail",
     enabled: true,
-    order: 4,
+    order: 7,
   },
   {
     id: "instagram",
@@ -95,7 +101,7 @@ export const ODKAZY: Odkaz[] = [
     href: SITE.instagramUrl,
     icon: "instagram",
     enabled: true,
-    order: 5,
+    order: 6,
   },
   {
     id: "mapa",
@@ -106,7 +112,7 @@ export const ODKAZY: Odkaz[] = [
     )}`,
     icon: "map",
     enabled: true,
-    order: 6,
+    order: 5,
   },
   {
     id: "recenze",
@@ -115,7 +121,8 @@ export const ODKAZY: Odkaz[] = [
     href: "https://g.page/r/CcpyYfBq7i3nEBM/review",
     icon: "star",
     enabled: true,
-    order: 7,
+    order: 1,
+    variant: "accent",
     utm: false,
   },
 ];

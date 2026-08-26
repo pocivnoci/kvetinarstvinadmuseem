@@ -156,7 +156,6 @@ export function Odkazy({ src }: { src: OdkazSrc | null }) {
           {odkazy.map((odkaz, i) => {
             const href = withUtm(odkaz, src);
             const external = /^https?:\/\//i.test(odkaz.href);
-            const primary = odkaz.variant === "primary";
 
             return (
               <li
@@ -168,19 +167,21 @@ export function Odkazy({ src }: { src: OdkazSrc | null }) {
                   href={href}
                   data-odkaz-id={odkaz.id}
                   data-odkaz-label={odkaz.label}
-                  className={`odkaz-card${primary ? " odkaz-card--primary" : ""}`}
+                  className={`odkaz-card${
+                    odkaz.variant ? ` odkaz-card--${odkaz.variant}` : ""
+                  }`}
                   {...(external
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
                 >
                   <span
                     aria-hidden="true"
+                    className="odkaz-ikona"
                     style={{
                       display: "grid",
                       placeItems: "center",
                       width: "1.9rem",
                       flexShrink: 0,
-                      color: primary ? "var(--cream)" : "var(--gilt-deep)",
                     }}
                   >
                     <OdkazIkona icon={odkaz.icon} />
@@ -207,7 +208,8 @@ export function Odkazy({ src }: { src: OdkazSrc | null }) {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     aria-hidden="true"
-                    style={{ flexShrink: 0, opacity: primary ? 0.85 : 0.45 }}
+                    className="odkaz-sipka"
+                    style={{ flexShrink: 0 }}
                   >
                     <path d="m9 5 7 7-7 7" />
                   </svg>

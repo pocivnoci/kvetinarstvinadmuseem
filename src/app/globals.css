@@ -363,6 +363,9 @@ button {
      což na WCAG AA pro malý text (4,5:1) nestačí. Tenhle odstín dá 4,85:1. */
   --sage-cta: #5f6c47;
 
+  /* Firemní modrá Woltu. */
+  --wolt-blue: #00c2e8;
+
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -394,13 +397,53 @@ button {
     4px 4px 0 rgba(26, 24, 20, 0.02);
 }
 
-.odkaz-card--primary {
-  background: var(--sage-cta);
+/* Zvýrazněné karty sdílí sytější stín — drží se nad krémovými sousedy. */
+.odkaz-card--primary,
+.odkaz-card--wolt {
   border-color: var(--noir);
-  color: var(--cream);
   box-shadow: 1px 1px 0 rgba(26, 24, 20, 0.14),
     2px 2px 0 rgba(26, 24, 20, 0.11), 3px 3px 0 rgba(26, 24, 20, 0.08),
     4px 4px 0 rgba(26, 24, 20, 0.05);
+}
+
+.odkaz-card--primary {
+  background: var(--sage-cta);
+  color: var(--cream);
+}
+
+/* Wolt si veze vlastní firemní modrou — tu značku lidi poznají dřív než text.
+   Popisky zůstávají tmavé: bílý text na téhle azurové dává 2,1:1, tedy hluboko
+   pod AA. Tmavý inkoust na ní dává 7,1:1. */
+.odkaz-card--wolt {
+  background: var(--wolt-blue);
+  color: var(--ink);
+}
+
+/* Jemné vyzdvižení zlatým proužkem — všimneš si ho, ale nepřekřičí Wolt. */
+.odkaz-card--accent {
+  border-left: 3px solid var(--gilt);
+}
+
+/* Barva ikony podle varianty — ať to nesedí v inline stylech komponenty. */
+.odkaz-ikona {
+  color: var(--gilt-deep);
+}
+
+.odkaz-card--primary .odkaz-ikona {
+  color: var(--cream);
+}
+
+.odkaz-card--wolt .odkaz-ikona {
+  color: var(--ink);
+}
+
+.odkaz-sipka {
+  opacity: 0.45;
+}
+
+.odkaz-card--primary .odkaz-sipka,
+.odkaz-card--wolt .odkaz-sipka {
+  opacity: 0.8;
 }
 
 .odkaz-label {
