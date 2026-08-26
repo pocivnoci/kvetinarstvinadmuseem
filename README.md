@@ -41,6 +41,14 @@ Stránka navíc čte `?src=` s hodnotami `vizitka`, `samolepka`, `ig`, `wolt`
 a propisuje ji do `utm_content` i do pixel eventů — díky tomu je vidět,
 který nosič lidi přivedl.
 
+### Odkaz do Instagram bia
+
+```
+https://kvetinynadmuseem.cz/odkazy?src=ig
+```
+
+Vkládá se ručně v aplikaci Instagram → Upravit profil → Odkazy.
+
 ### QR kódy
 
 ```bash
