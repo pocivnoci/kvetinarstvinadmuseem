@@ -139,7 +139,7 @@ export function Odkazy({ src }: { src: OdkazSrc | null }) {
           className="morris-band"
           style={{
             backgroundImage: MORRIS_URL,
-            margin: "1rem 0 1.15rem",
+            margin: "0.85rem 0 1rem",
           }}
         />
 
@@ -150,7 +150,7 @@ export function Odkazy({ src }: { src: OdkazSrc | null }) {
             margin: 0,
             display: "flex",
             flexDirection: "column",
-            gap: "0.55rem",
+            gap: "0.5rem",
           }}
         >
           {odkazy.map((odkaz, i) => {
@@ -265,7 +265,7 @@ export function Odkazy({ src }: { src: OdkazSrc | null }) {
         <footer
           style={{
             marginTop: "auto",
-            paddingTop: "1.4rem",
+            paddingTop: "1rem",
             textAlign: "center",
             fontFamily: "var(--font-ui), sans-serif",
             fontSize: "0.72rem",

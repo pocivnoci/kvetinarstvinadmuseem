@@ -366,7 +366,7 @@ button {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  padding: clamp(1.5rem, 5vw, 2.75rem) 1.25rem clamp(1.25rem, 4vw, 2rem);
+  padding: clamp(1.25rem, 4vw, 2.5rem) 1.25rem clamp(1rem, 3vw, 1.75rem);
 }
 
 .odkazy-shell {
@@ -384,7 +384,7 @@ button {
   align-items: center;
   gap: 0.85rem;
   min-height: 48px;
-  padding: 0.7rem 1rem;
+  padding: 0.65rem 1rem;
   background: var(--cream);
   border: 1px solid rgba(26, 24, 20, 0.1);
   border-radius: 3px;

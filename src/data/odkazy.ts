@@ -123,7 +123,8 @@ export const ODKAZY: Odkaz[] = [
 /** Texty kolem odkazů — hlavička, otevírací doba, patička. */
 export const ODKAZY_PAGE = {
   name: "Květiny nad museem",
-  tagline: "Rodinné květinářství na Vinohradské 6, krok nad Národním muzeem.",
+  // Nezlomitelné mezery drží „Vinohradské 6“ a „Praha 2“ pohromadě na jednom řádku.
+  tagline: "Rodinné květinářství na Vinohradské\u00a06, krok nad Národním muzeem.",
 
   hours: {
     heading: "Otevírací doba",
@@ -133,7 +134,7 @@ export const ODKAZY_PAGE = {
     ],
   },
 
-  address: "Vinohradská 6 · 120 00 Praha 2 — Vinohrady",
+  address: "Vinohradská\u00a06 · 120\u00a000 Praha\u00a02 — Vinohrady",
   footer: "Květiny nad museem",
   footerLinkLabel: "kvetinynadmuseem.cz",
   footerLinkHref: "/",
