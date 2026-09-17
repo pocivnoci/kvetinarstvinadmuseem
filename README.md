@@ -129,6 +129,12 @@ odešle, jakmile se připojení vrátí.
 zůstanou v tom jednom prohlížeči. Druhé zařízení je neuvidí a vymazání dat
 prohlížeče je smaže.
 
+Ukazatel stavu vlevo dole: **šedá** = jen prohlížeč, **zelená** = uloženo
+v databázi, **zlatá** = právě se ukládá nebo slaďuje, **červená** = databáze
+neodpovídá. Při červené najdete v Nastavení přesnou hlášku serveru a tlačítko
+na nový pokus. Data se zatím ukládají do prohlížeče a odešlou se, jakmile
+spojení začne fungovat, takže se žádná práce neztratí.
+
 V obou režimech je v Nastavení **Stáhnout zálohu** (JSON) a **Načíst zálohu**.
 I s databází se hodí — třeba když si omylem smažete měsíc tržeb.
 

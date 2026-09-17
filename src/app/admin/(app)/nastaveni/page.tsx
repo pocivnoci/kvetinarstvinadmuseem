@@ -8,7 +8,7 @@ import { DEFAULT_SETTINGS, type Settings } from "@/lib/admin/types";
 import { Card, Field, Loading, PageHead } from "@/components/admin/ui";
 
 export default function NastaveniPage() {
-  const { doc, ready, mode, status, syncedAt, unsaved, update, replace, flush } = useAdmin();
+  const { doc, ready, mode, status, syncedAt, unsaved, error, update, replace, flush, reload } = useAdmin();
   const [msg, setMsg] = useState<{ tone: "ok" | "danger"; text: string } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -87,9 +87,41 @@ export default function NastaveniPage() {
                   `Databáze${syncedAt ? ` · naposledy uloženo ${new Date(syncedAt).toLocaleTimeString("cs-CZ")}` : ""}`}
               </dd>
             </dl>
-            {mode === "cloud" && unsaved > 0 && (
+            {mode === "cloud" && (status === "error" || status === "offline") && (
+              <div className="notice notice-danger" style={{ marginBottom: "1rem" }}>
+                <strong>Databáze neodpovídá.</strong> Data se zatím ukládají jen do tohoto
+                prohlížeče a odešlou se, jakmile spojení začne fungovat.
+                {error && (
+                  <>
+                    <br />
+                    <span className="field-label" style={{ display: "block", marginTop: "0.6rem" }}>
+                      Hlášení serveru
+                    </span>
+                    <code
+                      style={{
+                        display: "block",
+                        whiteSpace: "pre-wrap",
+                        wordBreak: "break-word",
+                        fontSize: "0.78rem",
+                        marginTop: "0.2rem",
+                      }}
+                    >
+                      {error}
+                    </code>
+                  </>
+                )}
+              </div>
+            )}
+            {mode === "cloud" && (
               <div className="row" style={{ marginBottom: "1rem" }}>
-                <button className="btn btn-ghost btn-sm" onClick={() => void flush()}>Uložit teď</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => void reload()}>
+                  Zkusit spojení znovu
+                </button>
+                {unsaved > 0 && (
+                  <button className="btn btn-ghost btn-sm" onClick={() => void flush()}>
+                    Uložit teď ({unsaved})
+                  </button>
+                )}
               </div>
             )}
           </Card>

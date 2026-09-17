@@ -7,7 +7,7 @@ import { useAdmin } from "@/lib/admin/store";
  * když se něco neuložilo — proto je stav vidět pořád, ne jen při chybě.
  */
 export function SyncBadge({ compact = false }: { compact?: boolean }) {
-  const { ready, mode, status, syncedAt, unsaved } = useAdmin();
+  const { ready, mode, status, syncedAt, unsaved, error } = useAdmin();
   if (!ready) return null;
 
   const view = (() => {
@@ -26,7 +26,7 @@ export function SyncBadge({ compact = false }: { compact?: boolean }) {
           detail: `Změny jsou zatím jen tady${unsaved ? ` (${unsaved})` : ""}. Odešlou se, až bude signál.`,
         };
       case "error":
-        return { tone: "var(--terracotta)", label: "Neuloženo", detail: "Uložení se nepovedlo, zkusím to znovu." };
+        return { tone: "var(--terracotta)", label: "Neuloženo", detail: "Uložení se nepovedlo. Podrobnosti jsou v Nastavení." };
       default:
         return {
           tone: "var(--sage-deep)",
@@ -37,7 +37,10 @@ export function SyncBadge({ compact = false }: { compact?: boolean }) {
   })();
 
   return (
-    <span className={`sync ${compact ? "sync--compact" : ""}`} title={view.detail}>
+    <span
+      className={`sync ${compact ? "sync--compact" : ""}`}
+      title={error ? `${view.detail}\n\n${error}` : view.detail}
+    >
       <i style={{ background: view.tone }} />
       <span>{view.label}</span>
     </span>

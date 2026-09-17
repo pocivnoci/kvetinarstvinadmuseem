@@ -274,6 +274,8 @@ export function useAdmin() {
   }, []);
   /** Ruční „ulož hned" — pro tlačítko v nastavení. */
   const flush = useCallback(() => save(), []);
+  /** Znovu se pokusit spojit s databází a načíst data. */
+  const reload = useCallback(() => load(), []);
 
   return {
     doc: s,
@@ -287,6 +289,7 @@ export function useAdmin() {
     update,
     replace,
     flush,
+    reload,
   };
 }
 
