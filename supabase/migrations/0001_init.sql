@@ -11,7 +11,11 @@
 --  zvenčí nepřečte. To je bezpečný výchozí stav, ne opomenutí.
 -- ════════════════════════════════════════════════════════════════════
 
--- Automatická aktualizace updated_at při každé změně řádku.
+-- Automatická aktualizace updated_at — ale jen když se řádek opravdu změnil.
+--
+-- Admin ukládá celý dokument najednou, takže se přepisují i řádky, kterých
+-- se nikdo nedotkl. Bez téhle podmínky by po každém uložení všechny
+-- objednávky tvrdily, že byly právě upravené.
 create or replace function public.touch_updated_at()
 returns trigger
 language plpgsql
@@ -19,7 +23,11 @@ security definer
 set search_path = ''
 as $$
 begin
-  new.updated_at = now();
+  -- Nejdřív srovnat čas se starým řádkem, ať se porovnávají jen data.
+  new.updated_at = old.updated_at;
+  if new is distinct from old then
+    new.updated_at = now();
+  end if;
   return new;
 end;
 $$;

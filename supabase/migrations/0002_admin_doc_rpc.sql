@@ -8,14 +8,22 @@
 --  Uložení běží celé v jedné transakci: buď projde všechno, nebo nic —
 --  polovičatý stav (uložené objednávky bez faktur) nemůže vzniknout.
 --
---  Obě funkce jsou security definer a volají se výhradně ze serveru
---  tajným klíčem projektu. Do prohlížeče se nedostanou.
+--  Obě funkce smí spustit jedině role service_role, tedy server s tajným
+--  klíčem. Chrání je dva nezávislé zámky:
+--
+--    1) Odebrané právo na spuštění. Pozor, Postgres dává právo spouštět
+--       funkce implicitně roli PUBLIC, takže nestačí ho odebrat rolím
+--       anon a authenticated — musí se odebrat i PUBLIC, jinak funkci
+--       spustí kdokoli s veřejným klíčem projektu.
+--
+--    2) Funkce běží právy volajícího (security invoker), ne svými. I kdyby
+--       se přes první zámek někdo dostal, naráží na RLS: nepřečte nic
+--       a nezapíše nic. service_role RLS obchází, takže server funguje.
 -- ════════════════════════════════════════════════════════════════════
 
 create or replace function public.load_admin_doc()
 returns jsonb
 language sql
-security definer
 set search_path = ''
 stable
 as $$
@@ -124,7 +132,6 @@ $$;
 create or replace function public.save_admin_doc(doc jsonb, expected_revision bigint default null)
 returns jsonb
 language plpgsql
-security definer
 set search_path = ''
 as $$
 declare
@@ -256,7 +263,10 @@ begin
 end;
 $$;
 
--- Funkce nesmí být volatelné přes veřejné API projektu; jdou jen
--- tajným klíčem ze serveru.
-revoke all on function public.load_admin_doc() from anon, authenticated;
-revoke all on function public.save_admin_doc(jsonb, bigint) from anon, authenticated;
+-- Zámek č. 1: odebrat právo spouštět všem kromě serveru.
+-- PUBLIC je tu klíčové — bez něj zůstane funkce spustitelná veřejným klíčem.
+revoke all on function public.load_admin_doc() from public, anon, authenticated;
+revoke all on function public.save_admin_doc(jsonb, bigint) from public, anon, authenticated;
+
+grant execute on function public.load_admin_doc() to service_role;
+grant execute on function public.save_admin_doc(jsonb, bigint) to service_role;

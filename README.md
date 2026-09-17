@@ -155,10 +155,23 @@ ne jako hotový výsledek), takže se cizí práce neztratí.
 Tajný klíč obchází pravidla přístupu k datům, takže nesmí do repozitáře ani
 nikam, odkud by ho přečetl prohlížeč. `.env*.local` je v `.gitignore`.
 
-Bezpečnost na straně databáze: všechny tabulky mají zapnuté RLS a **žádnou
-politiku**, takže anonymní ani přihlášené role k datům nemají přístup. Čte
-a zapisuje výhradně server tajným klíčem, přes dvě funkce
-(`load_admin_doc`, `save_admin_doc`).
+Bezpečnost na straně databáze stojí na třech vrstvách:
+
+1. **RLS bez politik** na všech tabulkách — anonymní ani přihlášená role
+   nepřečte ani nezapíše jediný řádek.
+2. **Odebrané právo spouštět funkce** `load_admin_doc` a `save_admin_doc`,
+   a to včetně role `PUBLIC`. To je snadné přehlédnout: Postgres dává právo
+   spouštět funkce implicitně všem, takže odebrání rolím `anon`
+   a `authenticated` nestačí — bez odebrání `PUBLIC` by obě funkce šly
+   zavolat veřejným klíčem projektu a prázdným dokumentem smazat celou
+   databázi.
+3. **Funkce běží právy volajícího**, ne svými (žádné `security definer`).
+   I kdyby někdo prolomil druhou vrstvu, naráží na RLS z první.
+
+Migrace jsou otestované na čistém Postgresu 16: obě projdou, uložení
+a načtení vrátí stejná data včetně české diakritiky, kontroly odmítnou
+rozvoz bez adresy i dvě tržby na stejný den, a útok veřejnou rolí na obě
+funkce skončí odmítnutím.
 
 ### Úpravy dat
 
