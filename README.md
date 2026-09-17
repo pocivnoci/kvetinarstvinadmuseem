@@ -82,7 +82,7 @@ záložkami, na počítači boční navigaci.
 
 ### Heslo
 
-Na Vercelu nastavte proměnnou prostředí **`ADMIN_PASSWORD`** (Settings →
+Do adminu se vstupuje jedním sdíleným heslem. Na Vercelu nastavte proměnnou prostředí **`ADMIN_PASSWORD`** (Settings →
 Environment Variables) a nasaďte web znovu. Bez ní admin v produkci nepustí
 nikoho; při `npm run dev` se bez hesla otevře rovnou. Přihlášení platí
 30 dní, změna hesla odhlásí všechna zařízení. Admin má `noindex` a je
@@ -115,18 +115,50 @@ předchozí přepíše.
 
 ### Kde jsou data
 
-Data adminu se ukládají **v prohlížeči zařízení, kde se zadala**
-(`localStorage`) — nikam na server neodcházejí. Funguje to hned bez databáze,
-ale znamená to:
+Admin umí běžet ve dvou režimech a pozná to sám podle proměnných prostředí.
+Aktuální stav je vidět vlevo dole a v Nastavení.
 
-- druhý telefon / počítač data nevidí,
-- vymazání dat prohlížeče je smaže.
+**Databáze (Supabase).** Když jsou nastavené `SUPABASE_URL` a
+`SUPABASE_SECRET_KEY`, data žijí v databázi a jsou stejná na mobilu i na
+počítači v krámu. Prohlížeč s databází nemluví přímo — chodí přes
+`/api/admin/data`, takže tajný klíč zůstává na serveru. Místní kopie
+v prohlížeči slouží jen pro výpadek internetu: co zadáte bez signálu, se
+odešle, jakmile se připojení vrátí.
 
-Proto je v Nastavení tlačítko **Stáhnout zálohu** (JSON) a **Načíst zálohu**
-— doporučujeme zálohovat třeba každý pátek. Úložiště je oddělené v jediném
-souboru `src/lib/admin/store.ts` (`read()`/`write()`), takže přechod na
-sdílenou databázi (Supabase, Vercel KV) je výměna těchto dvou funkcí, ne
-přepis adminu.
+**Jen tento prohlížeč.** Když proměnné chybí, admin funguje dál, ale data
+zůstanou v tom jednom prohlížeči. Druhé zařízení je neuvidí a vymazání dat
+prohlížeče je smaže.
+
+V obou režimech je v Nastavení **Stáhnout zálohu** (JSON) a **Načíst zálohu**.
+I s databází se hodí — třeba když si omylem smažete měsíc tržeb.
+
+#### Souběh dvou zařízení
+
+Ukládá se celý dokument najednou, v jedné transakci, a databáze u sebe drží
+číslo revize. Admin posílá revizi, ze které vycházel; když mezitím uložil
+někdo jiný, databáze nic nepřepíše a vrátí `conflict`. Admin si pak stáhne
+aktuální data a přehraje na ně své neuložené úpravy (drží si je jako operace,
+ne jako hotový výsledek), takže se cizí práce neztratí.
+
+### Nastavení databáze
+
+1. V Supabase založte projekt (region `eu-central-1`, Frankfurt je Praze
+   nejblíž).
+2. Pusťte migrace ze složky `supabase/migrations/` v pořadí — buď v SQL
+   editoru v Supabase (zkopírovat obsah souboru a spustit), nebo přes
+   Supabase CLI (`supabase db push`).
+3. V Supabase → Project Settings → API zkopírujte URL projektu a **tajný**
+   klíč (`service_role` / `sb_secret_…`).
+4. Vložte je do `.env.local` (lokálně) a na Vercelu do Environment Variables
+   jako `SUPABASE_URL` a `SUPABASE_SECRET_KEY`, pak web znovu nasaďte.
+
+Tajný klíč obchází pravidla přístupu k datům, takže nesmí do repozitáře ani
+nikam, odkud by ho přečetl prohlížeč. `.env*.local` je v `.gitignore`.
+
+Bezpečnost na straně databáze: všechny tabulky mají zapnuté RLS a **žádnou
+politiku**, takže anonymní ani přihlášené role k datům nemají přístup. Čte
+a zapisuje výhradně server tajným klíčem, přes dvě funkce
+(`load_admin_doc`, `save_admin_doc`).
 
 ### Úpravy dat
 
@@ -135,6 +167,8 @@ přepis adminu.
 - Péče o květiny: `src/lib/admin/pece.ts`
 - Příležitosti a stavy objednávek, kategorie výdajů: `src/lib/admin/types.ts`
 - Výpočty kolem peněz a export CSV: `src/lib/admin/penize.ts`
+- Schéma databáze: `supabase/migrations/`
+- Ukládání a synchronizace: `src/lib/admin/store.ts`, `src/lib/admin/db.ts`
 
 Barvy grafů (`src/components/admin/charts.tsx`) prošly kontrolou na
 rozlišitelnost pro barvoslepé a kontrast proti krémovému pozadí; při změně

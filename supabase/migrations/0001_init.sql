@@ -26,7 +26,7 @@ $$;
 
 -- ── Zákazníci ───────────────────────────────────────────────────────
 create table public.customers (
-  id            uuid primary key default gen_random_uuid(),
+  id            text primary key default gen_random_uuid()::text,
   name          text not null,
   phone         text not null,
   email         text,
@@ -43,12 +43,11 @@ create table public.customers (
 create index customers_phone_idx on public.customers (phone);
 
 -- ── Objednávky ──────────────────────────────────────────────────────
--- Pořadové číslo dává databáze, ať se dvě zařízení nepotkají na stejném.
-create sequence public.order_number_seq as integer start 1;
-
+-- Pořadové číslo přiděluje admin (aby fungoval i bez připojení);
+-- databáze hlídá jen to, že se nesejdou dvě stejná.
 create table public.orders (
-  id              uuid primary key default gen_random_uuid(),
-  cislo           integer not null unique default nextval('public.order_number_seq'),
+  id              text primary key default gen_random_uuid()::text,
+  cislo           integer not null unique,
 
   customer_name   text not null,
   customer_phone  text not null,
@@ -79,15 +78,13 @@ create table public.orders (
     check (fulfillment <> 'rozvoz' or (address is not null and length(btrim(address)) > 0))
 );
 
-alter sequence public.order_number_seq owned by public.orders.cislo;
-
 create index orders_date_idx on public.orders (date);
 create index orders_status_idx on public.orders (status);
 create index orders_phone_idx on public.orders (customer_phone);
 
 -- ── Sklad ───────────────────────────────────────────────────────────
 create table public.stock (
-  id              uuid primary key default gen_random_uuid(),
+  id              text primary key default gen_random_uuid()::text,
   name            text not null,
   category        text not null check (category in ('rezane', 'hrnkove', 'susene', 'doplnky')),
   qty             numeric(10, 2) not null default 0 check (qty >= 0),
@@ -108,7 +105,7 @@ create index stock_category_idx on public.stock (category);
 -- ── Denní tržby ─────────────────────────────────────────────────────
 -- Na jeden den připadá nejvýš jeden záznam; proto unikátní datum.
 create table public.takings (
-  id         uuid primary key default gen_random_uuid(),
+  id         text primary key default gen_random_uuid()::text,
   date       date not null unique,
   cash       numeric(10, 2) not null default 0 check (cash >= 0),
   card       numeric(10, 2) not null default 0 check (card >= 0),
@@ -120,7 +117,7 @@ create table public.takings (
 
 -- ── Faktury ─────────────────────────────────────────────────────────
 create table public.invoices (
-  id         uuid primary key default gen_random_uuid(),
+  id         text primary key default gen_random_uuid()::text,
   kind       text not null check (kind in ('prijata', 'vydana')),
   number     text not null,
   party      text not null,
@@ -156,6 +153,18 @@ create table public.settings (
 
 insert into public.settings (id) values (true);
 
+-- ── Stav synchronizace ──────────────────────────────────────────────
+-- Jediný řádek. `revision` roste s každým uložením; admin ji posílá zpátky,
+-- a když se mezitím změnila, uložení se zastaví místo přepsání cizí práce.
+create table public.sync_state (
+  id                boolean primary key default true check (id),
+  revision          bigint not null default 0,
+  next_order_number integer not null default 1,
+  saved_at          timestamptz not null default now()
+);
+
+insert into public.sync_state (id) values (true);
+
 -- ── Spouště pro updated_at ──────────────────────────────────────────
 create trigger customers_touch before update on public.customers
   for each row execute function public.touch_updated_at();
@@ -177,3 +186,4 @@ alter table public.stock     enable row level security;
 alter table public.takings   enable row level security;
 alter table public.invoices  enable row level security;
 alter table public.settings  enable row level security;
+alter table public.sync_state enable row level security;

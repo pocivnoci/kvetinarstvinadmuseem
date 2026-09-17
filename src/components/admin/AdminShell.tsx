@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
 import { Ico, type IconName } from "./icons";
+import { SyncBadge } from "./SyncBadge";
 
 const NAV: { href: string; label: string; icon: IconName; short?: string }[] = [
   { href: "/admin", label: "Přehled", icon: "home" },
@@ -42,6 +43,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.svg" alt="Květiny nad museem" />
         </Link>
+        <SyncBadge compact />
         <div className="row" style={{ gap: "0.35rem" }}>
           {NAV.filter((n) => !TABS.includes(n.href)).map((n) => {
             const I = Ico[n.icon];
@@ -81,6 +83,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           );
         })}
         <div className="admin-nav-foot">
+          <SyncBadge />
           <a href="/" target="_blank" rel="noreferrer">
             <Ico.web />
             Zobrazit web

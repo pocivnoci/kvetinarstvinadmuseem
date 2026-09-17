@@ -8,7 +8,7 @@ import { DEFAULT_SETTINGS, type Settings } from "@/lib/admin/types";
 import { Card, Field, Loading, PageHead } from "@/components/admin/ui";
 
 export default function NastaveniPage() {
-  const { doc, ready, update, replace } = useAdmin();
+  const { doc, ready, mode, status, syncedAt, unsaved, update, replace, flush } = useAdmin();
   const [msg, setMsg] = useState<{ tone: "ok" | "danger"; text: string } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -63,11 +63,41 @@ export default function NastaveniPage() {
         <SettingsForm settings={doc.settings} onSave={(s) => { update((d) => ({ ...d, settings: s })); setMsg({ tone: "ok", text: "Nastavení uloženo." }); }} />
 
         <div className="stack">
+          <Card title="Kde jsou data">
+            {mode === "cloud" ? (
+              <p className="small" style={{ fontFamily: "var(--font-body)", marginBottom: "0.9rem" }}>
+                Data jsou v <strong>databázi</strong>, takže je vidíte stejně na mobilu i na počítači
+                v krámu. Prohlížeč si drží kopii pro případ, že vypadne internet — co zadáte bez
+                signálu, se odešle, jakmile se připojení vrátí.
+              </p>
+            ) : (
+              <p className="small" style={{ fontFamily: "var(--font-body)", marginBottom: "0.9rem" }}>
+                Databáze zatím není nastavená, takže data žijí <strong>jen v tomto prohlížeči</strong>.
+                Vymazání historie prohlížeče je smaže a v jiném telefonu ani počítači nebudou.
+                Zálohujte si je pravidelně — třeba každý pátek.
+              </p>
+            )}
+            <dl className="kv small" style={{ marginBottom: "1rem" }}>
+              <dt>Stav</dt>
+              <dd>
+                {mode === "local" && "Jen tento prohlížeč"}
+                {mode === "cloud" && status === "offline" && `Bez připojení${unsaved ? ` · ${unsaved} neuložených změn` : ""}`}
+                {mode === "cloud" && status === "error" && "Uložení se nepovedlo"}
+                {mode === "cloud" && (status === "ready" || status === "saving" || status === "conflict" || status === "loading") &&
+                  `Databáze${syncedAt ? ` · naposledy uloženo ${new Date(syncedAt).toLocaleTimeString("cs-CZ")}` : ""}`}
+              </dd>
+            </dl>
+            {mode === "cloud" && unsaved > 0 && (
+              <div className="row" style={{ marginBottom: "1rem" }}>
+                <button className="btn btn-ghost btn-sm" onClick={() => void flush()}>Uložit teď</button>
+              </div>
+            )}
+          </Card>
+
           <Card title="Záloha dat">
             <p className="small" style={{ fontFamily: "var(--font-body)", marginBottom: "0.9rem" }}>
-              Data adminu jsou uložená <strong>v tomto prohlížeči na tomto zařízení</strong>. Vymazání
-              historie prohlížeče je smaže, a v jiném telefonu nebo počítači nebudou.
-              Zálohujte si je pravidelně — třeba každý pátek.
+              Stažená záloha je obyčejný soubor s daty ke dni stažení. Hodí se, i když běží databáze
+              — třeba když si omylem smažete měsíc tržeb.
             </p>
             <dl className="kv small" style={{ marginBottom: "1rem" }}>
               <dt>Naposledy uloženo</dt>
