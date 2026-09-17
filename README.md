@@ -173,6 +173,15 @@ a načtení vrátí stejná data včetně české diakritiky, kontroly odmítnou
 rozvoz bez adresy i dvě tržby na stejný den, a útok veřejnou rolí na obě
 funkce skončí odmítnutím.
 
+#### Kontrola po nasazení
+
+Po spuštění migrací vložte do SQL editoru **`supabase/kontrola.sql`**. Nic
+nemění, jen projde osm bodů (tabulky, RLS, politiky, obě funkce, práva na
+jejich spuštění, výchozí řádky) a u každého napíše OK nebo CHYBA i s tím,
+co je špatně. Sama kontrola je ověřená proti rozbitým stavům: umí poznat
+vypnuté RLS, přidanou politiku i omylem povolené spuštění funkce veřejnou
+rolí.
+
 ### Úpravy dat
 
 - Kalendář jmen: `src/lib/admin/svatky.ts`
