@@ -1,27 +1,8 @@
 import type { Metadata } from "next";
-import { Fraunces, Source_Serif_4, Inter } from "next/font/google";
+import { fontClassName } from "@/lib/fonts";
 import { getDictionary, locales } from "@/lib/i18n";
 import { SITE } from "@/lib/site";
 import "../globals.css";
-
-const fraunces = Fraunces({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-display",
-  axes: ["opsz", "SOFT", "WONK"],
-  display: "swap",
-});
-
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-body",
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-ui",
-  display: "swap",
-});
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -101,7 +82,7 @@ export default function LocaleLayout({
   return (
     <html
       lang={t.htmlLang}
-      className={`${fraunces.variable} ${sourceSerif.variable} ${inter.variable}`}
+      className={fontClassName}
     >
       <body>{children}</body>
     </html>

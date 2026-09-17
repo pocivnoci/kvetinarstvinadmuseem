@@ -1,0 +1,989 @@
+/* ─────────────────────────────────────────────────────────────────────
+   Admin — pracovní nástroj floristky. Stejné barvy jako web, ale menší
+   písmo, hustší rytmus a minimum pohybu. Krémový „papír“ na růžové zdi.
+   ───────────────────────────────────────────────────────────────────── */
+
+.admin {
+  --line: rgba(26, 24, 20, 0.12);
+  --line-soft: rgba(26, 24, 20, 0.07);
+  --paper-shadow: 1px 1px 0 rgba(26, 24, 20, 0.05), 2px 2px 0 rgba(26, 24, 20, 0.04),
+    3px 3px 0 rgba(26, 24, 20, 0.03), 4px 4px 0 rgba(26, 24, 20, 0.02);
+  --sage-cta: #5f6c47;
+  --danger: #a13d2d;
+
+  min-height: 100svh;
+  font-family: var(--font-ui), system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+}
+
+@media (min-width: 900px) {
+  .admin {
+    grid-template-columns: 232px 1fr;
+    grid-template-rows: 1fr;
+  }
+}
+
+.admin h1,
+.admin h2,
+.admin h3 {
+  color: var(--ink);
+  letter-spacing: 0;
+}
+
+.admin h1 {
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  font-variation-settings: "opsz" 72, "SOFT" 50, "WONK" 1;
+  line-height: 1.1;
+}
+
+.admin h2 {
+  font-size: 1.25rem;
+  font-variation-settings: "opsz" 24, "SOFT" 50, "WONK" 0;
+}
+
+.admin h3 {
+  font-size: 1rem;
+  font-style: normal;
+  font-family: var(--font-ui), sans-serif;
+  font-weight: 600;
+}
+
+.admin em,
+.admin i {
+  color: var(--gilt-deep);
+}
+
+/* ── Navigace ──────────────────────────────────────────────────────── */
+
+.admin-nav {
+  background: var(--cream);
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.25rem 0.9rem;
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow-y: auto;
+}
+
+.admin-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.25rem 0.6rem 1rem;
+  border-bottom: 1px solid var(--line-soft);
+  margin-bottom: 0.75rem;
+}
+
+.admin-nav-brand img {
+  height: 2.4rem;
+  width: auto;
+}
+
+.admin-nav-brand span {
+  font-family: var(--font-display), serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--sage-deep);
+}
+
+.admin-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  transition: background 0.2s var(--ease-petal), color 0.2s var(--ease-petal);
+}
+
+.admin-nav a:hover {
+  background: var(--shell);
+  color: var(--ink);
+}
+
+.admin-nav a[aria-current="page"] {
+  background: var(--sage-cta);
+  color: var(--cream);
+}
+
+.admin-nav a svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  opacity: 0.85;
+}
+
+.admin-nav-section {
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stone);
+  padding: 0.9rem 0.7rem 0.3rem;
+}
+
+.admin-nav-foot {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Mobil: horní lišta + spodní záložky */
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  background: var(--cream);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.admin-topbar img {
+  height: 2rem;
+  width: auto;
+}
+
+.admin-tabs {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  background: var(--cream);
+  border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.admin-tabs a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.55rem 0.25rem 0.5rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+}
+
+.admin-tabs a svg {
+  width: 20px;
+  height: 20px;
+}
+
+.admin-tabs a[aria-current="page"] {
+  color: var(--sage-cta);
+  font-weight: 600;
+}
+
+@media (min-width: 900px) {
+  .admin-topbar,
+  .admin-tabs {
+    display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .admin-nav {
+    display: none;
+  }
+}
+
+/* ── Obsah ─────────────────────────────────────────────────────────── */
+
+.admin-main {
+  padding: clamp(1rem, 3vw, 2.25rem) clamp(1rem, 3vw, 2.5rem) 4rem;
+  max-width: 1180px;
+  width: 100%;
+  min-width: 0;
+}
+
+.admin-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-head p {
+  color: var(--ink-soft);
+  font-family: var(--font-body), serif;
+  font-size: 1rem;
+  margin-top: 0.35rem;
+  max-width: 60ch;
+}
+
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Karta — krémový papír s odsazenými stíny (žádná měkká elevace). */
+.card {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  box-shadow: var(--paper-shadow);
+  padding: 1.1rem 1.25rem;
+}
+
+.card + .card {
+  margin-top: 1rem;
+}
+
+.card-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.card-title h2 {
+  font-size: 1.1rem;
+}
+
+.card-title a,
+.card-title button {
+  font-size: 0.8rem;
+  color: var(--sage-cta);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 760px) {
+  .grid-2 {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Mřížkové děti nesmí tlačit šířku podle nezalomeného textu. */
+.grid-2 > *,
+.grid-3 > *,
+.list-row > *,
+.card {
+  min-width: 0;
+}
+
+.grid-2 > .card,
+.grid-3 > .card {
+  margin-top: 0;
+}
+
+/* Statistiky */
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+.stat-value {
+  font-family: var(--font-display), serif;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--sage-deep);
+  font-variation-settings: "opsz" 72, "SOFT" 30;
+}
+
+.stat-sub {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+
+/* ── Formuláře ─────────────────────────────────────────────────────── */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.field > label,
+.field-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.field-hint {
+  font-size: 0.78rem;
+  color: var(--stone);
+}
+
+.input,
+.admin input[type="text"],
+.admin input[type="tel"],
+.admin input[type="email"],
+.admin input[type="number"],
+.admin input[type="date"],
+.admin input[type="time"],
+.admin input[type="password"],
+.admin input[type="search"],
+.admin select,
+.admin textarea {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: #fbf8f1;
+  border: 1px solid var(--stone-pale);
+  border-radius: 3px;
+  padding: 0.55rem 0.7rem;
+  width: 100%;
+  min-width: 0;
+  transition: border-color 0.2s var(--ease-petal), box-shadow 0.2s var(--ease-petal);
+}
+
+.admin textarea {
+  min-height: 5.5rem;
+  resize: vertical;
+  font-family: var(--font-body), serif;
+  line-height: 1.5;
+}
+
+.admin input:focus,
+.admin select:focus,
+.admin textarea:focus {
+  outline: none;
+  border-color: var(--gilt);
+  box-shadow: 0 0 0 3px rgba(184, 146, 77, 0.2);
+}
+
+.admin input::placeholder,
+.admin textarea::placeholder {
+  color: var(--stone);
+}
+
+.admin select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='%234a4238' stroke-width='1.5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem center;
+  padding-right: 2rem;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.check input {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--sage-cta);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .form-grid .span-2 {
+    grid-column: span 2;
+  }
+}
+
+.form-section {
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px dashed var(--line);
+}
+
+.form-section h3 {
+  margin-bottom: 0.75rem;
+  color: var(--sage-deep);
+}
+
+/* Segmentový přepínač (vyzvednutí / rozvoz) */
+.seg {
+  display: inline-flex;
+  border: 1px solid var(--stone-pale);
+  border-radius: 3px;
+  overflow: hidden;
+  background: #fbf8f1;
+}
+
+.seg button {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.seg button[aria-pressed="true"] {
+  background: var(--sage-cta);
+  color: var(--cream);
+}
+
+/* ── Tlačítka ──────────────────────────────────────────────────────── */
+
+.admin .btn {
+  font-size: 0.78rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+  transform: none !important;
+}
+
+.admin .btn-primary {
+  background: var(--sage-cta);
+  box-shadow: none;
+}
+
+.admin .btn-primary:hover {
+  background: var(--ink);
+  box-shadow: none;
+}
+
+.admin .btn-ghost {
+  border-color: var(--stone-pale);
+  color: var(--ink);
+}
+
+.admin .btn-ghost:hover {
+  background: var(--shell);
+  color: var(--ink);
+}
+
+.admin .btn-danger {
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid transparent;
+}
+
+.admin .btn-danger:hover {
+  border-color: var(--danger);
+}
+
+.admin .btn-sm {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.72rem;
+}
+
+.admin .btn svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+.admin-topbar .btn svg {
+  width: 20px;
+  height: 20px;
+  flex-basis: 20px;
+}
+
+.admin .btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.link {
+  color: var(--sage-cta);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ── Štítky ────────────────────────────────────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.badge-gilt { background: rgba(184, 146, 77, 0.18); color: var(--gilt-deep); }
+.badge-dusk { background: rgba(90, 106, 120, 0.16); color: var(--dusk-blue); }
+.badge-terracotta { background: rgba(184, 88, 66, 0.16); color: var(--terracotta); }
+.badge-sage { background: rgba(109, 122, 82, 0.18); color: var(--sage-deep); }
+.badge-stone { background: rgba(140, 133, 121, 0.16); color: var(--ink-soft); }
+.badge-noir { background: transparent; color: var(--stone); border-color: var(--stone-pale); text-decoration: line-through; }
+.badge-danger { background: rgba(161, 61, 45, 0.14); color: var(--danger); }
+
+/* ── Seznamy a tabulky ─────────────────────────────────────────────── */
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.85rem;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--line-soft);
+  color: inherit;
+}
+
+.list-row:first-child {
+  border-top: none;
+}
+
+a.list-row:hover .list-title {
+  color: var(--sage-cta);
+}
+
+.list-when {
+  font-family: var(--font-display), serif;
+  font-size: 1.05rem;
+  line-height: 1.1;
+  color: var(--sage-deep);
+  min-width: 3.2rem;
+  text-align: center;
+}
+
+.list-when small {
+  display: block;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-top: 0.15rem;
+}
+
+.list-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.list-sub {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  font-family: var(--font-body), serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-end {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  margin: 0 -1.25rem;
+  padding: 0 1.25rem;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table th {
+  text-align: left;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone);
+  font-weight: 500;
+  padding: 0.4rem 0.6rem 0.5rem;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: middle;
+}
+
+.table td.num,
+.table th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.table tr:hover td {
+  background: rgba(242, 214, 220, 0.35);
+}
+
+.empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--stone);
+  font-family: var(--font-body), serif;
+  font-style: italic;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.toolbar .input,
+.toolbar input,
+.toolbar select {
+  width: auto;
+  min-width: 10rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.chip {
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--stone-pale);
+  color: var(--ink-soft);
+  background: transparent;
+}
+
+.chip[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--cream);
+  border-color: var(--ink);
+}
+
+.notice {
+  padding: 0.8rem 1rem;
+  border-radius: 3px;
+  font-size: 0.88rem;
+  border: 1px solid;
+  margin-bottom: 1rem;
+}
+
+.notice-warn {
+  background: rgba(184, 146, 77, 0.12);
+  border-color: rgba(184, 146, 77, 0.5);
+  color: var(--gilt-deep);
+}
+
+.notice-danger {
+  background: rgba(161, 61, 45, 0.1);
+  border-color: rgba(161, 61, 45, 0.4);
+  color: var(--danger);
+}
+
+.notice-ok {
+  background: rgba(109, 122, 82, 0.12);
+  border-color: rgba(109, 122, 82, 0.4);
+  color: var(--sage-deep);
+}
+
+.muted {
+  color: var(--stone);
+}
+
+.small {
+  font-size: 0.82rem;
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  align-items: center;
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.35rem 1rem;
+  font-size: 0.92rem;
+}
+
+.kv dt {
+  color: var(--stone);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding-top: 0.15rem;
+}
+
+.kv dd {
+  margin: 0;
+}
+
+/* ── Kalendář (týden) ──────────────────────────────────────────────── */
+
+.week {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+}
+
+@media (min-width: 900px) {
+  .week {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+.week-day {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0.7rem 0.75rem;
+  min-height: 7rem;
+}
+
+.week-day.is-today {
+  border-color: var(--sage-cta);
+  box-shadow: inset 0 0 0 1px var(--sage-cta);
+}
+
+.week-day.is-weekend {
+  background: rgba(244, 237, 224, 0.55);
+}
+
+.week-day-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--line-soft);
+  padding-bottom: 0.35rem;
+}
+
+.week-day-head strong {
+  font-family: var(--font-display), serif;
+  font-weight: 500;
+  font-size: 1.05rem;
+  color: var(--sage-deep);
+}
+
+.week-day-head span {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+.week-item {
+  display: block;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.45rem;
+  margin-bottom: 0.3rem;
+  border-radius: 2px;
+  border-left: 3px solid var(--sage);
+  background: rgba(242, 214, 220, 0.5);
+  color: var(--ink);
+  line-height: 1.3;
+}
+
+.week-item.is-rozvoz {
+  border-left-color: var(--terracotta);
+}
+
+.week-item.is-done {
+  opacity: 0.55;
+}
+
+.week-item b {
+  font-weight: 600;
+}
+
+.week-note {
+  font-size: 0.72rem;
+  color: var(--gilt-deep);
+  font-style: italic;
+  font-family: var(--font-body), serif;
+  margin-bottom: 0.3rem;
+}
+
+/* ── Kalendář svátků (měsíc) ───────────────────────────────────────── */
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 0.4rem;
+}
+
+.month-cell {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 2px;
+  font-size: 0.85rem;
+  background: rgba(251, 248, 241, 0.7);
+}
+
+.month-cell.is-today {
+  border-color: var(--sage-cta);
+  background: rgba(109, 122, 82, 0.12);
+}
+
+.month-cell.is-holiday {
+  color: var(--stone);
+  font-style: italic;
+  font-family: var(--font-body), serif;
+}
+
+.month-cell .d {
+  font-family: var(--font-display), serif;
+  color: var(--sage-deep);
+  min-width: 1.6rem;
+  text-align: right;
+}
+
+/* ── Tisk ──────────────────────────────────────────────────────────── */
+
+.print-sheet {
+  background: #fff;
+  color: #1a1814;
+  border: 1px solid var(--line);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  max-width: 640px;
+}
+
+.print-card {
+  background: #fff;
+  color: #1a1814;
+  border: 1px dashed var(--stone-pale);
+  width: 148mm;
+  min-height: 105mm;
+  max-width: 100%;
+  padding: 14mm 16mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-display), serif;
+  margin-bottom: 1rem;
+}
+
+.print-card .msg {
+  font-size: 1.5rem;
+  font-style: italic;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  font-variation-settings: "opsz" 48, "SOFT" 100, "WONK" 1;
+}
+
+.print-card .from {
+  margin-top: 1.5rem;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8c8579;
+}
+
+@media print {
+  body::before {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  .admin {
+    display: block;
+    font-size: 12pt;
+  }
+  .admin-nav,
+  .admin-topbar,
+  .admin-tabs,
+  .no-print {
+    display: none !important;
+  }
+  .admin-main {
+    padding: 0;
+    max-width: none;
+  }
+  .print-sheet,
+  .print-card {
+    border: none;
+    box-shadow: none;
+    margin: 0;
+    break-after: page;
+    page-break-after: always;
+  }
+  .print-card {
+    width: auto;
+    min-height: 90vh;
+  }
+  .print-card:last-child,
+  .print-sheet:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+}
