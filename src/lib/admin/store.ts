@@ -50,6 +50,8 @@ export function normalize(input: Partial<AdminDoc>): AdminDoc {
     orders,
     customers: Array.isArray(input.customers) ? input.customers : [],
     stock: Array.isArray(input.stock) ? input.stock : [],
+    takings: Array.isArray(input.takings) ? input.takings : [],
+    invoices: Array.isArray(input.invoices) ? input.invoices : [],
     settings: { ...base.settings, ...(input.settings ?? {}) },
   };
 }

@@ -120,3 +120,43 @@ export function waHref(p: string): string {
   const d = normalizePhone(p);
   return d.length === 9 ? `https://wa.me/420${d}` : `https://wa.me/${d}`;
 }
+
+/* ── Měsíce (klíč „YYYY-MM") ───────────────────────────────────────── */
+
+/** Měsíc, do kterého datum patří. */
+export function ymOf(iso: string): string {
+  return iso.slice(0, 7);
+}
+
+export function shiftMonth(ym: string, delta: number): string {
+  const [y, m] = ym.split("-").map(Number);
+  const d = new Date(y, (m ?? 1) - 1 + delta, 1, 12);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+/** Všechny dny měsíce jako YYYY-MM-DD. */
+export function monthDays(ym: string): string[] {
+  const [y, m] = ym.split("-").map(Number);
+  const count = new Date(y, m, 0).getDate();
+  return Array.from({ length: count }, (_, i) => `${ym}-${String(i + 1).padStart(2, "0")}`);
+}
+
+/** „Říjen 2026" */
+export function formatMonth(ym: string): string {
+  const [y, m] = ym.split("-").map(Number);
+  return `${MONTH_NOMINATIVE[(m ?? 1) - 1]} ${y}`;
+}
+
+/** Krátké číslo do osy grafu: 12 500 → „12,5 tis." */
+export function formatShortCzk(n: number): string {
+  if (Math.abs(n) >= 1_000_000) return `${(n / 1_000_000).toLocaleString("cs-CZ", { maximumFractionDigits: 1 })} mil.`;
+  if (Math.abs(n) >= 1000) return `${(n / 1000).toLocaleString("cs-CZ", { maximumFractionDigits: 1 })} tis.`;
+  return Math.round(n).toLocaleString("cs-CZ");
+}
+
+/** Podíl v procentech se znaménkem: +18 % */
+export function formatDelta(ratio: number): string {
+  const pct = Math.round(ratio * 100);
+  if (pct === 0) return "beze změny";
+  return `${pct > 0 ? "+" : "\u2212"}${Math.abs(pct)} %`;
+}

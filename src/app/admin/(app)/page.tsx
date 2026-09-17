@@ -7,11 +7,14 @@ import {
   formatCzk,
   formatDateLong,
   formatDateShort,
+  formatMonth,
   relativeDay,
   telHref,
   todayIso,
+  ymOf,
 } from "@/lib/admin/format";
 import { svatekPro } from "@/lib/admin/svatky";
+import { monthSummary, overdueInvoices, takingsOn, takingsTotal } from "@/lib/admin/penize";
 import { nadchazejiciKlicoveDny } from "@/lib/admin/klicove-dny";
 import {
   customerEvents,
@@ -34,6 +37,9 @@ export default function DashboardPage() {
   const alerts = stockAlerts(doc.stock, today);
   const events = customerEvents(doc.customers, today, 14);
   const stats = monthStats(doc.orders, today);
+  const money = monthSummary(doc, ymOf(today));
+  const todayTakings = takingsOn(doc.takings, today);
+  const overdue = overdueInvoices(doc.invoices, today);
   const svatek = svatekPro(today);
   const klicove = nadchazejiciKlicoveDny(today, 45);
   const nextDays = [1, 2, 3, 4, 5, 6, 7].map((n) => addDays(today, n));
@@ -68,6 +74,15 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {overdue.length > 0 && (
+        <div className="notice notice-danger">
+          <strong>Faktury po splatnosti:</strong>{" "}
+          {overdue.slice(0, 3).map((i) => `${i.party} ${formatCzk(i.amount)}`).join(" · ")}
+          {overdue.length > 3 && ` a další ${overdue.length - 3}`} —{" "}
+          <Link href="/admin/penize/faktury" className="link">otevřít faktury</Link>
+        </div>
+      )}
+
       {alerts.length > 0 && (
         <div className="notice notice-warn">
           <strong>Sklad:</strong>{" "}
@@ -84,7 +99,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <div className="grid-3" style={{ marginBottom: "1rem" }}>
+      <div className="grid-4" style={{ marginBottom: "1rem" }}>
         <Card>
           <Stat label="Dnes k předání" value={todayOrders.length} sub={`${week.length} dalších tento týden`} />
         </Card>
@@ -92,7 +107,22 @@ export default function DashboardPage() {
           <Stat label="Otevřené objednávky" value={stats.open} sub={stats.unpaid ? `${stats.unpaid} nezaplacených` : "vše zaplaceno"} />
         </Card>
         <Card>
-          <Stat label="Tržba tento měsíc" value={formatCzk(stats.revenue)} sub={`${stats.count} objednávek`} />
+          <Stat
+            label="Dnešní tržba"
+            value={todayTakings ? formatCzk(takingsTotal(todayTakings)) : "—"}
+            sub={
+              <Link href="/admin/penize" className="link">
+                {todayTakings ? "upravit zápis" : "zapsat tržbu"}
+              </Link>
+            }
+          />
+        </Card>
+        <Card>
+          <Stat
+            label={`Zisk — ${formatMonth(ymOf(today))}`}
+            value={formatCzk(money.profit)}
+            sub={`${formatCzk(money.income)} příjmy · ${formatCzk(money.expenses)} výdaje`}
+          />
         </Card>
       </div>
 

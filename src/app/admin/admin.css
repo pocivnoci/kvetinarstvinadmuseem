@@ -277,7 +277,8 @@
   gap: 1rem;
 }
 
-.grid-3 {
+.grid-3,
+.grid-4 {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
@@ -290,18 +291,29 @@
   .grid-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+  .grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .grid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 /* Mřížkové děti nesmí tlačit šířku podle nezalomeného textu. */
 .grid-2 > *,
 .grid-3 > *,
+.grid-4 > *,
 .list-row > *,
 .card {
   min-width: 0;
 }
 
 .grid-2 > .card,
-.grid-3 > .card {
+.grid-3 > .card,
+.grid-4 > .card {
   margin-top: 0;
 }
 
@@ -985,5 +997,179 @@ a.list-row:hover .list-title {
   .print-sheet:last-child {
     break-after: auto;
     page-break-after: auto;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   Grafy (sekce Peníze) — sloupce z obyčejného HTML, žádná knihovna.
+   Data jsou jediná hlasitá věc: mřížka i osy jsou potlačené.
+   ───────────────────────────────────────────────────────────────────── */
+
+.chart {
+  margin: 0;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 1.1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+
+.chart-legend span,
+.chart-tip span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.chart-legend i,
+.chart-tip i {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex: 0 0 10px;
+}
+
+.chart-plot {
+  position: relative;
+  height: 190px;
+  padding-left: 3.1rem;
+  padding-bottom: 1.1rem;
+}
+
+.chart-grid {
+  position: absolute;
+  inset: 0 0 1.1rem 3.1rem;
+}
+
+.chart-gridline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(26, 24, 20, 0.09);
+}
+
+.chart-gridline span {
+  position: absolute;
+  right: calc(100% + 0.5rem);
+  transform: translateY(-50%);
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--stone);
+  white-space: nowrap;
+}
+
+.chart-cols {
+  position: absolute;
+  inset: 0 0 1.1rem 3.1rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.chart-col,
+.chart-group {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  cursor: default;
+}
+
+.chart-cols--grouped {
+  gap: 6px;
+}
+
+.chart-pair {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+}
+
+/* Sloupec: max 24 px, zaoblený jen nahoře (u osy zůstává hranatý). */
+.chart-bar {
+  width: 100%;
+  max-width: 24px;
+  min-height: 0;
+  border-radius: 4px 4px 0 0;
+  transition: opacity 0.15s var(--ease-petal);
+}
+
+.chart-col:focus-visible,
+.chart-group:focus-visible {
+  outline: 2px solid var(--gilt);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.chart-col.is-hover .chart-bar,
+.chart-group.is-hover .chart-bar {
+  opacity: 0.75 !important;
+}
+
+.chart-xlab {
+  position: absolute;
+  bottom: -1.05rem;
+  font-size: 0.6rem;
+  color: var(--stone);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-xlab.is-today {
+  color: var(--sage-deep);
+  font-weight: 700;
+}
+
+.chart-peak {
+  position: absolute;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-tip {
+  position: absolute;
+  top: -0.25rem;
+  z-index: 5;
+  background: var(--noir);
+  color: var(--cream);
+  border-radius: 3px;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 2px 2px 0 rgba(26, 24, 20, 0.18);
+}
+
+.chart-tip .muted {
+  color: var(--stone-pale);
+}
+
+.chart-note {
+  margin-top: 1.4rem;
+  font-size: 0.74rem;
+  color: var(--stone);
+}
+
+/* Na úzkém displeji se popisky dnů proředí. */
+@media (max-width: 720px) {
+  .chart-col:not(:nth-child(5n + 1)) .chart-xlab {
+    display: none;
   }
 }

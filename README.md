@@ -70,6 +70,9 @@ záložkami, na počítači boční navigaci.
 | **Objednávky** | Kytice na objednávku: zákazník, vyzvednutí / rozvoz s adresou, termín, příležitost, popis kytice, text na kartičku, cena, záloha, stav (nová → potvrzená → v přípravě → hotová → předaná). Hledání a filtry. |
 | **Tisk** | Průvodka pro dílnu / kurýra a kartička s přáním, každá na vlastní stránce (`/admin/objednavky/<id>/tisk`). |
 | **Kalendář** | Týdenní přehled objednávek se svátky a květinovými dny, šipkami po týdnech. |
+| **Peníze — Měsíc** | Denní tržby (hotovost, karta, ostatní) do jednoho formuláře. Sloupcový graf dnů, průměr na otevřený den, nejsilnější den. Měsíční příjmy, výdaje a zisk se počítají samy. Rozpad výdajů po kategoriích. Export tržeb i faktur do CSV pro účetní. |
+| **Peníze — Faktury** | Přijaté (výdaj) i vydané (příjem) faktury: protistrana, číslo, vystaveno, splatnost, částka, kategorie, zaplaceno. Filtry na nezaplacené a po splatnosti, součty „dluží nám“ a „dlužíme“. |
+| **Peníze — Rok** | Příjmy a výdaje po měsících v grafu i tabulce, zisk a marže za rok, srovnání se stejným obdobím loni. |
 | **Zákazníci** | Zakládají se sami z objednávek. Poznámky (oblíbené květiny, alergie), jméno pro svátek a narozeniny — admin pak připomene 14 dní předem. Historie objednávek, tlačítka Zavolat / WhatsApp. |
 | **Sklad** | Položky s množstvím, nákupní a prodejní cenou, datem naskladnění a trvanlivostí. Hlídá řezané zboží, kterému dochází čas. Rychlé ±1, hodnota skladu. |
 | **Kalkulačka kytice** | Materiál v nákupu × marže + práce + obal, DPH, zaokrouhlení. Položky lze přidat ze skladu. Jedním klikem založí objednávku s vypočtenou cenou. |
@@ -84,6 +87,31 @@ Environment Variables) a nasaďte web znovu. Bez ní admin v produkci nepustí
 nikoho; při `npm run dev` se bez hesla otevře rovnou. Přihlášení platí
 30 dní, změna hesla odhlásí všechna zařízení. Admin má `noindex` a je
 zakázaný v `robots.txt`.
+
+### Jak se počítají peníze
+
+Celá sekce Peníze stojí na jednom pravidle:
+
+```
+PŘÍJMY = denní tržby z krámu + vydané faktury
+VÝDAJE = přijaté faktury
+ZISK   = příjmy − výdaje
+```
+
+Z toho plyne jediná věc, kterou je potřeba hlídat při zadávání: **co jde
+zákazníkovi na fakturu, se nesmí zároveň zapsat do denní tržby**, jinak by se
+ten samý příjem počítal dvakrát. Upozorňuje na to i text pod formulářem.
+
+Faktura patří do měsíce podle **data vystavení**, ne podle zaplacení — aby
+měsíc seděl s tím, co uvidí účetní. Zaplacení se sleduje zvlášť a slouží
+k hlídání splatnosti.
+
+Rozjetý měsíc se nesrovnává s celým minulým (to by pořád vypadalo jako
+propad), ale se **stejně dlouhým úsekem**: 1.–dnešek proti 1.–témuž dni
+minulého měsíce. Stejně tak rok proti stejnému období loni.
+
+Na každý den je nejvýš jeden záznam tržby; uložení stejného data ten
+předchozí přepíše.
 
 ### Kde jsou data
 
@@ -105,4 +133,9 @@ přepis adminu.
 - Kalendář jmen: `src/lib/admin/svatky.ts`
 - Klíčové dny roku a tipy: `src/lib/admin/klicove-dny.ts`
 - Péče o květiny: `src/lib/admin/pece.ts`
-- Příležitosti a stavy objednávek: `src/lib/admin/types.ts`
+- Příležitosti a stavy objednávek, kategorie výdajů: `src/lib/admin/types.ts`
+- Výpočty kolem peněz a export CSV: `src/lib/admin/penize.ts`
+
+Barvy grafů (`src/components/admin/charts.tsx`) prošly kontrolou na
+rozlišitelnost pro barvoslepé a kontrast proti krémovému pozadí; při změně
+je potřeba ověřit znovu, jinak se dvě série můžou slít v jednu.

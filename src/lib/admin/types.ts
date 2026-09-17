@@ -124,6 +124,60 @@ export type StockItem = {
   note?: string;
 };
 
+/** Denní tržba z krámu — jeden záznam na den. */
+export type Takings = {
+  id: string;
+  /** YYYY-MM-DD. V dokumentu je na každé datum nejvýš jeden záznam. */
+  date: string;
+  /** Hotovost v kase. */
+  cash: number;
+  /** Platby kartou. */
+  card: number;
+  /** Ostatní — Wolt, převodem, poukazy. */
+  other: number;
+  note?: string;
+};
+
+export type InvoiceKind = "prijata" | "vydana";
+
+export const INVOICE_KIND: Record<InvoiceKind, { label: string; short: string }> = {
+  prijata: { label: "Přijatá (výdaj)", short: "Přijatá" },
+  vydana: { label: "Vydaná (příjem)", short: "Vydaná" },
+};
+
+/** Kategorie výdajů — sčítají se v měsíčním přehledu. */
+export const INVOICE_CATEGORIES = [
+  "Nákup květin",
+  "Nákup zboží a doplňků",
+  "Obaly a stuhy",
+  "Nájem",
+  "Energie",
+  "Doprava a rozvoz",
+  "Marketing",
+  "Služby a účetnictví",
+  "Ostatní",
+] as const;
+
+export type Invoice = {
+  id: string;
+  kind: InvoiceKind;
+  /** Číslo faktury nebo variabilní symbol. */
+  number: string;
+  /** Dodavatel (u přijaté) nebo odběratel (u vydané). */
+  party: string;
+  /** YYYY-MM-DD — datum vystavení, podle něj se řadí do měsíce. */
+  issuedAt: string;
+  /** YYYY-MM-DD — splatnost. */
+  dueAt?: string;
+  /** Částka celkem včetně DPH. */
+  amount: number;
+  category?: string;
+  paid: boolean;
+  /** YYYY-MM-DD — kdy se zaplatila. */
+  paidAt?: string;
+  note?: string;
+};
+
 export type Settings = {
   /** Násobek nákupní ceny pro kalkulačku (např. 2.5). */
   defaultMarkup: number;
@@ -145,6 +199,8 @@ export type AdminDoc = {
   orders: Order[];
   customers: Customer[];
   stock: StockItem[];
+  takings: Takings[];
+  invoices: Invoice[];
   settings: Settings;
 };
 
@@ -164,6 +220,8 @@ export function emptyDoc(): AdminDoc {
     orders: [],
     customers: [],
     stock: [],
+    takings: [],
+    invoices: [],
     settings: { ...DEFAULT_SETTINGS },
   };
 }

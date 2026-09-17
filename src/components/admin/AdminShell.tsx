@@ -9,6 +9,7 @@ const NAV: { href: string; label: string; icon: IconName; short?: string }[] = [
   { href: "/admin", label: "Přehled", icon: "home" },
   { href: "/admin/objednavky", label: "Objednávky", icon: "orders" },
   { href: "/admin/kalendar", label: "Kalendář", icon: "calendar" },
+  { href: "/admin/penize", label: "Peníze", icon: "money" },
   { href: "/admin/zakaznici", label: "Zákazníci", icon: "people" },
   { href: "/admin/sklad", label: "Sklad", icon: "stock" },
   { href: "/admin/kalkulacka", label: "Kalkulačka kytice", icon: "calc", short: "Kalkulačka" },
@@ -18,7 +19,7 @@ const NAV: { href: string; label: string; icon: IconName; short?: string }[] = [
 ];
 
 /** Na mobilu se do spodní lišty vejde 5 záložek. */
-const TABS = ["/admin", "/admin/objednavky", "/admin/kalendar", "/admin/sklad", "/admin/kalkulacka"];
+const TABS = ["/admin", "/admin/objednavky", "/admin/kalendar", "/admin/penize", "/admin/sklad"];
 
 function isActive(pathname: string, href: string) {
   return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
