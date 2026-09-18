@@ -12,3 +12,6 @@ public/images/_zdroj/
 
 # Mezivýsledek TypeScriptu, vzniká při každém buildu
 tsconfig.tsbuildinfo
+
+# Fotky sešitu s tržbami — do repa nepatří, přepis je v supabase/import-trzby.sql
+výdělky/
