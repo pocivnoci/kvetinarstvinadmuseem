@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useAdmin } from "@/lib/admin/store";
-import { formatCzk, formatDateShort, relativeDay, todayIso } from "@/lib/admin/format";
+import { formatCzk, formatDateShort, relativeDay, smsHref, todayIso, waHref } from "@/lib/admin/format";
 import { isActive, sortByDateTime } from "@/lib/admin/select";
+import { zpravaHotovo } from "@/lib/admin/zpravy";
 import { ORDER_STATUS, ORDER_STATUS_ORDER, type OrderStatus } from "@/lib/admin/types";
 import { Card, Empty, LinkBtn, Loading, PageHead, StatusBadge } from "@/components/admin/ui";
 import { Ico } from "@/components/admin/icons";
@@ -76,7 +77,8 @@ export default function ObjednavkyPage() {
         ) : (
           <div className="list">
             {rows.map((o) => (
-              <Link key={o.id} href={`/admin/objednavky/${o.id}`} className="list-row">
+              <div key={o.id} className="list-obal">
+              <Link href={`/admin/objednavky/${o.id}`} className="list-row">
                 <div className="list-when">
                   {formatDateShort(o.date).split(" ").slice(1).join(" ")}
                   <small>{o.time ?? relativeDay(o.date, today)}</small>
@@ -98,6 +100,25 @@ export default function ObjednavkyPage() {
                   </span>
                 </div>
               </Link>
+              {/* Zpráva rovnou ze seznamu: proklik do detailu kvůli jedné
+                  zprávě je ten klik navíc, kvůli kterému se to přestane
+                  používat. Jen u hotových — jinde není co hlásit. */}
+              {o.status === "hotova" && (
+                <div className="list-akce">
+                  <a
+                    href={waHref(o.customerPhone, zpravaHotovo(o))}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-ghost btn-sm"
+                  >
+                    WhatsApp: hotová
+                  </a>
+                  <a href={smsHref(o.customerPhone, zpravaHotovo(o))} className="btn btn-ghost btn-sm">
+                    SMS
+                  </a>
+                </div>
+              )}
+              </div>
             ))}
           </div>
         )}

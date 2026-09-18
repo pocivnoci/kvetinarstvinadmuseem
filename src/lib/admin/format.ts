@@ -101,7 +101,11 @@ export function parseNumber(v: string): number | undefined {
 
 /** Telefon jen z číslic, pro porovnání zákazníků. */
 export function normalizePhone(p: string): string {
-  const digits = p.replace(/\D/g, "");
+  let digits = p.replace(/\D/g, "");
+  // Mezinárodní předvolba se píše +420 i 00420 — obojí je totéž číslo.
+  // Bez tohohle kroku vzniklo z „00420 770 401 834" neplatné
+  // wa.me/00420770401834 a takový zákazník se nespároval sám se sebou.
+  if (digits.startsWith("00")) digits = digits.slice(2);
   return digits.startsWith("420") && digits.length === 12 ? digits.slice(3) : digits;
 }
 
@@ -116,9 +120,24 @@ export function telHref(p: string): string {
   return d.length === 9 ? `tel:+420${d}` : `tel:${p.replace(/\s/g, "")}`;
 }
 
-export function waHref(p: string): string {
+export function waHref(p: string, text?: string): string {
   const d = normalizePhone(p);
-  return d.length === 9 ? `https://wa.me/420${d}` : `https://wa.me/${d}`;
+  const cil = d.length === 9 ? `420${d}` : d;
+  return `https://wa.me/${cil}${text ? `?text=${encodeURIComponent(text)}` : ""}`;
+}
+
+/**
+ * SMS se stejným textem jako WhatsApp.
+ *
+ * Musí být vedle WhatsAppu, ne místo něj: část stálých zákaznic WhatsApp
+ * nemá, klik skončí hláškou „toto číslo není na WhatsAppu", floristka si
+ * myslí, že odeslala, a kytice čeká. Tvar „?&body=" je ten, kterému
+ * rozumí iOS i Android.
+ */
+export function smsHref(p: string, text?: string): string {
+  const d = normalizePhone(p);
+  const cil = d.length === 9 ? `+420${d}` : p.replace(/\s/g, "");
+  return `sms:${cil}${text ? `?&body=${encodeURIComponent(text)}` : ""}`;
 }
 
 /* ── Měsíce (klíč „YYYY-MM") ───────────────────────────────────────── */

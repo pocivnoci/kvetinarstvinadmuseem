@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useAdmin } from "@/lib/admin/store";
-import { formatCzk, formatDateLong, formatPhone, telHref, waHref } from "@/lib/admin/format";
+import { formatCzk, formatDateLong, formatPhone, smsHref, telHref, waHref } from "@/lib/admin/format";
 import { findCustomerByPhone } from "@/lib/admin/select";
+import { zpravaHotovo } from "@/lib/admin/zpravy";
 import { ORDER_STATUS, ORDER_STATUS_ORDER, type OrderStatus } from "@/lib/admin/types";
 import { OrderForm } from "@/components/admin/OrderForm";
 import { Card, Empty, Loading, PageHead, StatusBadge } from "@/components/admin/ui";
@@ -143,6 +144,25 @@ export default function ObjednavkaDetailPage() {
               <span className="mono">{formatPhone(order.customerPhone)}</span>
               <a href={telHref(order.customerPhone)} className="btn btn-ghost btn-sm">Zavolat</a>
               <a href={waHref(order.customerPhone)} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm">WhatsApp</a>
+            </dd>
+            <dt>Kytice je hotová</dt>
+            <dd>
+              <div className="row">
+                <a
+                  href={waHref(order.customerPhone, zpravaHotovo(order))}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-primary btn-sm"
+                >
+                  Poslat na WhatsApp
+                </a>
+                {/* SMS musí být vedle: kdo WhatsApp nemá, tomu zpráva nedojde
+                    a floristka o tom neví. */}
+                <a href={smsHref(order.customerPhone, zpravaHotovo(order))} className="btn btn-ghost btn-sm">
+                  Poslat SMS
+                </a>
+              </div>
+              <p className="small zprava-nahled">{zpravaHotovo(order)}</p>
             </dd>
             {order.customerEmail && (
               <>

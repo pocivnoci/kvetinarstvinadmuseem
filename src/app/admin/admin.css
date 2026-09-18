@@ -1353,3 +1353,35 @@ button.ukol-nazev:hover {
     margin-left: 0;
   }
 }
+
+/* ── Zpráva zákazníkovi ────────────────────────────────────────────── */
+/*
+ * Obal řádku seznamu: samotný řádek je odkaz do detailu, takže tlačítka
+ * na zprávu musí být vedle něj, ne v něm — vnořený odkaz v odkazu není
+ * platné HTML a prohlížeče si s ním poradí každý po svém.
+ */
+.list-obal {
+  border-top: 1px solid var(--line-soft);
+}
+
+.list-obal > .list-row {
+  border-top: 0;
+}
+
+.list-akce {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  padding: 0 0 0.7rem;
+}
+
+/* Náhled textu, který odejde. Ať floristka nemusí věřit tlačítku. */
+.zprava-nahled {
+  font-family: var(--font-body);
+  color: var(--ink-soft);
+  background: var(--cream);
+  border-left: 2px solid var(--line);
+  border-radius: 2px;
+  margin: 0.5rem 0 0;
+  padding: 0.45rem 0.6rem;
+}
