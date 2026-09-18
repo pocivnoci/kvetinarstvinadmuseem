@@ -9,3 +9,6 @@ next-env.d.ts
 
 # Zdrojové fotky (originály z fotaku) — do repa nepatří
 public/images/_zdroj/
+
+# Mezivýsledek TypeScriptu, vzniká při každém buildu
+tsconfig.tsbuildinfo
