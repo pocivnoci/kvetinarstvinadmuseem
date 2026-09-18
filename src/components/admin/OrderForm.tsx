@@ -2,8 +2,8 @@
 
 import { useMemo, useState, type FormEvent } from "react";
 import { useAdmin, newId, nowIso } from "@/lib/admin/store";
-import { formatPhone, parseNumber, todayIso } from "@/lib/admin/format";
-import { findCustomerByPhone, upsertCustomerFromOrder } from "@/lib/admin/select";
+import { formatCzk, formatDate, formatPhone, parseNumber, todayIso } from "@/lib/admin/format";
+import { customerOrders, findCustomerByPhone, upsertCustomerFromOrder } from "@/lib/admin/select";
 import {
   OCCASIONS,
   ORDER_STATUS,
@@ -60,6 +60,32 @@ export function OrderForm({
     () => findCustomerByPhone(doc.customers, d.customerPhone),
     [doc.customers, d.customerPhone]
   );
+
+  /**
+   * Co u nás zákazník měl posledně. Vlastní objednávku (při úpravě) do
+   * toho nepočítat, ať se sama sobě nenabízí jako předloha.
+   */
+  const minule = useMemo(() => {
+    if (!knownCustomer) return [];
+    return customerOrders(doc.orders, knownCustomer)
+      .filter((o) => o.id !== order?.id)
+      .slice(0, 3);
+  }, [doc.orders, knownCustomer, order?.id]);
+
+  /**
+   * „Jako posledně" kopíruje jen popis a příležitost.
+   *
+   * Cenu schválně ne: květiny se sezónně hýbou a předvyplněné číslo se
+   * během hovoru řekne nahlas. Vedle pole se ukáže, za kolik to bylo
+   * minule, a částku doťuká sama.
+   *
+   * Způsob předání taky ne: rozvoz bez adresy je objednávka, kterou
+   * databáze nepřijme, a příjemce se ukládá i u vyzvednutí, takže by
+   * se tiše připsal někdo, koho ve formuláři nevidí.
+   */
+  function jakoPosledne(o: Order) {
+    setD((p) => ({ ...p, description: o.description, occasion: o.occasion }));
+  }
 
   function pickCustomer(name: string) {
     set("customerName", name);
@@ -149,6 +175,34 @@ export function OrderForm({
             placeholder="777 123 456"
           />
         </Field>
+        {knownCustomer && (
+          <div className="span-2 zakaznik-proužek">
+            {knownCustomer.note && <p className="zakaznik-pozor">{knownCustomer.note}</p>}
+            {minule.length > 0 ? (
+              <>
+                <span className="field-label">Předchozí objednávky</span>
+                <ul className="minule">
+                  {minule.map((o) => (
+                    <li key={o.id}>
+                      <div className="minule-hlava">
+                        <strong>{formatDate(o.date)}</strong>
+                        <span>{formatCzk(o.price)}</span>
+                        <button type="button" className="btn btn-ghost btn-sm" onClick={() => jakoPosledne(o)}>
+                          Jako tuhle
+                        </button>
+                      </div>
+                      {/* Popis celý, nezkracovat: varování bývá na konci („BEZ LILIÍ"). */}
+                      <p className="minule-popis">{o.description}</p>
+                      {o.recipientName && <p className="small">pro {o.recipientName}</p>}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p className="small">Zákazníka známe, ale předchozí objednávku u nás nemá.</p>
+            )}
+          </div>
+        )}
         <Field label="E-mail (nepovinné)">
           <input type="email" value={d.customerEmail} onChange={(e) => set("customerEmail", e.target.value)} />
         </Field>
@@ -241,7 +295,13 @@ export function OrderForm({
       <div className="form-section">
         <h3>Platba a stav</h3>
         <div className="form-grid">
-          <Field label="Cena (Kč)">
+          {/* Cena se z předchozí objednávky nepředvyplňuje, jen se připomene:
+              květiny se sezónně hýbou a předvyplněné číslo se během hovoru
+              řekne nahlas. */}
+          <Field
+            label="Cena (Kč)"
+            hint={minule[0]?.price ? `Minule ${formatCzk(minule[0].price)}` : undefined}
+          >
             <input type="text" inputMode="decimal" value={d.price} onChange={(e) => set("price", e.target.value)} placeholder="1 200" />
           </Field>
           <Field label="Záloha (Kč)">

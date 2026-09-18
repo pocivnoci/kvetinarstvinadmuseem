@@ -1281,3 +1281,75 @@ button.ukol-nazev:hover {
     justify-content: flex-start;
   }
 }
+
+/* ── Proužek se známým zákazníkem v objednávkovém formuláři ────────── */
+/*
+ * Sedí pod polem Telefon, ne nad formulářem: jinak by obsah poskočil
+ * pod prstem přesně ve chvíli, kdy floristka dopisuje číslo.
+ */
+.zakaznik-proužek {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--sage-deep);
+  background: var(--cream);
+  border-radius: 2px;
+  padding: 0.8rem 0.9rem;
+}
+
+/* Poznámka o zákazníkovi celá a barevně — bývá v ní alergie. */
+.zakaznik-pozor {
+  font-family: var(--font-body);
+  color: var(--danger);
+  background: rgba(161, 61, 45, 0.08);
+  border-radius: 2px;
+  padding: 0.45rem 0.6rem;
+  margin: 0 0 0.7rem;
+}
+
+.minule {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.minule > li {
+  border-top: 1px solid var(--line);
+  padding-top: 0.55rem;
+}
+
+.minule > li:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.minule-hlava {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.minule-hlava strong {
+  font-family: var(--font-display);
+}
+
+.minule-hlava > span {
+  color: var(--ink-soft);
+}
+
+.minule-hlava > button {
+  margin-left: auto;
+}
+
+/* Popis se nezkracuje — varování bývá až na konci textu. */
+.minule-popis {
+  font-family: var(--font-body);
+  margin: 0.2rem 0 0;
+}
+
+@media (max-width: 520px) {
+  .minule-hlava > button {
+    margin-left: 0;
+  }
+}
