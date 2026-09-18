@@ -83,13 +83,29 @@ export default function PenizePage() {
           />
         </Card>
         <Card>
-          <Stat label="Výdaje" value={formatCzk(s.expenses)} sub={`${s.byCategory.length} kategorií`} />
+          <Stat
+            label="Výdaje"
+            value={formatCzk(s.expenses)}
+            sub={
+              s.fixedExpenses > 0
+                ? `z toho pravidelné ${formatCzk(s.fixedExpenses)}`
+                : `${s.byCategory.length} kategorií`
+            }
+          />
         </Card>
         <Card>
           <Stat
             label="Zisk"
             value={formatCzk(s.profit)}
-            sub={s.income > 0 ? `marže ${Math.round(s.margin * 100)} % z příjmů` : "zatím bez příjmů"}
+            sub={
+              s.income === 0
+                ? "zatím bez příjmů"
+                : s.expenses === 0
+                  // Zisk rovný tržbám není zisk, jen nezapsané výdaje. Radši to
+                  // přiznat, než ukazovat marži 100 % a tvářit se, že sedí.
+                  ? "bez zapsaných výdajů — číslo je nadsazené"
+                  : `marže ${Math.round(s.margin * 100)} % z příjmů`
+            }
           />
         </Card>
       </div>
@@ -154,7 +170,10 @@ export default function PenizePage() {
           }
         >
           {s.byCategory.length === 0 ? (
-            <Empty>Za tenhle měsíc není zapsaná žádná přijatá faktura.</Empty>
+            <Empty>
+              Za tenhle měsíc není zapsaný žádný výdaj. Nájem a energie se dají zadat jednou
+              jako pravidelné náklady ve Fakturách — pak se počítají samy.
+            </Empty>
           ) : (
             <div className="list">
               {s.byCategory.map((c) => (

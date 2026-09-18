@@ -232,6 +232,29 @@ export type Settings = {
   roundTo: number;
 };
 
+/**
+ * Pravidelný měsíční výdaj — nájem, energie, internet, účetní.
+ *
+ * Zadá se jednou a počítá se do každého měsíce sám, dokud platí. Bez
+ * toho ukazoval admin zisk rovný tržbám a marži 100 %, protože nájem na
+ * Vinohradské ani energie nemá kam zapsat — a to jsou desetitisíce
+ * měsíčně, tedy víc než všechny faktury dohromady.
+ */
+export type FixedCost = {
+  id: string;
+  /** Co to je — „Nájem Vinohradská 6". */
+  name: string;
+  /** Kolik měsíčně. */
+  amount: number;
+  /** Kategorie ze stejného výčtu jako u faktur, ať sedí rozpad výdajů. */
+  category: string;
+  /** YYYY-MM — od kterého měsíce se počítá. */
+  from: string;
+  /** YYYY-MM — poslední měsíc, kdy se počítá. Prázdné = pořád běží. */
+  to?: string;
+  note?: string;
+};
+
 export type AdminDoc = {
   version: 1;
   /** Kdy se naposledy uložilo. */
@@ -242,6 +265,7 @@ export type AdminDoc = {
   stock: StockItem[];
   takings: Takings[];
   invoices: Invoice[];
+  fixedCosts: FixedCost[];
   tasks: Task[];
   shopping: ShoppingItem[];
   settings: Settings;
@@ -265,6 +289,7 @@ export function emptyDoc(): AdminDoc {
     stock: [],
     takings: [],
     invoices: [],
+    fixedCosts: [],
     tasks: [],
     shopping: [],
     settings: { ...DEFAULT_SETTINGS },

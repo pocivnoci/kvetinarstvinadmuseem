@@ -153,6 +153,12 @@ function srovnat(doc: AdminDoc): AdminDoc {
       const paid = Boolean(i.paid);
       return { ...i, paid, paidAt: paid ? i.paidAt ?? ted.slice(0, 10) : undefined };
     }),
+    fixedCosts: (doc.fixedCosts ?? []).map((f) => ({
+      ...f,
+      amount: Number.isFinite(f.amount) ? f.amount : 0,
+      // Konec dřív než začátek by tiše znamenal náklad, který nikdy neplatí.
+      to: f.to && f.to < f.from ? undefined : f.to || undefined,
+    })),
   };
 }
 
@@ -170,6 +176,7 @@ export function normalize(input: Partial<AdminDoc>): AdminDoc {
     stock: Array.isArray(input.stock) ? input.stock : [],
     takings: Array.isArray(input.takings) ? input.takings : [],
     invoices: Array.isArray(input.invoices) ? input.invoices : [],
+    fixedCosts: Array.isArray(input.fixedCosts) ? input.fixedCosts : [],
     tasks: Array.isArray(input.tasks) ? input.tasks : [],
     shopping: Array.isArray(input.shopping) ? input.shopping : [],
     settings: { ...base.settings, ...(input.settings ?? {}) },

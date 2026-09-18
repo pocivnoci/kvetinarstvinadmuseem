@@ -6,6 +6,7 @@ import { daysBetween, formatCzk, formatDate, todayIso } from "@/lib/admin/format
 import { INVOICE_KIND, type Invoice, type InvoiceKind } from "@/lib/admin/types";
 import { InvoiceForm } from "@/components/admin/InvoiceForm";
 import { MoneyTabs } from "@/components/admin/MoneyTabs";
+import { FixedCosts } from "@/components/admin/FixedCosts";
 import { Badge, Card, Empty, Loading, PageHead } from "@/components/admin/ui";
 import { Ico } from "@/components/admin/icons";
 
@@ -70,6 +71,8 @@ export default function FakturyPage() {
       <MoneyTabs />
 
       {editing && <InvoiceForm invoice={editing === "new" ? undefined : editing} onClose={() => setEditing(null)} />}
+
+      <FixedCosts />
 
       <div className="grid-2" style={{ marginBottom: "1rem" }}>
         <Card>

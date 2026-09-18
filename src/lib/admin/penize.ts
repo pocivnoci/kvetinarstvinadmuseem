@@ -1,11 +1,11 @@
 import { monthDays, shiftMonth, todayIso, ymOf } from "./format";
-import type { AdminDoc, Invoice, Takings } from "./types";
+import type { AdminDoc, FixedCost, Invoice, Takings } from "./types";
 
 /**
  * Výpočty kolem peněz. Jedno pravidlo, na kterém všechno stojí:
  *
  *   PŘÍJMY  = denní tržby z krámu + vydané faktury
- *   VÝDAJE  = přijaté faktury
+ *   VÝDAJE  = přijaté faktury + pravidelné měsíční náklady
  *   ZISK    = příjmy − výdaje
  *
  * Co jde zákazníkovi na fakturu, se nesmí zároveň zapsat do denní tržby —
@@ -27,6 +27,16 @@ export function invoicesInMonth(invoices: Invoice[], ym: string): Invoice[] {
   return invoices.filter((i) => ymOf(i.issuedAt) === ym);
 }
 
+/**
+ * Pravidelné výdaje platné v daném měsíci.
+ *
+ * Porovnává se text „YYYY-MM", takže stačí obyčejné porovnání řetězců.
+ * Prázdné „do" znamená, že náklad pořád běží.
+ */
+export function fixedCostsInMonth(fixed: FixedCost[], ym: string): FixedCost[] {
+  return fixed.filter((f) => f.from <= ym && (!f.to || ym <= f.to));
+}
+
 export type DayRow = {
   date: string;
   takings?: Takings;
@@ -41,7 +51,14 @@ export type MonthSummary = {
   /** Vydané faktury za měsíc (fakturovaný příjem). */
   invoicedRevenue: number;
   income: number;
+  /** Výdaje celkem = přijaté faktury + pravidelné náklady. */
   expenses: number;
+  /** Z toho přijaté faktury. */
+  invoiceExpenses: number;
+  /** Z toho pravidelné měsíční náklady. */
+  fixedExpenses: number;
+  /** Pravidelné náklady platné v tomto měsíci, pro rozpis. */
+  fixedCosts: FixedCost[];
   profit: number;
   /** Marže v procentech z příjmů (0–1). */
   margin: number;
@@ -70,7 +87,10 @@ export function monthSummary(doc: AdminDoc, ym: string): MonthSummary {
   const received = inMonth.filter((i) => i.kind === "prijata");
 
   const invoicedRevenue = issued.reduce((s, i) => s + i.amount, 0);
-  const expenses = received.reduce((s, i) => s + i.amount, 0);
+  const invoiceExpenses = received.reduce((s, i) => s + i.amount, 0);
+  const fixed = fixedCostsInMonth(doc.fixedCosts ?? [], ym);
+  const fixedExpenses = fixed.reduce((s, f) => s + f.amount, 0);
+  const expenses = invoiceExpenses + fixedExpenses;
   const income = shopRevenue + invoicedRevenue;
   const profit = income - expenses;
 
@@ -80,10 +100,16 @@ export function monthSummary(doc: AdminDoc, ym: string): MonthSummary {
     undefined
   );
 
+  // Rozpad výdajů počítá faktury i pravidelné náklady — jinak by nájem
+  // v přehledu chyběl, přestože je to největší jednotlivá položka.
   const catMap = new Map<string, number>();
   for (const i of received) {
     const key = i.category?.trim() || "Nezařazeno";
     catMap.set(key, (catMap.get(key) ?? 0) + i.amount);
+  }
+  for (const f of fixed) {
+    const key = f.category?.trim() || "Nezařazeno";
+    catMap.set(key, (catMap.get(key) ?? 0) + f.amount);
   }
 
   return {
@@ -93,6 +119,9 @@ export function monthSummary(doc: AdminDoc, ym: string): MonthSummary {
     invoicedRevenue,
     income,
     expenses,
+    invoiceExpenses,
+    fixedExpenses,
+    fixedCosts: fixed,
     profit,
     margin: income > 0 ? profit / income : 0,
     openDays: withSales.length,

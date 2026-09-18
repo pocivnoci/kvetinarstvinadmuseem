@@ -23,7 +23,13 @@ function trzby(today: string) {
   return out;
 }
 
-/** Faktury: nákup květin každý týden, nájem a energie měsíčně, pár vydaných firmám. */
+/**
+ * Ukázkové faktury.
+ *
+ * Nájem ani energie tu schválně nejsou — drží je pravidelné měsíční
+ * výdaje. Kdyby byly na obou místech, sečetly by se dvakrát a ukázka by
+ * učila právě tu chybu, před kterou admin varuje.
+ */
 function faktury(today: string) {
   const ym = ymOf(today);
   const prev = shiftMonth(ym, -1);
@@ -32,12 +38,10 @@ function faktury(today: string) {
     { id: "f1", kind: "prijata" as const, number: "FV-2026-3311", party: "Květinová burza Praha", issuedAt: d(ym, 3), dueAt: d(ym, 17), amount: 18400, category: "Nákup květin", paid: true, paidAt: d(ym, 9) },
     { id: "f2", kind: "prijata" as const, number: "FV-2026-3390", party: "Květinová burza Praha", issuedAt: d(ym, 10), dueAt: d(ym, 24), amount: 15900, category: "Nákup květin", paid: true, paidAt: d(ym, 15) },
     { id: "f3", kind: "prijata" as const, number: "2026/0912", party: "Obaly Kraft s.r.o.", issuedAt: d(ym, 8), dueAt: d(ym, 22), amount: 4300, category: "Obaly a stuhy", paid: false },
-    { id: "f4", kind: "prijata" as const, number: "NAJ-09", party: "Správa domu Vinohradská", issuedAt: d(ym, 1), dueAt: d(ym, 15), amount: 32000, category: "Nájem", paid: true, paidAt: d(ym, 2) },
-    { id: "f5", kind: "prijata" as const, number: "EN-2026-09", party: "Energie ČR", issuedAt: d(prev, 28), dueAt: addDays(today, -3), amount: 5400, category: "Energie", paid: false, note: "po splatnosti — zaplatit" },
+    { id: "f5", kind: "prijata" as const, number: "2026-114", party: "Tiskárna Vinohrady", issuedAt: d(prev, 28), dueAt: addDays(today, -3), amount: 2400, category: "Marketing", paid: false, note: "po splatnosti — zaplatit" },
     { id: "f6", kind: "vydana" as const, number: "2026-0141", party: "Ateliér Svoboda s.r.o.", issuedAt: d(ym, 6), dueAt: addDays(today, 8), amount: 12500, paid: false, note: "vernisáž — 3 aranžmá" },
     { id: "f7", kind: "vydana" as const, number: "2026-0138", party: "Hotel Vinohrady", issuedAt: d(prev, 20), dueAt: d(ym, 4), amount: 9800, paid: true, paidAt: d(ym, 3), note: "týdenní vazby na recepci" },
     { id: "f8", kind: "prijata" as const, number: "FV-2026-3201", party: "Květinová burza Praha", issuedAt: d(prev, 12), dueAt: d(prev, 26), amount: 21100, category: "Nákup květin", paid: true, paidAt: d(prev, 20) },
-    { id: "f9", kind: "prijata" as const, number: "NAJ-08", party: "Správa domu Vinohradská", issuedAt: d(prev, 1), dueAt: d(prev, 15), amount: 32000, category: "Nájem", paid: true, paidAt: d(prev, 2) },
   ];
 }
 
@@ -78,6 +82,13 @@ export function ukazkovaData(): AdminDoc {
     ],
     takings: trzby(t),
     invoices: faktury(t),
+    // Pravidelné náklady — zadané jednou, počítají se do každého měsíce.
+    fixedCosts: [
+      { id: "fn1", name: "Nájem Vinohradská 6", amount: 32000, category: "Nájem", from: ymOf(addDays(t, -400)) },
+      { id: "fn2", name: "Elektřina a voda", amount: 4200, category: "Energie", from: ymOf(addDays(t, -400)) },
+      { id: "fn3", name: "Účetní", amount: 2500, category: "Služby a účetnictví", from: ymOf(addDays(t, -400)) },
+      { id: "fn4", name: "Internet a telefon", amount: 900, category: "Ostatní", from: ymOf(addDays(t, -400)) },
+    ],
     stock: [
       { id: "s1", name: "Růže Red Naomi 60 cm", category: "rezane", qty: 40, unit: "ks", costPrice: 28, salePrice: 79, receivedAt: addDays(t, -2), shelfLifeDays: 8, supplier: "Květinová burza" },
       { id: "s2", name: "Pivoňka Sarah Bernhardt", category: "rezane", qty: 15, unit: "ks", costPrice: 45, salePrice: 120, receivedAt: addDays(t, -5), shelfLifeDays: 6, supplier: "Květinová burza" },
