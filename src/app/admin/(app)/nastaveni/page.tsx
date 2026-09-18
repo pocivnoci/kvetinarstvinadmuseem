@@ -1,16 +1,19 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
-import { useAdmin } from "@/lib/admin/store";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { neodeslaneZmeny, useAdmin, zapomenoutNeodeslane, type Neodeslane } from "@/lib/admin/store";
 import { parseNumber } from "@/lib/admin/format";
 import { ukazkovaData } from "@/lib/admin/ukazka";
 import { DEFAULT_SETTINGS, type Settings } from "@/lib/admin/types";
 import { Card, Field, Loading, PageHead } from "@/components/admin/ui";
 
 export default function NastaveniPage() {
-  const { doc, ready, mode, status, syncedAt, unsaved, error, update, replace, flush, reload } = useAdmin();
+  const { doc, ready, loaded, mode, status, syncedAt, unsaved, error, update, replace, flush, reload } = useAdmin();
   const [msg, setMsg] = useState<{ tone: "ok" | "danger"; text: string } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  // Úpravy, které se do databáze nedostaly a přežily zavření záložky.
+  const [neodeslane, setNeodeslane] = useState<Neodeslane | null>(null);
+  useEffect(() => setNeodeslane(neodeslaneZmeny()), [status]);
 
   if (!ready) return <Loading />;
 
@@ -126,6 +129,45 @@ export default function NastaveniPage() {
             )}
           </Card>
 
+          {neodeslane && (
+            <Card title="Neodeslané změny">
+              <div className="notice notice-warn" style={{ marginBottom: "1rem" }}>
+                <strong>Něco se do databáze nedostalo.</strong> Když databáze neodpovídá, admin do ní
+                schválně nezapisuje, aby nepřepsal, co v ní je. Poslední takovou podobu dat si ale
+                odložil stranou — {neodeslane.kdy ? new Date(neodeslane.kdy).toLocaleString("cs-CZ") : "bez data"}.
+                Obsahuje {neodeslane.doc.orders.length} objednávek a {neodeslane.doc.takings.length} dní tržeb.
+                Stáhněte si ji a chybějící položky doťukejte ručně — vkládat ji celou přes „Načíst zálohu“
+                nedoporučuju, přepsala by i to, co mezitím uložil někdo jiný.
+              </div>
+              <div className="row">
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={() => {
+                    const blob = new Blob([JSON.stringify(neodeslane.doc, null, 2)], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `kvetiny-neodeslane-${neodeslane.kdy.slice(0, 10) || "zmeny"}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}
+                >
+                  Stáhnout neodeslané změny
+                </button>
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => {
+                    if (!confirm("Opravdu zahodit? Odložená kopie se smaže.")) return;
+                    zapomenoutNeodeslane();
+                    setNeodeslane(null);
+                  }}
+                >
+                  Už to nepotřebuju
+                </button>
+              </div>
+            </Card>
+          )}
+
           <Card title="Záloha dat">
             <p className="small" style={{ fontFamily: "var(--font-body)", marginBottom: "0.9rem" }}>
               Stažená záloha je obyčejný soubor s daty ke dni stažení. Hodí se, i když běží databáze
@@ -137,9 +179,15 @@ export default function NastaveniPage() {
               <dt>Obsah</dt>
               <dd>{doc.orders.length} objednávek · {doc.customers.length} zákazníků · {doc.stock.length} položek skladu</dd>
             </dl>
+            {!loaded && (
+              <p className="notice notice-danger">
+                Data z databáze se zatím nenačetla, na obrazovce je jen kopie z tohohle
+                zařízení. Zálohu teď nestahujte — přepsala by tu pořádnou prázdnou.
+              </p>
+            )}
             <div className="row">
-              <button className="btn btn-primary btn-sm" onClick={exportJson}>Stáhnout zálohu</button>
-              <button className="btn btn-ghost btn-sm" onClick={() => fileRef.current?.click()}>Načíst zálohu…</button>
+              <button className="btn btn-primary btn-sm" onClick={exportJson} disabled={!loaded}>Stáhnout zálohu</button>
+              <button className="btn btn-ghost btn-sm" onClick={() => fileRef.current?.click()} disabled={!loaded}>Načíst zálohu…</button>
               <input
                 ref={fileRef}
                 type="file"

@@ -25,6 +25,13 @@ import { emptyDoc, type AdminDoc } from "./types";
  */
 
 const KEY = "knm-admin-v1";
+/**
+ * Kopie dokumentu s úpravami, o kterých víme, že do databáze nedošly.
+ * Neuložené úpravy se jinak drží jen v paměti stránky jako funkce, takže
+ * zavření záložky nebo obnovení stránky je ztratí. Sem se odkládají ve
+ * chvíli, kdy je jisté, že zápis neprošel — ať je aspoň z čeho je vzít.
+ */
+const KEY_NEODESLANO = "knm-admin-neodeslano-v1";
 /** Jak dlouho se čeká, jestli nepřijde další úprava, než se uloží. */
 const SAVE_DEBOUNCE_MS = 700;
 
@@ -50,7 +57,13 @@ const SERVER_SNAPSHOT: Snapshot = {
 };
 
 let snapshot: Snapshot | null = null;
+/**
+ * Číslo verze dat, na kterých stavíme. Dokud je null, nevíme, co je
+ * v databázi — a nesmíme do ní zapisovat: ukládá se celý dokument
+ * a co v něm není, se maže.
+ */
 let revision: number | null = null;
+let loading = false;
 /** Úpravy, které ještě databáze nepotvrdila. */
 let pending: Updater[] = [];
 let saving = false;
@@ -76,6 +89,36 @@ function writeLocal(doc: AdminDoc) {
   } catch {
     // Plné úložiště nebo soukromé okno — v režimu cloud to nevadí,
     // přijdeme jen o zálohu pro offline.
+  }
+}
+
+/** Odložit stranou dokument s úpravami, které se neuložily. */
+function odlozitNeodeslane(doc: AdminDoc) {
+  try {
+    window.localStorage.setItem(KEY_NEODESLANO, JSON.stringify({ kdy: new Date().toISOString(), doc }));
+  } catch {
+    /* plné úložiště — víc se dělat nedá */
+  }
+}
+
+export type Neodeslane = { kdy: string; doc: AdminDoc };
+
+export function neodeslaneZmeny(): Neodeslane | null {
+  try {
+    const raw = window.localStorage.getItem(KEY_NEODESLANO);
+    if (!raw) return null;
+    const p = JSON.parse(raw) as { kdy?: string; doc?: Partial<AdminDoc> };
+    return p.doc ? { kdy: p.kdy ?? "", doc: normalize(p.doc) } : null;
+  } catch {
+    return null;
+  }
+}
+
+export function zapomenoutNeodeslane() {
+  try {
+    window.localStorage.removeItem(KEY_NEODESLANO);
+  } catch {
+    /* nic */
   }
 }
 
@@ -170,6 +213,8 @@ function getServerSnapshot(): Snapshot {
 type LoadResponse = { mode: SyncMode; doc?: Partial<AdminDoc> & { revision?: number }; error?: string };
 
 async function load(): Promise<void> {
+  if (loading) return;
+  loading = true;
   try {
     const res = await fetch("/api/admin/data", { cache: "no-store" });
     const data = (await res.json()) as LoadResponse;
@@ -201,6 +246,8 @@ async function load(): Promise<void> {
       status: "offline",
       error: e instanceof Error ? e.message : undefined,
     });
+  } finally {
+    loading = false;
   }
 }
 
@@ -216,6 +263,25 @@ async function save(attempt = 0): Promise<void> {
   const current = getSnapshot();
   if (current.mode !== "cloud" || saving || pending.length === 0) return;
 
+  /*
+   * Bez známé revize nezapisovat.
+   *
+   * Server ukládá celý dokument naráz a řádky, které v něm nejsou, maže.
+   * Když se načtení nepovedlo (vypadlá wifi, spící databáze), držíme v ruce
+   * jen místní kopii — a ta je na cizím telefonu prázdná. Uložit ji by
+   * znamenalo smazat všechno, co v databázi je.
+   *
+   * Úpravy zůstanou v pending jako funkce. Jakmile se načtení povede,
+   * load() je přehraje na čerstvá data a uloží. Nic se neztratí, jen to
+   * chvíli počká.
+   */
+  if (revision === null) {
+    odlozitNeodeslane(docOf(getSnapshot()));
+    patch({ status: "offline", error: "Zatím nevím, co je v databázi, tak do ní nezapisuju. Změny mám schované a odešlu je, jakmile se spojím." });
+    void load();
+    return;
+  }
+
   saving = true;
   const sending = pending.length;
   patch({ status: "saving" });
@@ -230,6 +296,7 @@ async function save(attempt = 0): Promise<void> {
 
     if (res.ok && data.ok) {
       revision = data.revision ?? revision;
+      zapomenoutNeodeslane();
       // Úpravy, které přibyly během ukládání, čekají na další kolo.
       pending = pending.slice(sending);
       patch({
@@ -250,10 +317,12 @@ async function save(attempt = 0): Promise<void> {
       return;
     }
 
+    odlozitNeodeslane(docOf(getSnapshot()));
     patch({ status: "error", error: data.error ?? "Uložení se nepovedlo." });
     saving = false;
   } catch (e) {
     // Bez sítě: data zůstávají v prohlížeči a odešlou se při dalším pokusu.
+    odlozitNeodeslane(docOf(getSnapshot()));
     patch({ status: "offline", error: e instanceof Error ? e.message : undefined });
     saving = false;
   }
@@ -322,6 +391,12 @@ export function useAdmin() {
     error: s.error,
     /** Počet úprav, které ještě nejsou v databázi. */
     unsaved: pending.length,
+    /**
+     * Máme skutečně data z databáze? V režimu cloud po nepovedeném načtení
+     * je na obrazovce jen místní kopie, která může být prázdná — a podle
+     * toho se nesmí ani zálohovat, ani zapisovat.
+     */
+    loaded: s.mode === "local" || revision !== null,
     update,
     replace,
     flush,

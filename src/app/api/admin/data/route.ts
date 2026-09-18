@@ -56,9 +56,18 @@ export async function PUT(req: Request) {
   if (!payload.doc || typeof payload.doc !== "object") {
     return NextResponse.json({ error: "Chybí data k uložení." }, { status: 400 });
   }
+  // Zápis bez čísla revize by v databázi přepsal všechno tím, co zrovna
+  // drží prohlížeč — a ten po nepovedeném načtení nedrží nic. Klient si
+  // úpravy podrží a pošle je, až bude vědět, na čem staví.
+  if (typeof payload.revision !== "number") {
+    return NextResponse.json(
+      { conflict: true, error: "Uložení bez známé verze dat. Načtěte data znovu." },
+      { status: 409 }
+    );
+  }
 
   try {
-    const result = await saveDoc(payload.doc, payload.revision ?? null);
+    const result = await saveDoc(payload.doc, payload.revision);
     return NextResponse.json(result, { status: result.ok ? 200 : 409 });
   } catch (e) {
     return NextResponse.json(
