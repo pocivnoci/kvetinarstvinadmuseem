@@ -160,3 +160,17 @@ export function formatDelta(ratio: number): string {
   if (pct === 0) return "beze změny";
   return `${pct > 0 ? "+" : "\u2212"}${Math.abs(pct)} %`;
 }
+
+/** Další termín opakovaného úkolu. */
+export function nextRepeat(iso: string, repeat: "denne" | "tydne" | "mesicne"): string {
+  if (repeat === "denne") return addDays(iso, 1);
+  if (repeat === "tydne") return addDays(iso, 7);
+  const d = fromIso(iso);
+  const den = d.getDate();
+  d.setDate(1);
+  d.setMonth(d.getMonth() + 1);
+  // Konec měsíce: 31. 1. + měsíc = 28. 2., ne 3. 3.
+  const posledni = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  d.setDate(Math.min(den, posledni));
+  return localIso(d);
+}

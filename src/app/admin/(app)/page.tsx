@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useAdmin } from "@/lib/admin/store";
+import { nowIso, useAdmin } from "@/lib/admin/store";
 import {
   addDays,
   formatCzk,
@@ -15,6 +15,7 @@ import {
 } from "@/lib/admin/format";
 import { svatekPro } from "@/lib/admin/svatky";
 import { monthSummary, overdueInvoices, takingsOn, takingsTotal } from "@/lib/admin/penize";
+import { tasksForToday, toggleTask } from "@/lib/admin/ukoly";
 import { nadchazejiciKlicoveDny } from "@/lib/admin/klicove-dny";
 import {
   customerEvents,
@@ -27,7 +28,7 @@ import { Badge, Card, Empty, LinkBtn, Loading, PageHead, Stat, StatusBadge } fro
 import { Ico } from "@/components/admin/icons";
 
 export default function DashboardPage() {
-  const { doc, ready } = useAdmin();
+  const { doc, ready, update } = useAdmin();
   const today = todayIso();
 
   if (!ready) return <Loading />;
@@ -40,6 +41,8 @@ export default function DashboardPage() {
   const money = monthSummary(doc, ymOf(today));
   const todayTakings = takingsOn(doc.takings, today);
   const overdue = overdueInvoices(doc.invoices, today);
+  const dnesniUkoly = tasksForToday(doc.tasks, today);
+  const kNakupu = doc.shopping.filter((s) => !s.bought);
   const svatek = svatekPro(today);
   const klicove = nadchazejiciKlicoveDny(today, 45);
   const nextDays = [1, 2, 3, 4, 5, 6, 7].map((n) => addDays(today, n));
@@ -108,6 +111,19 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <Stat
+            label="Úkoly na dnes"
+            value={dnesniUkoly.length}
+            sub={
+              kNakupu.length > 0 ? (
+                <Link href="/admin/ukoly" className="link">{kNakupu.length} věcí k nákupu</Link>
+              ) : (
+                <Link href="/admin/ukoly" className="link">nákupní seznam je prázdný</Link>
+              )
+            }
+          />
+        </Card>
+        <Card>
+          <Stat
             label="Dnešní tržba"
             value={todayTakings ? formatCzk(takingsTotal(todayTakings)) : "—"}
             sub={
@@ -154,6 +170,50 @@ export default function DashboardPage() {
                   </div>
                 </Link>
               ))}
+            </div>
+          )}
+        </Card>
+
+        <Card
+          title="Úkoly"
+          action={<Link href="/admin/ukoly">celý seznam →</Link>}
+        >
+          {dnesniUkoly.length === 0 ? (
+            <Empty>
+              Na dnešek nic nečeká.
+              {kNakupu.length > 0 && (
+                <>
+                  <br />
+                  <span className="small">Na nákup ale ano — {kNakupu.length} položek.</span>
+                </>
+              )}
+            </Empty>
+          ) : (
+            <div className="list">
+              {dnesniUkoly.slice(0, 6).map((t) => (
+                <div key={t.id} className={`ukol ${t.due && t.due < today ? "je-po-terminu" : ""}`}>
+                  <button
+                    className="ukol-check"
+                    aria-label={`Odškrtnout úkol ${t.title}`}
+                    aria-pressed={false}
+                    onClick={() => update((d) => ({ ...d, tasks: toggleTask(d.tasks, t.id, nowIso()) }))}
+                  />
+                  <div style={{ minWidth: 0 }}>
+                    <span className="ukol-nazev" style={{ cursor: "default" }}>{t.title}</span>
+                    {t.due && t.due < today && (
+                      <div className="small" style={{ color: "var(--terracotta)" }}>
+                        mělo být {relativeDay(t.due, today)}
+                      </div>
+                    )}
+                  </div>
+                  <span />
+                </div>
+              ))}
+              {dnesniUkoly.length > 6 && (
+                <div className="small muted" style={{ paddingTop: "0.6rem" }}>
+                  a další {dnesniUkoly.length - 6}
+                </div>
+              )}
             </div>
           )}
         </Card>

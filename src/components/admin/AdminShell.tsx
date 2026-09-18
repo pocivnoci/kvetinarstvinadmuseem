@@ -8,6 +8,7 @@ import { SyncBadge } from "./SyncBadge";
 
 const NAV: { href: string; label: string; icon: IconName; short?: string }[] = [
   { href: "/admin", label: "Přehled", icon: "home" },
+  { href: "/admin/ukoly", label: "Úkoly a nákup", icon: "check", short: "Úkoly" },
   { href: "/admin/objednavky", label: "Objednávky", icon: "orders" },
   { href: "/admin/kalendar", label: "Kalendář", icon: "calendar" },
   { href: "/admin/penize", label: "Peníze", icon: "money" },
@@ -20,7 +21,7 @@ const NAV: { href: string; label: string; icon: IconName; short?: string }[] = [
 ];
 
 /** Na mobilu se do spodní lišty vejde 5 záložek. */
-const TABS = ["/admin", "/admin/objednavky", "/admin/kalendar", "/admin/penize", "/admin/sklad"];
+const TABS = ["/admin", "/admin/ukoly", "/admin/objednavky", "/admin/penize", "/admin/sklad"];
 
 function isActive(pathname: string, href: string) {
   return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);

@@ -62,6 +62,20 @@ export function ukazkovaData(): AdminDoc {
       { id: "o4", cislo: 4, createdAt: now, updatedAt: now, customerName: "Marie Černá", customerPhone: "608 111 333", fulfillment: "vyzvednuti", date: addDays(t, 4), occasion: "Pohřeb / smuteční", description: "Smuteční vazba — bílé chryzantémy, lilie, zeleň. Stuha: „S láskou vzpomínáme“.", price: 2200, paid: false, status: "nova" },
       { id: "o5", cislo: 5, createdAt: now, updatedAt: now, customerName: "Jana Nováková", customerPhone: "777 123 456", fulfillment: "vyzvednuti", date: addDays(t, -20), time: "17:00", occasion: "Jen tak pro radost", description: "Malá kytice tulipánů, růžové a bílé.", price: 450, paid: true, status: "predana" },
     ],
+    tasks: [
+      { id: "u1", title: "Objednat růže na Valentýna", note: "Red Naomi 60 cm, letos aspoň 200 ks", due: addDays(t, 3), done: false, repeat: "zadne" as const, createdAt: now },
+      { id: "u2", title: "Zalít rostliny v regálu", due: t, done: false, repeat: "tydne" as const, createdAt: now },
+      { id: "u3", title: "Vyhodit prošlé gerbery a přepsat cedulky", due: t, done: false, repeat: "zadne" as const, createdAt: now },
+      { id: "u4", title: "Poslat účetní faktury za minulý měsíc", due: addDays(t, 5), done: false, repeat: "mesicne" as const, createdAt: now },
+      { id: "u5", title: "Umýt vázy a kýble", due: addDays(t, -1), done: true, doneAt: now, repeat: "tydne" as const, createdAt: now },
+    ],
+    shopping: [
+      { id: "n1", name: "Růže Red Naomi 60 cm", qty: 60, unit: "ks", supplier: "Květinová burza", bought: false, createdAt: now },
+      { id: "n2", name: "Eustoma bílá", qty: 20, unit: "ks", supplier: "Květinová burza", bought: false, createdAt: now },
+      { id: "n3", name: "Kraftový papír 70 cm", qty: 2, unit: "role", supplier: "Obaly Kraft", note: "došel skoro celý", bought: false, createdAt: now },
+      { id: "n4", name: "Stuha sametová 25 mm", supplier: "Obaly Kraft", bought: false, createdAt: now },
+      { id: "n5", name: "Floristická pěna", qty: 1, unit: "karton", bought: true, boughtAt: now, createdAt: now },
+    ],
     takings: trzby(t),
     invoices: faktury(t),
     stock: [

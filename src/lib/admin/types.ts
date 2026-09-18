@@ -178,6 +178,47 @@ export type Invoice = {
   note?: string;
 };
 
+/* ── Úkoly ──────────────────────────────────────────────────────────── */
+
+export type TaskRepeat = "zadne" | "denne" | "tydne" | "mesicne";
+
+export const TASK_REPEAT: Record<TaskRepeat, string> = {
+  zadne: "Jednorázově",
+  denne: "Každý den",
+  tydne: "Každý týden",
+  mesicne: "Každý měsíc",
+};
+
+export type Task = {
+  id: string;
+  title: string;
+  note?: string;
+  /** YYYY-MM-DD — do kdy. Bez data = kdykoliv. */
+  due?: string;
+  done: boolean;
+  /** ISO — kdy se odškrtl. */
+  doneAt?: string;
+  /** Opakovaný úkol se po odškrtnutí založí znovu na další termín. */
+  repeat: TaskRepeat;
+  createdAt: string;
+};
+
+/* ── Nákupní seznam ─────────────────────────────────────────────────── */
+
+export type ShoppingItem = {
+  id: string;
+  name: string;
+  /** Kolik koupit. Nepovinné — na burze se často kupuje „co bude". */
+  qty?: number;
+  unit?: string;
+  /** U koho. Seznam se podle toho na nákupu seskupuje. */
+  supplier?: string;
+  note?: string;
+  bought: boolean;
+  boughtAt?: string;
+  createdAt: string;
+};
+
 export type Settings = {
   /** Násobek nákupní ceny pro kalkulačku (např. 2.5). */
   defaultMarkup: number;
@@ -201,6 +242,8 @@ export type AdminDoc = {
   stock: StockItem[];
   takings: Takings[];
   invoices: Invoice[];
+  tasks: Task[];
+  shopping: ShoppingItem[];
   settings: Settings;
 };
 
@@ -222,6 +265,8 @@ export function emptyDoc(): AdminDoc {
     stock: [],
     takings: [],
     invoices: [],
+    tasks: [],
+    shopping: [],
     settings: { ...DEFAULT_SETTINGS },
   };
 }

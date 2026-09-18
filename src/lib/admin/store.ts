@@ -79,12 +79,46 @@ function writeLocal(doc: AdminDoc) {
   }
 }
 
+/**
+ * Srovnání dat do tvaru, který databáze přijme.
+ *
+ * Schéma má kontroly (hotový úkol musí mít čas dokončení, opakování dává
+ * smysl jen s termínem, zaplacená faktura musí mít datum). Ukládá se celý
+ * dokument najednou v jedné transakci, takže JEDEN špatný řádek by shodil
+ * uložení úplně všeho. Proto se to srovná tady, ne až v databázi.
+ */
+function srovnat(doc: AdminDoc): AdminDoc {
+  const ted = new Date().toISOString();
+  return {
+    ...doc,
+    tasks: doc.tasks.map((t) => {
+      const done = Boolean(t.done);
+      const repeat = t.repeat ?? "zadne";
+      return {
+        ...t,
+        done,
+        doneAt: done ? t.doneAt ?? ted : undefined,
+        // Opakovat se dá jen úkol, který má termín.
+        repeat: repeat !== "zadne" && !t.due ? "zadne" : repeat,
+      };
+    }),
+    shopping: doc.shopping.map((s) => {
+      const bought = Boolean(s.bought);
+      return { ...s, bought, boughtAt: bought ? s.boughtAt ?? ted : undefined };
+    }),
+    invoices: doc.invoices.map((i) => {
+      const paid = Boolean(i.paid);
+      return { ...i, paid, paidAt: paid ? i.paidAt ?? ted.slice(0, 10) : undefined };
+    }),
+  };
+}
+
 /** Doplní chybějící pole — ať starší záloha neshodí novější admin. */
 export function normalize(input: Partial<AdminDoc>): AdminDoc {
   const base = emptyDoc();
   const orders = Array.isArray(input.orders) ? input.orders : [];
   const maxCislo = orders.reduce((m, o) => Math.max(m, o.cislo ?? 0), 0);
-  return {
+  return srovnat({
     version: 1,
     savedAt: input.savedAt ?? base.savedAt,
     nextOrderNumber: Math.max(input.nextOrderNumber ?? 1, maxCislo + 1),
@@ -93,8 +127,10 @@ export function normalize(input: Partial<AdminDoc>): AdminDoc {
     stock: Array.isArray(input.stock) ? input.stock : [],
     takings: Array.isArray(input.takings) ? input.takings : [],
     invoices: Array.isArray(input.invoices) ? input.invoices : [],
+    tasks: Array.isArray(input.tasks) ? input.tasks : [],
+    shopping: Array.isArray(input.shopping) ? input.shopping : [],
     settings: { ...base.settings, ...(input.settings ?? {}) },
-  };
+  });
 }
 
 /* ── Stav ──────────────────────────────────────────────────────────── */
@@ -252,7 +288,7 @@ function subscribe(cb: () => void) {
 }
 
 function commit(fn: Updater) {
-  const next = { ...fn(docOf(getSnapshot())), savedAt: new Date().toISOString() };
+  const next = srovnat({ ...fn(docOf(getSnapshot())), savedAt: new Date().toISOString() });
   writeLocal(next);
   patch(next);
 
