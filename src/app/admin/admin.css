@@ -288,6 +288,11 @@
   .grid-2 {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
+  /* Kalkulačka: tabulka materiálu širší než přehled ceny. Jen od tabletu —
+     inline styl tohle dřív vnucoval i telefonu a pravá karta byla uříznutá. */
+  .grid-2.grid-calc {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  }
   .grid-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }

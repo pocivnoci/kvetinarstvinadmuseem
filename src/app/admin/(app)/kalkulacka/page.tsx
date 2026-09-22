@@ -80,7 +80,7 @@ export default function KalkulackaPage() {
     <>
       <PageHead title="Kalkulačka kytice" sub={formula} />
 
-      <div className="grid-2" style={{ gridTemplateColumns: "minmax(0, 3fr) minmax(0, 2fr)" }}>
+      <div className="grid-2 grid-calc">
         <Card title="Materiál">
           {doc.stock.length > 0 && (
             <div className="toolbar">
