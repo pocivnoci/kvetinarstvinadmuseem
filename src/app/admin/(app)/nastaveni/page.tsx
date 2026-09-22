@@ -222,6 +222,7 @@ function SettingsForm({ settings, onSave }: { settings: Settings; onSave: (s: Se
   const [d, setD] = useState({
     defaultMarkup: String(settings.defaultMarkup),
     vatRate: String(settings.vatRate),
+    purchaseVatRate: String(settings.purchaseVatRate),
     laborFee: String(settings.laborFee),
     wrapFee: String(settings.wrapFee),
     roundTo: String(settings.roundTo),
@@ -233,6 +234,7 @@ function SettingsForm({ settings, onSave }: { settings: Settings; onSave: (s: Se
     onSave({
       defaultMarkup: parseNumber(d.defaultMarkup) ?? DEFAULT_SETTINGS.defaultMarkup,
       vatRate: parseNumber(d.vatRate) ?? DEFAULT_SETTINGS.vatRate,
+      purchaseVatRate: parseNumber(d.purchaseVatRate) ?? DEFAULT_SETTINGS.purchaseVatRate,
       laborFee: parseNumber(d.laborFee) ?? DEFAULT_SETTINGS.laborFee,
       wrapFee: parseNumber(d.wrapFee) ?? DEFAULT_SETTINGS.wrapFee,
       roundTo: parseNumber(d.roundTo) ?? DEFAULT_SETTINGS.roundTo,
@@ -243,11 +245,14 @@ function SettingsForm({ settings, onSave }: { settings: Settings; onSave: (s: Se
     <form onSubmit={submit} className="card">
       <div className="card-title"><h2>Kalkulačka kytice</h2></div>
       <div className="form-grid">
-        <Field label="Marže na materiál (×)" hint="Prodejní cena květin = nákup × tohle číslo. Obvykle 2–3.">
+        <Field label="Marže na materiál (×)" hint="Prodejní cena květin = nákup včetně DPH × tohle číslo. Obvykle 2–3.">
           <input type="text" inputMode="decimal" value={d.defaultMarkup} onChange={(e) => set("defaultMarkup", e.target.value)} />
         </Field>
-        <Field label="DPH (%)" hint="Řezané květiny jsou ve snížené sazbě.">
+        <Field label="DPH na prodej (%)" hint="Neplátce DPH nechá 0 — k prodejní ceně se nic nepřidává.">
           <input type="text" inputMode="decimal" value={d.vatRate} onChange={(e) => set("vatRate", e.target.value)} />
+        </Field>
+        <Field label="DPH v nákupu (%)" hint="Velkoobchod fakturuje bez DPH. Kalkulačka ho k nákupním cenám připočte sama; 0 = zadáváte ceny už s DPH.">
+          <input type="text" inputMode="decimal" value={d.purchaseVatRate} onChange={(e) => set("purchaseVatRate", e.target.value)} />
         </Field>
         <Field label="Práce (Kč)" hint="Paušál za vazbu jedné kytice.">
           <input type="text" inputMode="decimal" value={d.laborFee} onChange={(e) => set("laborFee", e.target.value)} />

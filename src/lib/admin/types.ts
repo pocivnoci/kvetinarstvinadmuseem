@@ -112,7 +112,10 @@ export type StockItem = {
   category: StockCategory;
   qty: number;
   unit: string;
-  /** Nákupní cena za jednotku (bez DPH nebo s — dle nastavení). */
+  /**
+   * Nákupní cena za jednotku bez DPH, tak jak je na faktuře z velkoobchodu.
+   * DPH k ní připočte kalkulačka podle `Settings.purchaseVatRate`.
+   */
   costPrice: number;
   /** Prodejní cena za jednotku (pro kalkulaci kytice). */
   salePrice?: number;
@@ -222,8 +225,14 @@ export type ShoppingItem = {
 export type Settings = {
   /** Násobek nákupní ceny pro kalkulačku (např. 2.5). */
   defaultMarkup: number;
-  /** Sazba DPH v %. Řezané květiny jsou ve snížené sazbě. */
+  /** Sazba DPH na prodej v %. Neplátce DPH má 0 — k prodejní ceně se nic nepřidává. */
   vatRate: number;
+  /**
+   * Sazba DPH v nákupu v %. Velkoobchod fakturuje bez DPH a krám jako
+   * neplátce si ho neodečte, takže je to skutečný náklad: kalkulačka ho
+   * k zadaným nákupním cenám připočte sama. 0 = ceny se zadávají už s DPH.
+   */
+  purchaseVatRate: number;
   /** Paušál za práci floristky v Kč. */
   laborFee: number;
   /** Paušál za obal/stuhu v Kč. */
@@ -274,6 +283,7 @@ export type AdminDoc = {
 export const DEFAULT_SETTINGS: Settings = {
   defaultMarkup: 2.5,
   vatRate: 12,
+  purchaseVatRate: 21,
   laborFee: 150,
   wrapFee: 60,
   roundTo: 10,

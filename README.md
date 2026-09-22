@@ -74,11 +74,11 @@ záložkami, na počítači boční navigaci.
 | **Peníze — Faktury** | Přijaté (výdaj) i vydané (příjem) faktury: protistrana, číslo, vystaveno, splatnost, částka, kategorie, zaplaceno. Filtry na nezaplacené a po splatnosti, součty „dluží nám“ a „dlužíme“. |
 | **Peníze — Rok** | Příjmy a výdaje po měsících v grafu i tabulce, zisk a marže za rok, srovnání se stejným obdobím loni. |
 | **Zákazníci** | Zakládají se sami z objednávek. Poznámky (oblíbené květiny, alergie), jméno pro svátek a narozeniny — admin pak připomene 14 dní předem. Historie objednávek, tlačítka Zavolat / WhatsApp. |
-| **Sklad** | Položky s množstvím, nákupní a prodejní cenou, datem naskladnění a trvanlivostí. Hlídá řezané zboží, kterému dochází čas. Rychlé ±1, hodnota skladu. |
-| **Kalkulačka kytice** | Materiál v nákupu × marže + práce + obal, DPH, zaokrouhlení. Položky lze přidat ze skladu. Jedním klikem založí objednávku s vypočtenou cenou. |
+| **Sklad** | Položky s množstvím, nákupní cenou (bez DPH, jak je na faktuře) a prodejní cenou, datem naskladnění a trvanlivostí. Hlídá řezané zboží, kterému dochází čas. Rychlé ±1, hodnota skladu. |
+| **Kalkulačka kytice** | Materiál v nákupu × marže + práce + obal, DPH, zaokrouhlení. Nákupní ceny se zadávají bez DPH tak, jak jsou na faktuře z velkoobchodu — krám není plátce, takže kalkulačka DPH (výchozí 21 %) připočte sama a nemusí se dopočítávat z hlavy; zaškrtávátko nad tabulkou to pro jednu kytici vypne. Položky lze přidat ze skladu. Jedním klikem založí objednávku s vypočtenou cenou. |
 | **Svátky a sezóna** | Český kalendář jmen s hledáním, klíčové květinové dny roku (pohyblivé svátky se počítají — Velikonoce, Den matek, advent…), s tipy co objednat a kolik dní předem. |
 | **Péče o květiny** | Tahák pro příjem zboží (voda, řez, výdrž, co se s čím nesnáší) a tisk kartičky „Aby vám kytice vydržela“ složené z květin, které v kytici jsou. |
-| **Nastavení** | Výchozí marže, DPH, paušály; export a import zálohy (JSON); ukázková data; smazání. |
+| **Nastavení** | Výchozí marže, DPH na prodej a DPH v nákupu, paušály; export a import zálohy (JSON); ukázková data; smazání. |
 
 ### Heslo
 

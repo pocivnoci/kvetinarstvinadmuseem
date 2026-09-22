@@ -188,7 +188,8 @@ export default function SkladPage() {
 }
 
 function StockForm({ item, onClose }: { item?: StockItem; onClose: () => void }) {
-  const { update } = useAdmin();
+  const { doc, update } = useAdmin();
+  const purchaseVat = doc.settings.purchaseVatRate;
   const [d, setD] = useState<Draft>(() => toDraft(item));
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setD((p) => ({ ...p, [k]: v }));
 
@@ -246,7 +247,10 @@ function StockForm({ item, onClose }: { item?: StockItem; onClose: () => void })
           </Field>
         </div>
         <div className="form-grid" style={{ gridTemplateColumns: "1fr 1fr" }}>
-          <Field label="Nákup / ks (Kč)">
+          <Field
+            label="Nákup / ks (Kč)"
+            hint={purchaseVat > 0 ? `Bez DPH, jak je na faktuře — kalkulačka ${purchaseVat} % připočte sama.` : undefined}
+          >
             <input type="text" inputMode="decimal" required value={d.costPrice} onChange={(e) => set("costPrice", e.target.value)} />
           </Field>
           <Field label="Prodej / ks (Kč)">
