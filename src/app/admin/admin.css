@@ -106,9 +106,13 @@
   transition: background 0.2s var(--ease-petal), color 0.2s var(--ease-petal);
 }
 
-.admin-nav a:hover {
-  background: var(--shell);
-  color: var(--ink);
+/* Jen s myší: na dotykovém displeji by po ťuknutí na hamburger zůstal
+   „najetý" odkaz, který se pod prstem zrovna vysunul. */
+@media (hover: hover) {
+  .admin-nav a:hover {
+    background: var(--shell);
+    color: var(--ink);
+  }
 }
 
 .admin-nav a[aria-current="page"] {
@@ -140,13 +144,14 @@
   gap: 0.25rem;
 }
 
-/* Mobil: horní lišta + spodní záložky */
+/* Mobil: horní lišta (hamburger, logo uprostřed) + spodní záložky */
 .admin-topbar {
-  display: flex;
+  display: grid;
+  /* Třetí sloupec je stejně široký jako hamburger — jinak by logo
+     nebylo uprostřed, ale posunuté doprava. */
+  grid-template-columns: 2.75rem 1fr 2.75rem;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.7rem 1rem;
+  padding: 0.45rem 0.6rem;
   background: var(--cream);
   border-bottom: 1px solid var(--line);
   position: sticky;
@@ -154,9 +159,72 @@
   z-index: 20;
 }
 
+.admin-topbar-logo {
+  grid-column: 2;
+  justify-self: center;
+  display: block;
+}
+
 .admin-topbar img {
-  height: 2rem;
+  height: 2.1rem;
   width: auto;
+  display: block;
+}
+
+.admin-burger,
+.admin-nav-close {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 4px;
+  color: var(--ink);
+}
+
+@media (hover: hover) {
+  .admin-burger:hover,
+  .admin-nav-close:hover {
+    background: var(--shell);
+  }
+}
+
+.admin-burger svg,
+.admin-nav-close svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Něco se neuložilo — tečka na hamburgeru, podrobnosti v patičce. */
+.admin-burger i {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.5rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--terracotta);
+  box-shadow: 0 0 0 2px var(--cream);
+}
+
+.admin-nav-close {
+  display: none;
+}
+
+.admin-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 39;
+  background: rgba(26, 24, 20, 0.35);
+}
+
+/* Stav uložení na konci stránky (jen mobil — na počítači je v boční liště). */
+.admin-foot {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line-soft);
 }
 
 .admin-tabs {
@@ -194,14 +262,49 @@
 
 @media (min-width: 900px) {
   .admin-topbar,
-  .admin-tabs {
+  .admin-tabs,
+  .admin-backdrop,
+  .admin-foot {
     display: none;
   }
 }
 
+/* Na mobilu je boční navigace vysouvací menu zleva. */
 @media (max-width: 899px) {
   .admin-nav {
-    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 40;
+    width: min(82vw, 300px);
+    height: 100dvh;
+    padding-top: calc(1.25rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    box-shadow: 4px 0 24px rgba(26, 24, 20, 0.18);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition: transform 0.25s var(--ease-petal), visibility 0s linear 0.25s;
+  }
+
+  .admin-nav.is-open {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.25s var(--ease-petal);
+  }
+
+  .admin-nav-close {
+    display: grid;
+    position: absolute;
+    top: calc(0.9rem + env(safe-area-inset-top, 0px));
+    right: 0.6rem;
+  }
+}
+
+@media (max-width: 899px) and (prefers-reduced-motion: reduce) {
+  .admin-nav,
+  .admin-nav.is-open {
+    transition: none;
   }
 }
 
@@ -1323,19 +1426,6 @@ a.list-row:hover .list-title {
   height: 8px;
   border-radius: 50%;
   flex: 0 0 8px;
-}
-
-.sync--compact {
-  padding: 0;
-  font-size: 0.68rem;
-  margin-left: auto;
-  margin-right: 0.5rem;
-}
-
-@media (max-width: 420px) {
-  .sync--compact span {
-    display: none;
-  }
 }
 
 /* ── Úkoly a nákupní seznam ─────────────────────────────────────────

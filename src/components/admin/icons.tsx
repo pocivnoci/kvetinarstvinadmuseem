@@ -70,6 +70,12 @@ export const Ico = {
   chevron: (p: P) => (
     <svg {...base} {...p}><path d="m9 6 6 6-6 6" /></svg>
   ),
+  menu: (p: P) => (
+    <svg {...base} {...p}><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+  ),
+  close: (p: P) => (
+    <svg {...base} {...p}><path d="M6 6l12 12M18 6 6 18" /></svg>
+  ),
   trash: (p: P) => (
     <svg {...base} {...p}><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" /></svg>
   ),

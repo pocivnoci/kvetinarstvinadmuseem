@@ -6,7 +6,7 @@ import { useAdmin } from "@/lib/admin/store";
  * Kde právě žijí data. Floristka nemá řešit techniku, ale musí poznat,
  * když se něco neuložilo — proto je stav vidět pořád, ne jen při chybě.
  */
-export function SyncBadge({ compact = false }: { compact?: boolean }) {
+export function SyncBadge() {
   const { ready, mode, status, syncedAt, unsaved, error } = useAdmin();
   if (!ready) return null;
 
@@ -38,7 +38,7 @@ export function SyncBadge({ compact = false }: { compact?: boolean }) {
 
   return (
     <span
-      className={`sync ${compact ? "sync--compact" : ""}`}
+      className="sync"
       title={error ? `${view.detail}\n\n${error}` : view.detail}
     >
       <i style={{ background: view.tone }} />
