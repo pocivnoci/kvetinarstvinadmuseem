@@ -119,9 +119,15 @@ podržení ikony na Androidu nabídne zkratky Moje výplata, Zapsat tržbu
 a Nová objednávka.
 
 Manifest a ikony jsou v `public/admin-app/` — mimo `/admin`, aby je
-prohlížeč stáhl i bez přihlášení. Ikony jsou vyrenderované z
-`src/app/icon.svg`. Offline režim (service worker) aplikace nemá; výpadek
-sítě řeší admin sám kopií dat v prohlížeči.
+prohlížeč stáhl i bez přihlášení. Na ikoně je znak z loga (růže na kupoli
+muzea), vyříznutý přímo z `public/logo.svg` skriptem
+`scripts/generate-app-icons.mjs` — postup spuštění je v jeho hlavičce.
+Offline režim (service worker) aplikace nemá; výpadek sítě řeší admin sám
+kopií dat v prohlížeči.
+
+Změněnou ikonu si iPhone sám nepřevezme — zapamatuje si ji ve chvíli
+přidání na plochu. Starou ikonu je potřeba z plochy smazat a přidat znovu.
+Android si ji časem obnoví sám.
 
 ### Heslo
 
