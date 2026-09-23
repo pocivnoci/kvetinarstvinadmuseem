@@ -47,6 +47,12 @@ type Snapshot = AdminDoc & {
   /** Kdy se naposledy potvrdilo uložení do databáze. */
   syncedAt?: string;
   error?: string;
+  /**
+   * Umí databáze uložit výplaty? Přibyly v migraci 0006. Dokud v ní
+   * nejsou, stará funkce save_admin_doc by je tiše zahodila — zapsaná
+   * výplata by po obnovení stránky zmizela a nikdo by nevěděl proč.
+   */
+  payoutsInDb: boolean;
 };
 
 const SERVER_SNAPSHOT: Snapshot = {
@@ -54,6 +60,7 @@ const SERVER_SNAPSHOT: Snapshot = {
   ready: false,
   mode: "local",
   status: "loading",
+  payoutsInDb: false,
 };
 
 let snapshot: Snapshot | null = null;
@@ -159,6 +166,13 @@ function srovnat(doc: AdminDoc): AdminDoc {
       // Konec dřív než začátek by tiše znamenal náklad, který nikdy neplatí.
       to: f.to && f.to < f.from ? undefined : f.to || undefined,
     })),
+    payouts: (doc.payouts ?? [])
+      // Nulová výplata nic neříká a databáze ji odmítne — a s ní celé uložení.
+      .filter((p) => Number.isFinite(p.amount) && p.amount > 0)
+      .map((p) => ({
+        ...p,
+        forMonth: /^\d{4}-\d{2}$/.test(p.forMonth ?? "") ? p.forMonth : p.date.slice(0, 7),
+      })),
   };
 }
 
@@ -177,6 +191,7 @@ export function normalize(input: Partial<AdminDoc>): AdminDoc {
     takings: Array.isArray(input.takings) ? input.takings : [],
     invoices: Array.isArray(input.invoices) ? input.invoices : [],
     fixedCosts: Array.isArray(input.fixedCosts) ? input.fixedCosts : [],
+    payouts: Array.isArray(input.payouts) ? input.payouts : [],
     tasks: Array.isArray(input.tasks) ? input.tasks : [],
     shopping: Array.isArray(input.shopping) ? input.shopping : [],
     settings: { ...base.settings, ...(input.settings ?? {}) },
@@ -195,18 +210,19 @@ function patch(next: Partial<Snapshot>) {
 }
 
 function docOf(s: Snapshot): AdminDoc {
-  const { ready, mode, status, syncedAt, error, ...doc } = s;
+  const { ready, mode, status, syncedAt, error, payoutsInDb, ...doc } = s;
   void ready;
   void mode;
   void status;
   void syncedAt;
   void error;
+  void payoutsInDb;
   return doc;
 }
 
 function getSnapshot(): Snapshot {
   if (!snapshot) {
-    snapshot = { ...readLocal(), ready: false, mode: "local", status: "loading" };
+    snapshot = { ...readLocal(), ready: false, mode: "local", status: "loading", payoutsInDb: false };
   }
   return snapshot;
 }
@@ -233,7 +249,7 @@ async function load(): Promise<void> {
     }
 
     if (data.mode === "local") {
-      patch({ ...readLocal(), ready: true, mode: "local", status: "ready" });
+      patch({ ...readLocal(), ready: true, mode: "local", status: "ready", payoutsInDb: true });
       return;
     }
 
@@ -243,7 +259,15 @@ async function load(): Promise<void> {
     // Neuložené úpravy z tohohle zařízení přehrát na čerstvá data.
     const merged = pending.reduce((d, fn) => fn(d), server);
     writeLocal(merged);
-    patch({ ...merged, ready: true, mode: "cloud", status: "ready", error: undefined });
+    patch({
+      ...merged,
+      ready: true,
+      mode: "cloud",
+      status: "ready",
+      error: undefined,
+      // Databáze po migraci 0006 vrací pole payouts vždycky, i prázdné.
+      payoutsInDb: Array.isArray(data.doc?.payouts),
+    });
     if (pending.length) scheduleSave();
   } catch (e) {
     patch({
@@ -404,6 +428,8 @@ export function useAdmin() {
      * toho se nesmí ani zálohovat, ani zapisovat.
      */
     loaded: s.mode === "local" || revision !== null,
+    /** Dá se uložit výplata a cíl výplaty? V databázi až po migraci 0006. */
+    payoutsInDb: s.payoutsInDb,
     update,
     replace,
     flush,

@@ -232,6 +232,8 @@ function SettingsForm({ settings, onSave }: { settings: Settings; onSave: (s: Se
   function submit(e: FormEvent) {
     e.preventDefault();
     onSave({
+      // Výplata se nastavuje v Penězích — tady se jen nesmí ztratit.
+      ...settings,
       defaultMarkup: parseNumber(d.defaultMarkup) ?? DEFAULT_SETTINGS.defaultMarkup,
       vatRate: parseNumber(d.vatRate) ?? DEFAULT_SETTINGS.vatRate,
       purchaseVatRate: parseNumber(d.purchaseVatRate) ?? DEFAULT_SETTINGS.purchaseVatRate,

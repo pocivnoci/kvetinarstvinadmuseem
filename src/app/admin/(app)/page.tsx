@@ -14,7 +14,7 @@ import {
   ymOf,
 } from "@/lib/admin/format";
 import { svatekPro } from "@/lib/admin/svatky";
-import { monthSummary, overdueInvoices, takingsOn, takingsTotal } from "@/lib/admin/penize";
+import { monthSummary, overdueInvoices, payPlan, takingsOn, takingsTotal, weekBudget } from "@/lib/admin/penize";
 import { tasksForToday, toggleTask } from "@/lib/admin/ukoly";
 import { nadchazejiciKlicoveDny } from "@/lib/admin/klicove-dny";
 import {
@@ -41,6 +41,8 @@ export default function DashboardPage() {
   const money = monthSummary(doc, ymOf(today));
   const todayTakings = takingsOn(doc.takings, today);
   const overdue = overdueInvoices(doc.invoices, today);
+  const plan = doc.settings.ownerPay > 0 ? payPlan(doc, today) : undefined;
+  const goodsWeek = plan ? weekBudget(doc, plan, today) : undefined;
   const dnesniUkoly = tasksForToday(doc.tasks, today);
   const kNakupu = doc.shopping.filter((s) => !s.bought);
   const svatek = svatekPro(today);
@@ -138,6 +140,21 @@ export default function DashboardPage() {
             label={`Zisk — ${formatMonth(ymOf(today))}`}
             value={formatCzk(money.profit)}
             sub={`${formatCzk(money.income)} příjmy · ${formatCzk(money.expenses)} výdaje`}
+          />
+        </Card>
+        <Card>
+          <Stat
+            label={goodsWeek && goodsWeek.left < 0 ? "Zboží — přečerpáno o" : "Na zboží tento týden"}
+            value={goodsWeek ? formatCzk(Math.abs(goodsWeek.left)) : "—"}
+            sub={
+              <Link href="/admin/penize/vyplata" className="link">
+                {goodsWeek
+                  ? `z ${formatCzk(goodsWeek.budget)}, ať zbyde na výplatu`
+                  : doc.settings.ownerPay > 0
+                    ? "zatím málo tržeb"
+                    : "nastavit moji výplatu"}
+              </Link>
+            }
           />
         </Card>
       </div>

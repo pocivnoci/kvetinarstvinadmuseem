@@ -53,7 +53,7 @@ export function ukazkovaData(): AdminDoc {
     version: 1,
     savedAt: now,
     nextOrderNumber: 6,
-    settings: { ...DEFAULT_SETTINGS },
+    settings: { ...DEFAULT_SETTINGS, ownerPay: 25000 },
     customers: [
       { id: "c1", name: "Jana Nováková", phone: "777 123 456", email: "jana@example.cz", note: "Miluje pivoňky a pastel. Nechce lilie (alergie). Kupuje pro maminku.", namedayName: "Jana", birthday: "03-14", createdAt: now },
       { id: "c2", name: "Petr Svoboda", phone: "602 987 654", note: "Firemní objednávky — Ateliér Svoboda, fakturu na IČO.", namedayName: "Petr", createdAt: now },
@@ -88,6 +88,10 @@ export function ukazkovaData(): AdminDoc {
       { id: "fn2", name: "Elektřina a voda", amount: 4200, category: "Energie", from: ymOf(addDays(t, -400)) },
       { id: "fn3", name: "Účetní", amount: 2500, category: "Služby a účetnictví", from: ymOf(addDays(t, -400)) },
       { id: "fn4", name: "Internet a telefon", amount: 900, category: "Ostatní", from: ymOf(addDays(t, -400)) },
+    ],
+    // Výplata za minulý měsíc převedená na začátku tohoto.
+    payouts: [
+      { id: "v1", date: `${ymOf(t)}-02`, forMonth: shiftMonth(ymOf(t), -1), amount: 20000 },
     ],
     stock: [
       { id: "s1", name: "Růže Red Naomi 60 cm", category: "rezane", qty: 40, unit: "ks", costPrice: 28, salePrice: 79, receivedAt: addDays(t, -2), shelfLifeDays: 8, supplier: "Květinová burza" },

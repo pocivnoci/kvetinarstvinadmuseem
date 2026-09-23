@@ -1,5 +1,5 @@
-import { monthDays, shiftMonth, todayIso, ymOf } from "./format";
-import type { AdminDoc, FixedCost, Invoice, Takings } from "./types";
+import { addDays, monthDays, shiftMonth, startOfWeek, todayIso, ymOf } from "./format";
+import { GOODS_CATEGORIES, type AdminDoc, type FixedCost, type Invoice, type OwnerPayout, type Takings } from "./types";
 
 /**
  * Výpočty kolem peněz. Jedno pravidlo, na kterém všechno stojí:
@@ -228,6 +228,173 @@ export function unpaidInvoices(invoices: Invoice[], today = todayIso()): Invoice
   return invoices
     .filter((i) => !i.paid && (!i.dueAt || i.dueAt >= today))
     .sort((a, b) => (a.dueAt ?? "9999").localeCompare(b.dueAt ?? "9999"));
+}
+
+/* ── Moje výplata a kolik smí jít na zboží ─────────────────────────── */
+
+/** Přijatá faktura za zboží na prodej (květiny, doplňky, obaly). */
+export function isGoods(i: Invoice): boolean {
+  return i.kind === "prijata" && GOODS_CATEGORIES.includes(i.category?.trim() ?? "");
+}
+
+/** Z kolika posledních celých měsíců se bere typická tržba. */
+const PLAN_MONTHS = 3;
+
+export type PayPlan = {
+  /** Měsíce, ze kterých je průměr („2026-06"…), od nejstaršího. */
+  refMonths: string[];
+  /** Typický měsíční příjem — průměr refMonths. */
+  income: number;
+  /** Pravidelné výdaje, které platí tento měsíc (nájem, energie…). */
+  fixed: number;
+  /** Průměr ostatních přijatých faktur (ne za zboží) v refMonths. */
+  other: number;
+  /** Cíl výplaty. */
+  pay: number;
+  /** Kolik Kč měsíčně zbývá na zboží, než by se sáhlo na výplatu. Může být záporné. */
+  free: number;
+  /** Podíl příjmů, který smí jít na zboží (0 až `cap`). */
+  goodsShare: number;
+  /**
+   * Strop podílu zboží: 1 / přirážka. S přirážkou 2,5× se z koruny
+   * nákupu stane nejvýš 2,50 Kč tržby, takže víc než 40 % tržby do
+   * zboží dávat nemá smysl — zbytek by zůstal ležet nebo uvadl.
+   */
+  cap: number;
+  /** Co zbude nad strop zboží (Kč měsíčně) — prostor pro vyšší výplatu nebo rezervu. */
+  spare: number;
+  /** Kolik měsíčně chybí, aby se výplata vešla i bez zboží. */
+  shortfall: number;
+  /** Kolik tržby skutečně šlo na zboží v refMonths — jen když jsou faktury za zboží zapsané. */
+  actualGoodsShare?: number;
+};
+
+/**
+ * Jak se dělí typická měsíční tržba: provoz, výplata, zboží.
+ *
+ * Nejdřív se odečte, co se platí tak jako tak (pravidelné výdaje
+ * a ostatní faktury), pak výplata. Co zbyde, smí jít do velkoobchodu.
+ * Výplata se tu počítá dřív než zboží schválně — obráceně to dopadá
+ * tak, že se nakoupí, co je potřeba, a na výplatu zbyde, co zbyde.
+ *
+ * Typická tržba je průměr posledních celých měsíců s nějakým příjmem,
+ * ne rozjetý měsíc — ten by na začátku měsíce vycházel skoro nulový.
+ */
+export function payPlan(doc: AdminDoc, today = todayIso()): PayPlan | undefined {
+  const current = ymOf(today);
+  const refMonths: string[] = [];
+  for (let back = 1; back <= 12 && refMonths.length < PLAN_MONTHS; back++) {
+    const ym = shiftMonth(current, -back);
+    if (monthSummary(doc, ym).income > 0) refMonths.unshift(ym);
+  }
+  if (refMonths.length === 0) return undefined;
+
+  const months = refMonths.map((ym) => monthSummary(doc, ym));
+  const received = (ym: string) => invoicesInMonth(doc.invoices, ym).filter((i) => i.kind === "prijata");
+  const avg = (f: (ym: string, i: number) => number) =>
+    refMonths.reduce((sum, ym, i) => sum + f(ym, i), 0) / refMonths.length;
+
+  const income = avg((_, i) => months[i].income);
+  const goods = avg((ym) => received(ym).filter(isGoods).reduce((s, i) => s + i.amount, 0));
+  const other = avg((ym) => received(ym).filter((i) => !isGoods(i)).reduce((s, i) => s + i.amount, 0));
+  const fixed = fixedCostsInMonth(doc.fixedCosts ?? [], current).reduce((s, f) => s + f.amount, 0);
+  const pay = Math.max(0, doc.settings.ownerPay || 0);
+  const markup = doc.settings.defaultMarkup > 1 ? doc.settings.defaultMarkup : 2.5;
+  const cap = 1 / markup;
+
+  const free = income - fixed - other - pay;
+  const goodsShare = Math.min(cap, Math.max(0, free / income));
+
+  return {
+    refMonths,
+    income,
+    fixed,
+    other,
+    pay,
+    free,
+    goodsShare,
+    cap,
+    spare: Math.max(0, free - cap * income),
+    shortfall: Math.max(0, -free),
+    actualGoodsShare: goods > 0 ? goods / income : undefined,
+  };
+}
+
+/** Z kolika posledních týdnů se bere průměrná týdenní tržba. */
+const BUDGET_WEEKS = 4;
+
+export type WeekBudget = {
+  /** Pondělí a neděle tohoto týdne. */
+  from: string;
+  to: string;
+  /** Průměrná týdenní tržba za poslední týdny, kdy bylo otevřeno. */
+  avgWeekIncome: number;
+  /** Z kolika týdnů je průměr (týdny bez tržby — dovolená — se nepočítají). */
+  weeks: number;
+  /** Kolik smí tento týden jít na zboží. */
+  budget: number;
+  /** Faktury za zboží vystavené tento týden. */
+  invoices: Invoice[];
+  spent: number;
+  /** Kolik ještě zbývá. Záporné = přečerpáno. */
+  left: number;
+};
+
+/**
+ * Kolik smí tento týden (po–ne) jít do velkoobchodu.
+ *
+ * Týden proto, že se na burzu jezdí několikrát týdně a měsíční číslo
+ * se v hlavě špatně dělí. Základ je průměrný týden za poslední čtyři,
+ * ne jen ten minulý — jeden slabý nebo silný týden by limit rozhoupal.
+ */
+export function weekBudget(doc: AdminDoc, plan: PayPlan, today = todayIso()): WeekBudget {
+  const from = startOfWeek(today);
+  const to = addDays(from, 6);
+
+  const weekly = Array.from({ length: BUDGET_WEEKS }, (_, i) => {
+    const start = addDays(from, -7 * (i + 1));
+    return incomeBetween(doc, start, addDays(start, 6));
+  }).filter((x) => x > 0);
+  const avgWeekIncome = weekly.length ? weekly.reduce((s, x) => s + x, 0) / weekly.length : 0;
+
+  const invoices = doc.invoices
+    .filter((i) => isGoods(i) && i.issuedAt >= from && i.issuedAt <= to)
+    .sort((a, b) => a.issuedAt.localeCompare(b.issuedAt));
+  const spent = invoices.reduce((s, i) => s + i.amount, 0);
+  const budget = avgWeekIncome * plan.goodsShare;
+
+  return { from, to, avgWeekIncome, weeks: weekly.length, budget, invoices, spent, left: budget - spent };
+}
+
+/** Výplaty za daný měsíc (podle toho, za který měsíc jsou, ne kdy odešly). */
+export function payoutsFor(payouts: OwnerPayout[], ym: string): OwnerPayout[] {
+  return payouts.filter((p) => p.forMonth === ym);
+}
+
+export type PayMonth = {
+  ym: string;
+  /** Zisk měsíce — nejvýš tolik si šlo vyplatit. */
+  profit: number;
+  /** Kolik si majitelka za ten měsíc opravdu vyplatila. */
+  paid: number;
+  /** Byly v měsíci zapsané nějaké výdaje? Bez nich je zisk nadsazený. */
+  hasExpenses: boolean;
+  hasIncome: boolean;
+};
+
+/** Výplata po měsících roku — kolik zbylo a kolik se opravdu vyplatilo. */
+export function payYear(doc: AdminDoc, year: number): PayMonth[] {
+  return Array.from({ length: 12 }, (_, i) => {
+    const ym = `${year}-${String(i + 1).padStart(2, "0")}`;
+    const s = monthSummary(doc, ym);
+    return {
+      ym,
+      profit: s.profit,
+      paid: payoutsFor(doc.payouts ?? [], ym).reduce((sum, p) => sum + p.amount, 0),
+      hasExpenses: s.expenses > 0,
+      hasIncome: s.income > 0,
+    };
+  });
 }
 
 /* ── Export pro účetní ─────────────────────────────────────────────── */

@@ -161,6 +161,17 @@ export const INVOICE_CATEGORIES = [
   "Ostatní",
 ] as const;
 
+/**
+ * Kategorie výdajů, které jsou zboží na prodej — z nich se počítá, kolik
+ * smí jít do velkoobchodu. Nájem, energie a služby se platí tak jako tak;
+ * u zboží se dá rozhodnout, kolik ho koupit.
+ */
+export const GOODS_CATEGORIES: readonly string[] = [
+  "Nákup květin",
+  "Nákup zboží a doplňků",
+  "Obaly a stuhy",
+];
+
 export type Invoice = {
   id: string;
   kind: InvoiceKind;
@@ -239,6 +250,11 @@ export type Settings = {
   wrapFee: number;
   /** Zaokrouhlení výsledné ceny (na kolik Kč). */
   roundTo: number;
+  /**
+   * Kolik si majitelka chce měsíčně vyplatit (Kč). 0 = nenastaveno.
+   * Z toho se počítá, kolik smí jít na zboží, aby na výplatu zbylo.
+   */
+  ownerPay: number;
 };
 
 /**
@@ -264,6 +280,23 @@ export type FixedCost = {
   note?: string;
 };
 
+/**
+ * Výplata sobě — peníze, které si majitelka převedla z krámu pro sebe.
+ *
+ * Není to výdaj: zisk se tím nemění. Výplata se platí ze zisku, a když
+ * se nezapisuje, rozpustí se v další faktuře z velkoobchodu a na konci
+ * měsíce není vidět, kam zmizela.
+ */
+export type OwnerPayout = {
+  id: string;
+  /** YYYY-MM-DD — kdy se peníze převedly. */
+  date: string;
+  /** YYYY-MM — za který měsíc je to výplata (za září se často platí až 2. října). */
+  forMonth: string;
+  amount: number;
+  note?: string;
+};
+
 export type AdminDoc = {
   version: 1;
   /** Kdy se naposledy uložilo. */
@@ -275,6 +308,7 @@ export type AdminDoc = {
   takings: Takings[];
   invoices: Invoice[];
   fixedCosts: FixedCost[];
+  payouts: OwnerPayout[];
   tasks: Task[];
   shopping: ShoppingItem[];
   settings: Settings;
@@ -287,6 +321,7 @@ export const DEFAULT_SETTINGS: Settings = {
   laborFee: 150,
   wrapFee: 60,
   roundTo: 10,
+  ownerPay: 0,
 };
 
 export function emptyDoc(): AdminDoc {
@@ -300,6 +335,7 @@ export function emptyDoc(): AdminDoc {
     takings: [],
     invoices: [],
     fixedCosts: [],
+    payouts: [],
     tasks: [],
     shopping: [],
     settings: { ...DEFAULT_SETTINGS },

@@ -18,6 +18,21 @@ export const CHART = {
   day: "#6D7A52",
 } as const;
 
+/**
+ * Rozdělení tržby na stránce Výplata. Pořadí je pevné a sousední dvojice
+ * prošly validátorem (i pro barvoslepé, proti krémovému papíru):
+ *   provoz #B85842 → výplata #1C5F9E → zboží #4F8A3A
+ * Šalvějová #6D7A52 z denních tržeb by tu neprošla — vedle terakoty je pro
+ * deuteranopy k nerozeznání a čte se jako šedá. „Navíc" není kategorie,
+ * ale nerozdělený zbytek, proto neutrální.
+ */
+export const SPLIT = {
+  running: "#B85842",
+  pay: "#1C5F9E",
+  goods: "#4F8A3A",
+  spare: "rgba(42, 38, 32, 0.16)",
+} as const;
+
 /** Horní hranice osy zaokrouhlená na hezké číslo. */
 function niceMax(value: number): number {
   if (value <= 0) return 1000;
@@ -190,3 +205,66 @@ export function YearColumns({
 }
 
 const DAY_MONTHS = ["led", "úno", "bře", "dub", "kvě", "čvn", "čvc", "srp", "zář", "říj", "lis", "pro"];
+
+export type SplitPart = {
+  key: string;
+  label: string;
+  /** Kč měsíčně. */
+  amount: number;
+  color: string;
+  /** Světlý segment potřebuje tmavý popisek. */
+  light?: boolean;
+};
+
+/**
+ * Jak se dělí typická měsíční tržba — jeden vodorovný pruh.
+ *
+ * Když se provoz a výplata do tržby nevejdou, pruh je delší než tržba
+ * a svislá čára ukazuje, kam tržba stačí: co je za ní, nemá z čeho být.
+ */
+export function PaySplit({ parts, income }: { parts: SplitPart[]; income: number }) {
+  const [hover, setHover] = useState<number | null>(null);
+  const shown = parts.filter((p) => p.amount > 0);
+  const total = Math.max(income, shown.reduce((s, p) => s + p.amount, 0));
+  const pct = (n: number) => (total > 0 ? (n / total) * 100 : 0);
+  const per100 = (n: number) => (income > 0 ? Math.round((n / income) * 100) : 0);
+  const active = hover !== null ? shown[hover] : undefined;
+  const activeLeft =
+    hover !== null ? pct(shown.slice(0, hover).reduce((s, p) => s + p.amount, 0) + shown[hover].amount / 2) : 0;
+
+  return (
+    <figure className="chart" role="img" aria-label={shown.map((p) => `${p.label} ${per100(p.amount)} Kč ze 100`).join(", ")}>
+      <div className="split-plot">
+        <div className="split-bar">
+          {shown.map((p, i) => (
+            <div
+              key={p.key}
+              className={`split-seg ${hover === i ? "is-hover" : ""}`}
+              style={{ width: `${pct(p.amount)}%`, background: p.color, color: p.light ? "var(--ink)" : "var(--cream)" }}
+              onMouseEnter={() => setHover(i)}
+              onMouseLeave={() => setHover(null)}
+              onFocus={() => setHover(i)}
+              onBlur={() => setHover(null)}
+              tabIndex={0}
+              aria-label={`${p.label}: ${formatCzk(p.amount)} měsíčně`}
+            >
+              {pct(p.amount) >= 11 && <span>{per100(p.amount)} Kč</span>}
+            </div>
+          ))}
+        </div>
+        {total > income && income > 0 && (
+          <div className="split-limit" style={{ left: `${pct(income)}%` }}>
+            <span>sem tržba stačí</span>
+          </div>
+        )}
+        {active && (
+          <Tooltip left={activeLeft}>
+            <strong>{active.label}</strong>
+            <span>{formatCzk(active.amount)} měsíčně</span>
+            <span className="muted">{per100(active.amount)} Kč z každých 100 Kč tržby</span>
+          </Tooltip>
+        )}
+      </div>
+    </figure>
+  );
+}

@@ -263,8 +263,10 @@
   font-size: 1.1rem;
 }
 
-.card-title a,
-.card-title button {
+/* Odkaz v hlavičce karty. Opravdová tlačítka (.btn) mají vlastní vzhled —
+   jinak by primární tlačítko dostalo zelený text na zeleném pozadí. */
+.card-title a:not(.btn),
+.card-title button:not(.btn) {
   font-size: 0.8rem;
   color: var(--sage-cta);
   text-decoration: underline;
@@ -1170,6 +1172,132 @@ a.list-row:hover .list-title {
   margin-top: 1.4rem;
   font-size: 0.74rem;
   color: var(--stone);
+}
+
+/* Rozdělení tržby (stránka Výplata). Mezera 2px mezi segmenty je barva papíru. */
+.split-plot {
+  position: relative;
+  padding-top: 0.2rem;
+  padding-bottom: 1.3rem;
+}
+
+.split-bar {
+  display: flex;
+  gap: 2px;
+  height: 34px;
+}
+
+.split-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: default;
+  transition: opacity 0.15s ease;
+}
+
+.split-seg:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.split-seg:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.split-seg:only-child {
+  border-radius: 4px;
+}
+
+.split-bar:hover .split-seg:not(.is-hover) {
+  opacity: 0.6;
+}
+
+.split-seg:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.split-limit {
+  position: absolute;
+  top: -0.2rem;
+  bottom: 0.6rem;
+  border-left: 2px dashed var(--ink);
+  pointer-events: none;
+}
+
+.split-limit span {
+  position: absolute;
+  bottom: -1.05rem;
+  left: 0;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.split-legend {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.split-legend > div {
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  align-items: baseline;
+  column-gap: 0.6rem;
+  padding: 0.45rem 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.split-legend > div:first-child {
+  border-top: 0;
+}
+
+.split-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  align-self: start;
+  margin-top: 0.35em;
+}
+
+.split-legend small {
+  display: block;
+}
+
+/* Na mobilu částky pod popisek, ať popisek nemá dvě slova na řádek. */
+@media (max-width: 599px) {
+  .split-legend > div {
+    grid-template-columns: 10px 1fr;
+  }
+
+  .split-legend > div > :last-child {
+    grid-column: 2;
+  }
+}
+
+/* Kolik ještě zbývá utratit — ukazatel pod velkým číslem. */
+.meter {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--line-soft);
+  overflow: hidden;
+  margin: 0.7rem 0 0.35rem;
+}
+
+.meter > div {
+  height: 100%;
+  border-radius: 4px;
+  background: #4F8A3A;
+}
+
+.meter.is-over > div {
+  background: var(--danger);
 }
 
 /* Na úzkém displeji se popisky dnů proředí. */

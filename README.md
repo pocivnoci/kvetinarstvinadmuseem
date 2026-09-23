@@ -71,6 +71,7 @@ záložkami, na počítači boční navigaci.
 | **Tisk** | Průvodka pro dílnu / kurýra a kartička s přáním, každá na vlastní stránce (`/admin/objednavky/<id>/tisk`). |
 | **Kalendář** | Týdenní přehled objednávek se svátky a květinovými dny, šipkami po týdnech. |
 | **Peníze — Měsíc** | Denní tržby (hotovost, karta, ostatní) do jednoho formuláře. Sloupcový graf dnů, průměr na otevřený den, nejsilnější den. Měsíční příjmy, výdaje a zisk se počítají samy. Rozpad výdajů po kategoriích. Export tržeb i faktur do CSV pro účetní. |
+| **Peníze — Výplata** | Kolik si majitelka chce měsíčně brát a kolik si opravdu vyplatila (výplata za měsíc, kdy převedeno). Hlavní číslo: **kolik smí tento týden utratit ve velkoobchodě**, aby na výplatu zbylo. Pruh „jak se dělí každých 100 Kč tržby“ (nájem a provoz → výplata → zboží) a srovnání se skutečností z faktur. Limit je i na Přehledu. |
 | **Peníze — Faktury** | Přijaté (výdaj) i vydané (příjem) faktury: protistrana, číslo, vystaveno, splatnost, částka, kategorie, zaplaceno. Filtry na nezaplacené a po splatnosti, součty „dluží nám“ a „dlužíme“. |
 | **Peníze — Rok** | Příjmy a výdaje po měsících v grafu i tabulce, zisk a marže za rok, srovnání se stejným obdobím loni. |
 | **Zákazníci** | Zakládají se sami z objednávek. Poznámky (oblíbené květiny, alergie), jméno pro svátek a narozeniny — admin pak připomene 14 dní předem. Historie objednávek, tlačítka Zavolat / WhatsApp. |
@@ -79,6 +80,27 @@ záložkami, na počítači boční navigaci.
 | **Svátky a sezóna** | Český kalendář jmen s hledáním, klíčové květinové dny roku (pohyblivé svátky se počítají — Velikonoce, Den matek, advent…), s tipy co objednat a kolik dní předem. |
 | **Péče o květiny** | Tahák pro příjem zboží (voda, řez, výdrž, co se s čím nesnáší) a tisk kartičky „Aby vám kytice vydržela“ složené z květin, které v kytici jsou. |
 | **Nastavení** | Výchozí marže, DPH na prodej a DPH v nákupu, paušály; export a import zálohy (JSON); ukázková data; smazání. |
+
+### Jak se počítá, kolik smí jít na zboží
+
+Výplata se odečítá **před** zbožím, ne až z toho, co zbude:
+
+```
+typická tržba      = průměr posledních 3 celých měsíců s příjmem
+na zboží (Kč/měs.) = typická tržba − pravidelné výdaje − ostatní faktury − výplata
+podíl zboží        = to celé ÷ typická tržba, nejvýš 1 ÷ přirážka (2,5× → 40 %)
+limit na týden     = průměrná týdenní tržba za 4 týdny × podíl zboží
+utraceno           = přijaté faktury za zboží vystavené od pondělí
+```
+
+Zboží jsou kategorie *Nákup květin*, *Nákup zboží a doplňků* a *Obaly
+a stuhy* (`GOODS_CATEGORIES` v `types.ts`). Týdny bez tržby (dovolená) se
+do průměru nepočítají. Strop 1 ÷ přirážka je tam proto, že víc zboží, než
+se za tu přirážku prodá, zůstane ležet — co zbude nad něj, admin ukáže jako
+prostor pro vyšší výplatu nebo rezervu.
+
+Výplata sobě **není výdaj**: zisk se jí nemění. Tabulka po měsících
+ukazuje zisk, kolik z něj šlo majitelce a kolik zůstalo v krámu.
 
 ### Heslo
 
@@ -152,7 +174,10 @@ ne jako hotový výsledek), takže se cizí práce neztratí.
    nejblíž).
 2. Pusťte migrace ze složky `supabase/migrations/` v pořadí — buď v SQL
    editoru v Supabase (zkopírovat obsah souboru a spustit), nebo přes
-   Supabase CLI (`supabase db push`).
+   Supabase CLI (`supabase db push`). Na už běžící databázi stačí pustit
+   ty, které v ní ještě nejsou — pro výplatu je to
+   `0006_vyplata.sql`. Pusťte ji **před** nasazením nového webu; dokud
+   v databázi není, stránka Výplata to napíše a nic z ní neuloží.
 3. V Supabase → Project Settings → API zkopírujte URL projektu a **tajný**
    klíč (`service_role` / `sb_secret_…`).
 4. Vložte je do `.env.local` (lokálně) a na Vercelu do Environment Variables
