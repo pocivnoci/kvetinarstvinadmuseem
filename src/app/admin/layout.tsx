@@ -6,6 +6,12 @@ import "./admin.css";
 export const metadata: Metadata = {
   title: { default: "Admin — Květiny nad museem", template: "%s · Admin KNM" },
   robots: { index: false, follow: false },
+  // Admin jde přidat na plochu mobilu jako aplikace „Můj krám" — otevře se
+  // bez lišty prohlížeče, rovnou na Přehled. Manifest a ikony jsou
+  // v public/admin-app, mimo /admin, aby je prohlížeč stáhl i bez přihlášení.
+  manifest: "/admin-app/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "Můj krám", statusBarStyle: "default" },
+  icons: { apple: "/admin-app/apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = {

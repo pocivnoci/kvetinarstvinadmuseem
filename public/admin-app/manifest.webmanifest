@@ -1,0 +1,23 @@
+{
+  "id": "/admin",
+  "name": "Květiny nad museem — můj krám",
+  "short_name": "Můj krám",
+  "description": "Objednávky, tržby a moje výplata. Admin květinářství Květiny nad museem.",
+  "lang": "cs",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4ede0",
+  "theme_color": "#f4ede0",
+  "icons": [
+    { "src": "/admin-app/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/admin-app/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/admin-app/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Moje výplata", "short_name": "Výplata", "url": "/admin/penize/vyplata" },
+    { "name": "Zapsat tržbu", "short_name": "Tržba", "url": "/admin/penize" },
+    { "name": "Nová objednávka", "short_name": "Objednávka", "url": "/admin/objednavky/nova" }
+  ]
+}

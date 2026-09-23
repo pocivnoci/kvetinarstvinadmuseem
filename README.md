@@ -102,6 +102,27 @@ prostor pro vyšší výplatu nebo rezervu.
 Výplata sobě **není výdaj**: zisk se jí nemění. Tabulka po měsících
 ukazuje zisk, kolik z něj šlo majitelce a kolik zůstalo v krámu.
 
+### Aplikace v mobilu
+
+Admin jde přidat na plochu telefonu jako aplikace **„Můj krám“** — otevře
+se bez lišty prohlížeče rovnou na Přehled, s ikonou krámu. Žádný obchod
+s aplikacemi, žádná instalace navíc.
+
+- **iPhone (Safari):** otevřít `kvetinynadmuseem.cz/admin`, přihlásit se,
+  tlačítko Sdílet → **Přidat na plochu**.
+- **Android (Chrome):** otevřít `kvetinynadmuseem.cz/admin`, přihlásit se,
+  menu ⋮ → **Instalovat aplikaci** (nebo Přidat na plochu).
+
+Aplikace na iPhonu má vlastní přihlášení, oddělené od Safari — po přidání
+na plochu je potřeba se v ní jednou přihlásit (platí 30 dní). Dlouhé
+podržení ikony na Androidu nabídne zkratky Moje výplata, Zapsat tržbu
+a Nová objednávka.
+
+Manifest a ikony jsou v `public/admin-app/` — mimo `/admin`, aby je
+prohlížeč stáhl i bez přihlášení. Ikony jsou vyrenderované z
+`src/app/icon.svg`. Offline režim (service worker) aplikace nemá; výpadek
+sítě řeší admin sám kopií dat v prohlížeči.
+
 ### Heslo
 
 Do adminu se vstupuje jedním sdíleným heslem. Na Vercelu nastavte proměnnou prostředí **`ADMIN_PASSWORD`** (Settings →
