@@ -3,8 +3,9 @@
 import { useMemo, useState } from "react";
 import { useAdmin } from "@/lib/admin/store";
 import { daysBetween, formatCzk, formatDate, todayIso } from "@/lib/admin/format";
-import { INVOICE_KIND, type Invoice, type InvoiceKind } from "@/lib/admin/types";
+import { INVOICE_KIND, type Invoice, type InvoiceKind, type InvoiceScan } from "@/lib/admin/types";
 import { InvoiceForm } from "@/components/admin/InvoiceForm";
+import { InvoiceScanButton } from "@/components/admin/InvoiceScanButton";
 import { MoneyTabs } from "@/components/admin/MoneyTabs";
 import { FixedCosts } from "@/components/admin/FixedCosts";
 import { Badge, Card, Empty, Loading, PageHead } from "@/components/admin/ui";
@@ -17,7 +18,7 @@ export default function FakturyPage() {
   const today = todayIso();
   const [filter, setFilter] = useState<Filter>("nezaplacene");
   const [q, setQ] = useState("");
-  const [editing, setEditing] = useState<Invoice | "new" | null>(null);
+  const [editing, setEditing] = useState<Invoice | "new" | { scan: InvoiceScan } | null>(null);
 
   const rows = useMemo(() => {
     let list = doc.invoices;
@@ -63,6 +64,7 @@ export default function FakturyPage() {
   return (
     <>
       <PageHead title="Faktury" sub="Přijaté faktury jsou výdaje, vydané příjem. Do měsíce patří podle data vystavení.">
+        <InvoiceScanButton onScanned={(scan) => setEditing({ scan })} />
         <button className="btn btn-primary" onClick={() => setEditing("new")}>
           <Ico.plus className="" /> Nová faktura
         </button>
@@ -70,7 +72,15 @@ export default function FakturyPage() {
 
       <MoneyTabs />
 
-      {editing && <InvoiceForm invoice={editing === "new" ? undefined : editing} onClose={() => setEditing(null)} />}
+      {editing && (
+        <InvoiceForm
+          // nový klíč = nový formulář, když se načte další doklad
+          key={editing === "new" ? "new" : "scan" in editing ? JSON.stringify(editing.scan) : editing.id}
+          invoice={editing === "new" || "scan" in editing ? undefined : editing}
+          scan={editing !== "new" && "scan" in editing ? editing.scan : undefined}
+          onClose={() => setEditing(null)}
+        />
+      )}
 
       <FixedCosts />
 

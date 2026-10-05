@@ -192,6 +192,20 @@ export type Invoice = {
   note?: string;
 };
 
+/** Co se podařilo přečíst z fotky nebo PDF faktury — předvyplní formulář. */
+export type InvoiceScan = {
+  kind: InvoiceKind;
+  number: string;
+  party: string;
+  issuedAt?: string;
+  dueAt?: string;
+  amount?: number;
+  category?: string;
+  paid: boolean;
+  /** Co má floristka na dokladu ověřit (nečitelné, cizí měna…). */
+  warning?: string;
+};
+
 /* ── Úkoly ──────────────────────────────────────────────────────────── */
 
 export type TaskRepeat = "zadne" | "denne" | "tydne" | "mesicne";

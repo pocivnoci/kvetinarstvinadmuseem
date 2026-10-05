@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { ADMIN_COOKIE, adminPassword, isValidSession } from "@/lib/admin/auth";
+import { requireAdmin } from "@/lib/admin/guard";
 import { isDbConfigured, loadDoc, saveDoc } from "@/lib/admin/db";
 
 export const runtime = "nodejs";
@@ -12,13 +11,7 @@ export const dynamic = "force-dynamic";
  *
  * Každé volání ověřuje stejnou přihlašovací cookie jako stránky /admin.
  */
-async function guard(): Promise<NextResponse | null> {
-  // Ve vývoji bez nastaveného hesla platí stejná výjimka jako v middleware.
-  if (!adminPassword() && process.env.NODE_ENV === "development") return null;
-  const token = cookies().get(ADMIN_COOKIE)?.value;
-  if (await isValidSession(token)) return null;
-  return NextResponse.json({ error: "Nepřihlášeno." }, { status: 401 });
-}
+const guard = requireAdmin;
 
 export async function GET() {
   const denied = await guard();

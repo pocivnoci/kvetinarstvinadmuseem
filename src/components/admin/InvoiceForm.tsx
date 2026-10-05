@@ -3,10 +3,25 @@
 import { useState, type FormEvent } from "react";
 import { newId, useAdmin } from "@/lib/admin/store";
 import { addDays, parseNumber, todayIso } from "@/lib/admin/format";
-import { INVOICE_CATEGORIES, INVOICE_KIND, type Invoice, type InvoiceKind } from "@/lib/admin/types";
+import { INVOICE_CATEGORIES, INVOICE_KIND, type Invoice, type InvoiceKind, type InvoiceScan } from "@/lib/admin/types";
 import { Field } from "./ui";
 
-function toDraft(i?: Invoice) {
+function toDraft(i?: Invoice, scan?: InvoiceScan) {
+  if (!i && scan) {
+    const issuedAt = scan.issuedAt ?? todayIso();
+    return {
+      kind: scan.kind,
+      number: scan.number,
+      party: scan.party,
+      issuedAt,
+      dueAt: scan.dueAt ?? (scan.paid ? "" : addDays(issuedAt, 14)),
+      amount: scan.amount !== undefined ? String(scan.amount).replace(".", ",") : "",
+      category: scan.category ?? INVOICE_CATEGORIES[0],
+      paid: scan.paid,
+      paidAt: scan.paid ? issuedAt : "",
+      note: "",
+    };
+  }
   return {
     kind: i?.kind ?? ("prijata" as InvoiceKind),
     number: i?.number ?? "",
@@ -23,14 +38,26 @@ function toDraft(i?: Invoice) {
 
 export function InvoiceForm({
   invoice,
+  scan,
   onClose,
 }: {
   invoice?: Invoice;
+  /** Údaje přečtené z fotky nebo PDF — jen pro novou fakturu. */
+  scan?: InvoiceScan;
   onClose: () => void;
 }) {
-  const { update } = useAdmin();
-  const [d, setD] = useState(() => toDraft(invoice));
+  const { doc, update } = useAdmin();
+  const [d, setD] = useState(() => toDraft(invoice, scan));
   const set = <K extends keyof typeof d>(k: K, v: (typeof d)[K]) => setD((p) => ({ ...p, [k]: v }));
+
+  const duplicate = invoice
+    ? undefined
+    : doc.invoices.find(
+        (x) =>
+          d.number.trim() !== "" &&
+          x.number.trim().toLowerCase() === d.number.trim().toLowerCase() &&
+          x.party.trim().toLowerCase() === d.party.trim().toLowerCase()
+      );
 
   function submit(e: FormEvent) {
     e.preventDefault();
@@ -57,8 +84,19 @@ export function InvoiceForm({
   return (
     <form onSubmit={submit} className="card" style={{ marginBottom: "1rem" }}>
       <div className="card-title">
-        <h2>{invoice ? `Upravit fakturu ${invoice.number}` : "Nová faktura"}</h2>
+        <h2>{invoice ? `Upravit fakturu ${invoice.number}` : scan ? "Přečtená faktura" : "Nová faktura"}</h2>
       </div>
+      {scan && (
+        <p className="notice notice-ok" role="status">
+          Údaje jsou přečtené z dokladu — před uložením je prosím porovnejte s originálem.
+          {scan.warning && <><br /><strong>Ověřte:</strong> {scan.warning}</>}
+        </p>
+      )}
+      {duplicate && (
+        <p className="notice notice-warn" role="alert">
+          Faktura {duplicate.number} od {duplicate.party} už v seznamu je. Nepřidáváte ji podruhé?
+        </p>
+      )}
       <div className="form-grid">
         <div className="field">
           <span className="field-label">Typ</span>
