@@ -99,13 +99,13 @@ export type Customer = {
 
 export type StockCategory = "rezane" | "hrnkove" | "susene" | "doplnky";
 
-export const STOCK_CATEGORY: Record<StockCategory, string> = {
-  rezane: "Řezané",
-  hrnkove: "Hrnkové",
-  susene: "Sušené",
-  doplnky: "Doplňky",
-};
-
+/**
+ * Položka skladu. Obrazovku Sklad admin už nemá — u krámu, kde se zboží
+ * otočí za pár dní, bylo počítání kusů víc práce, než kolik přineslo.
+ * Kolik zboží se ztratí, ukazuje skutečná přirážka na Výplatě (z tržeb
+ * a faktur). Pole v dokumentu i tabulka v databázi zůstávají, ať starší
+ * zálohy jdou načíst a nic zapsaného nezmizí.
+ */
 export type StockItem = {
   id: string;
   name: string;
@@ -138,6 +138,12 @@ export type Takings = {
   card: number;
   /** Ostatní — Wolt, převodem, poukazy. */
   other: number;
+  /**
+   * Prodej přes Nesnězeno.cz (balíčky po 199 a 299 Kč). Zvlášť, ne
+   * v ostatních ani na kartě — ať je vidět, kolik zbytků se takhle prodá.
+   * Ve starších zálohách chybí, pak je to 0.
+   */
+  nesnezeno?: number;
   note?: string;
 };
 

@@ -423,7 +423,39 @@ function SplitCard({ plan }: { plan: PayPlan }) {
               : " — přesně podle plánu."}
         </p>
       )}
+
+      {plan.actualGoodsShare !== undefined && <RealMarkup plan={plan} />}
     </Card>
+  );
+}
+
+/**
+ * Skutečná přirážka: kolik korun tržby se udělalo z koruny utracené
+ * za zboží. Kalkulačka počítá s přirážkou z Nastavení, ale do tržby se
+ * propíše jen to, co se opravdu prodá za plnou cenu — co uvadne, skončí
+ * v balíčku Nesnězeno nebo se prodá se slevou, přirážku stahuje dolů.
+ * Práce a obal ji naopak trochu zvedají, takže vyjde-li pod nastavením,
+ * je rozdíl ve skutečnosti ještě větší.
+ */
+function RealMarkup({ plan }: { plan: PayPlan }) {
+  const real = 1 / plan.actualGoodsShare!;
+  const target = 1 / plan.cap;
+  const fmt = (n: number) => n.toLocaleString("cs-CZ", { maximumFractionDigits: 1 });
+  const low = real < target * 0.85;
+
+  return (
+    <div className={`notice ${low ? "notice-warn" : "notice-ok"}`} style={{ marginTop: "1rem", marginBottom: 0 }}>
+      <strong>Skutečná přirážka {fmt(real)}×.</strong> Z koruny utracené ve velkoobchodě se udělalo{" "}
+      {fmt(real)} Kč tržby. Kalkulačka počítá s {fmt(target)}×.
+      {low && (
+        <>
+          {" "}
+          Rozdíl se ztrácí cestou: zboží, které uvadne nebo se vyhodí, balíčky Nesnězeno pod cenou, kytice
+          prodané levněji, než by spočítala kalkulačka. Pomůže nakupovat méně najednou a hlídat, co zbývá
+          na konci týdne.
+        </>
+      )}
+    </div>
   );
 }
 

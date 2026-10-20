@@ -9,7 +9,6 @@ import {
   groupBySupplier,
   newShoppingItem,
   newTask,
-  shoppingSuggestions,
   sortTasks,
   taskBucket,
   toggleShopping,
@@ -47,7 +46,7 @@ export default function UkolyPage() {
         </button>
       </div>
 
-      {zalozka === "ukoly" ? <Ukoly today={today} /> : <Nakup today={today} />}
+      {zalozka === "ukoly" ? <Ukoly today={today} /> : <Nakup />}
     </>
   );
 }
@@ -228,7 +227,7 @@ function Ukoly({ today }: { today: string }) {
 
 /* ══ Nákupní seznam ══════════════════════════════════════════════════ */
 
-function Nakup({ today }: { today: string }) {
+function Nakup() {
   const { doc, update } = useAdmin();
   const [nazev, setNazev] = useState("");
   const [mnozstvi, setMnozstvi] = useState("");
@@ -238,13 +237,18 @@ function Nakup({ today }: { today: string }) {
   const kkoupeni = doc.shopping.filter((s) => !s.bought);
   const koupene = doc.shopping.filter((s) => s.bought);
   const skupiny = useMemo(() => groupBySupplier(kkoupeni), [kkoupeni]);
-  const navrhy = useMemo(
-    () => shoppingSuggestions(doc.stock, doc.shopping, today),
-    [doc.stock, doc.shopping, today]
-  );
+  // Dodavatelé z faktur a z dřívějšího nákupu — ať se nemusí psát pořád dokola.
   const dodavatele = useMemo(
-    () => [...new Set([...doc.stock.map((s) => s.supplier), ...doc.shopping.map((s) => s.supplier)].filter(Boolean) as string[])],
-    [doc.stock, doc.shopping]
+    () =>
+      [
+        ...new Set(
+          [
+            ...doc.invoices.filter((i) => i.kind === "prijata").map((i) => i.party.trim()),
+            ...doc.shopping.map((s) => s.supplier?.trim()),
+          ].filter(Boolean) as string[]
+        ),
+      ].sort((a, b) => a.localeCompare(b, "cs")),
+    [doc.invoices, doc.shopping]
   );
 
   function pridat(e: FormEvent) {
@@ -263,13 +267,6 @@ function Nakup({ today }: { today: string }) {
 
   function prepnout(id: string) {
     update((d) => ({ ...d, shopping: toggleShopping(d.shopping, id, nowIso()) }));
-  }
-
-  function pridatNavrh(n: { name: string; supplier?: string }) {
-    update((d) => ({
-      ...d,
-      shopping: [...d.shopping, { ...newShoppingItem(n.name, nowIso()), supplier: n.supplier }],
-    }));
   }
 
   function uklidit() {
@@ -318,18 +315,6 @@ function Nakup({ today }: { today: string }) {
           </button>
         </form>
       </Card>
-
-      {navrhy.length > 0 && (
-        <Card title="Ze skladu by se hodilo dokoupit">
-          <div className="chips">
-            {navrhy.map((n) => (
-              <button key={n.name} className="chip" onClick={() => pridatNavrh(n)} title={`Přidat na seznam — ${n.duvod}`}>
-                + {n.name} <span className="muted">({n.duvod})</span>
-              </button>
-            ))}
-          </div>
-        </Card>
-      )}
 
       {kkoupeni.length === 0 ? (
         <Card>

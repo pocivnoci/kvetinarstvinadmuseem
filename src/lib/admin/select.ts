@@ -1,6 +1,6 @@
-import { addDays, daysBetween, normalizePhone, todayIso } from "./format";
+import { addDays, normalizePhone, todayIso } from "./format";
 import { svatekJmena } from "./svatky";
-import type { AdminDoc, Customer, Order, OrderStatus, StockItem } from "./types";
+import type { AdminDoc, Customer, Order, OrderStatus } from "./types";
 
 /** Objednávka, o kterou se ještě má někdo starat. */
 export function isActive(status: OrderStatus): boolean {
@@ -19,20 +19,6 @@ export function ordersOn(orders: Order[], iso: string): Order[] {
 
 export function ordersBetween(orders: Order[], from: string, to: string): Order[] {
   return sortByDateTime(orders.filter((o) => o.date >= from && o.date <= to && o.status !== "zrusena"));
-}
-
-export type StockAlert = { item: StockItem; expiresOn: string; daysLeft: number };
-
-/** Řezané zboží, kterému dochází trvanlivost (dnes/zítra) nebo už prošlo. */
-export function stockAlerts(stock: StockItem[], today = todayIso()): StockAlert[] {
-  return stock
-    .filter((s) => s.shelfLifeDays > 0 && s.qty > 0)
-    .map((item) => {
-      const expiresOn = addDays(item.receivedAt, item.shelfLifeDays);
-      return { item, expiresOn, daysLeft: daysBetween(today, expiresOn) };
-    })
-    .filter((a) => a.daysLeft <= 1)
-    .sort((a, b) => a.daysLeft - b.daysLeft);
 }
 
 export type CustomerEvent = {
@@ -112,8 +98,4 @@ export function upsertCustomerFromOrder(doc: AdminDoc, order: Order, newId: () =
     createdAt: new Date().toISOString(),
   };
   return { ...doc, customers: [...doc.customers, c] };
-}
-
-export function stockValue(stock: StockItem[]): number {
-  return stock.reduce((s, i) => s + i.qty * i.costPrice, 0);
 }

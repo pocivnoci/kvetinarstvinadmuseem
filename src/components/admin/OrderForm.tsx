@@ -14,6 +14,12 @@ import {
 } from "@/lib/admin/types";
 import { Field } from "./ui";
 
+/**
+ * Od jaké ceny si říct o zálohu. Pod tím se kytice prodá i jinému,
+ * když si pro ni zákazník nepřijde; nad tím ne.
+ */
+const ZALOHA_OD = 1500;
+
 type Draft = Omit<Order, "id" | "cislo" | "createdAt" | "updatedAt" | "price" | "deposit"> & {
   price: string;
   deposit: string;
@@ -31,7 +37,9 @@ function toDraft(o?: Partial<Order>, prefill?: Partial<Order>): Draft {
     address: src.address ?? "",
     recipientName: src.recipientName ?? "",
     recipientPhone: src.recipientPhone ?? "",
-    occasion: src.occasion ?? OCCASIONS[0],
+    // Bez předvýběru. Dřív byly předvybrané Narozeniny a zůstaly i u výročí
+    // svatby nebo odchodu kolegyně — přehled podle příležitostí pak lhal.
+    occasion: src.occasion ?? "",
     description: src.description ?? "",
     price: src.price !== undefined ? String(src.price) : "",
     deposit: src.deposit !== undefined ? String(src.deposit) : "",
@@ -96,6 +104,10 @@ export function OrderForm({
       if (c.address && d.fulfillment === "rozvoz" && !d.address) set("address", c.address);
     }
   }
+
+  const cena = parseNumber(d.price);
+  const zaloha = parseNumber(d.deposit);
+  const navrhZalohy = cena && cena >= ZALOHA_OD ? Math.ceil(cena / 2 / 100) * 100 : undefined;
 
   function submit(e: FormEvent) {
     e.preventDefault();
@@ -207,10 +219,13 @@ export function OrderForm({
           <input type="email" value={d.customerEmail} onChange={(e) => set("customerEmail", e.target.value)} />
         </Field>
         <Field label="Příležitost">
-          <select value={d.occasion} onChange={(e) => set("occasion", e.target.value)}>
+          <select required value={d.occasion} onChange={(e) => set("occasion", e.target.value)}>
+            <option value="" disabled>Vyberte…</option>
             {OCCASIONS.map((o) => (
               <option key={o}>{o}</option>
             ))}
+            {/* Starší objednávka s příležitostí, která už v seznamu není. */}
+            {d.occasion && !(OCCASIONS as readonly string[]).includes(d.occasion) && <option>{d.occasion}</option>}
           </select>
         </Field>
       </div>
@@ -300,11 +315,39 @@ export function OrderForm({
               řekne nahlas. */}
           <Field
             label="Cena (Kč)"
-            hint={minule[0]?.price ? `Minule ${formatCzk(minule[0].price)}` : undefined}
+            hint={
+              <>
+                {minule[0]?.price ? `Minule ${formatCzk(minule[0].price)}. ` : ""}
+                {cena === undefined && !d.paid && (
+                  <span style={{ color: "var(--terracotta)" }}>
+                    Bez ceny se dohaduje až při předání. Stačí i horní hranice, kterou zákazník řekl.
+                  </span>
+                )}
+              </>
+            }
           >
             <input type="text" inputMode="decimal" value={d.price} onChange={(e) => set("price", e.target.value)} placeholder="1 200" />
           </Field>
-          <Field label="Záloha (Kč)">
+          <Field
+            label="Záloha (Kč)"
+            hint={
+              navrhZalohy && !zaloha && !d.paid ? (
+                <span style={{ color: "var(--terracotta)" }}>
+                  Od {formatCzk(ZALOHA_OD)} si řekněte o zálohu.{" "}
+                  <button
+                    type="button"
+                    className="link"
+                    onClick={() => set("deposit", String(navrhZalohy))}
+                    style={{ background: "none", border: 0, padding: 0, font: "inherit", cursor: "pointer" }}
+                  >
+                    Doplnit polovinu ({formatCzk(navrhZalohy)})
+                  </button>
+                </span>
+              ) : cena && zaloha && !d.paid ? (
+                `Při předání doplatit ${formatCzk(Math.max(0, cena - zaloha))}.`
+              ) : undefined
+            }
+          >
             <input type="text" inputMode="decimal" value={d.deposit} onChange={(e) => set("deposit", e.target.value)} />
           </Field>
           <label className="check">

@@ -29,7 +29,6 @@ export default function KalkulackaPage() {
   const [wrap, setWrap] = useState<string | null>(null);
   /** Připočítat DPH z nákupu? Výchozí je ano; vypnutí platí jen pro tuhle kytici. */
   const [addVat, setAddVat] = useState<boolean | null>(null);
-  const [pick, setPick] = useState("");
 
   const markupN = parseNumber(markup ?? String(s.defaultMarkup)) ?? s.defaultMarkup;
   const laborN = parseNumber(labor ?? String(s.laborFee)) ?? s.laborFee;
@@ -56,15 +55,6 @@ export default function KalkulackaPage() {
   const setLine = (id: string, patch: Partial<Line>) =>
     setLines((ls) => ls.map((l) => (l.id === id ? { ...l, ...patch } : l)));
 
-  function addFromStock(id: string) {
-    const item = doc.stock.find((x) => x.id === id);
-    if (!item) return;
-    const empty = lines.find((l) => !l.name && !l.unitCost);
-    const line: Line = { id: empty?.id ?? newId(), name: item.name, qty: "1", unitCost: String(item.costPrice) };
-    setLines((ls) => (empty ? ls.map((l) => (l.id === empty.id ? line : l)) : [...ls, line]));
-    setPick("");
-  }
-
   const description = lines
     .filter((l) => l.name.trim())
     .map((l) => `${l.qty}× ${l.name.trim()}`)
@@ -82,18 +72,6 @@ export default function KalkulackaPage() {
 
       <div className="grid-2 grid-calc">
         <Card title="Materiál">
-          {doc.stock.length > 0 && (
-            <div className="toolbar">
-              <select value={pick} onChange={(e) => addFromStock(e.target.value)} style={{ minWidth: "16rem" }}>
-                <option value="">+ přidat ze skladu…</option>
-                {doc.stock.filter((x) => x.qty > 0).map((x) => (
-                  <option key={x.id} value={x.id}>
-                    {x.name} — {formatCzk(x.costPrice)} ({x.qty} {x.unit})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
           {s.purchaseVatRate > 0 && (
             // Mimo .toolbar — ta dává všem inputům šířku auto a rámeček, checkbox by vypadal jako textové pole.
             <label className="check" style={{ marginBottom: "0.9rem" }}>

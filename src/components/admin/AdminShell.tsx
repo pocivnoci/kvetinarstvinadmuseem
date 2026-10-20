@@ -14,15 +14,13 @@ const NAV: { href: string; label: string; icon: IconName; short?: string }[] = [
   { href: "/admin/kalendar", label: "Kalendář", icon: "calendar" },
   { href: "/admin/penize", label: "Peníze", icon: "money" },
   { href: "/admin/zakaznici", label: "Zákazníci", icon: "people" },
-  { href: "/admin/sklad", label: "Sklad", icon: "stock" },
   { href: "/admin/kalkulacka", label: "Kalkulačka kytice", icon: "calc", short: "Kalkulačka" },
   { href: "/admin/svatky", label: "Svátky a sezóna", icon: "star", short: "Svátky" },
-  { href: "/admin/pece", label: "Péče o květiny", icon: "leaf", short: "Péče" },
   { href: "/admin/nastaveni", label: "Nastavení", icon: "settings" },
 ];
 
 /** Na mobilu se do spodní lišty vejde 5 záložek. */
-const TABS = ["/admin", "/admin/ukoly", "/admin/objednavky", "/admin/penize", "/admin/sklad"];
+const TABS = ["/admin", "/admin/ukoly", "/admin/objednavky", "/admin/penize", "/admin/kalkulacka"];
 
 function isActive(pathname: string, href: string) {
   return href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);

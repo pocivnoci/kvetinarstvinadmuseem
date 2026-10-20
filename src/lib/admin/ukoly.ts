@@ -1,5 +1,5 @@
 import { newId } from "./store";
-import { addDays, nextRepeat, todayIso } from "./format";
+import { nextRepeat, todayIso } from "./format";
 import type { ShoppingItem, Task } from "./types";
 
 /**
@@ -111,29 +111,4 @@ export function toggleShopping(items: ShoppingItem[], id: string, now: string): 
 
 export function newShoppingItem(name: string, now: string): ShoppingItem {
   return { id: newId(), name: name.trim(), bought: false, createdAt: now };
-}
-
-/**
- * Návrhy k nákupu ze skladu: co dochází nebo doslouží do pár dní.
- * Nabízí jen to, co v seznamu ještě není.
- */
-export function shoppingSuggestions(
-  stock: { id: string; name: string; qty: number; unit: string; supplier?: string; shelfLifeDays: number; receivedAt: string }[],
-  shopping: ShoppingItem[],
-  today = todayIso()
-): { name: string; supplier?: string; duvod: string }[] {
-  const uz = new Set(shopping.filter((s) => !s.bought).map((s) => s.name.toLowerCase()));
-  const out: { name: string; supplier?: string; duvod: string }[] = [];
-
-  for (const s of stock) {
-    if (uz.has(s.name.toLowerCase())) continue;
-    if (s.qty <= 0) {
-      out.push({ name: s.name, supplier: s.supplier, duvod: "došlo" });
-    } else if (s.shelfLifeDays > 0 && addDays(s.receivedAt, s.shelfLifeDays) <= addDays(today, 2)) {
-      out.push({ name: s.name, supplier: s.supplier, duvod: "dojde trvanlivost" });
-    } else if (s.qty <= 3 && s.shelfLifeDays > 0) {
-      out.push({ name: s.name, supplier: s.supplier, duvod: `zbývá ${s.qty} ${s.unit}` });
-    }
-  }
-  return out;
 }

@@ -93,15 +93,6 @@ export function ukazkovaData(): AdminDoc {
     payouts: [
       { id: "v1", date: `${ymOf(t)}-02`, forMonth: shiftMonth(ymOf(t), -1), amount: 20000 },
     ],
-    stock: [
-      { id: "s1", name: "Růže Red Naomi 60 cm", category: "rezane", qty: 40, unit: "ks", costPrice: 28, salePrice: 79, receivedAt: addDays(t, -2), shelfLifeDays: 8, supplier: "Květinová burza" },
-      { id: "s2", name: "Pivoňka Sarah Bernhardt", category: "rezane", qty: 15, unit: "ks", costPrice: 45, salePrice: 120, receivedAt: addDays(t, -5), shelfLifeDays: 6, supplier: "Květinová burza" },
-      { id: "s3", name: "Eustoma bílá", category: "rezane", qty: 20, unit: "ks", costPrice: 22, salePrice: 65, receivedAt: addDays(t, -1), shelfLifeDays: 10 },
-      { id: "s4", name: "Eukalyptus cinerea", category: "rezane", qty: 12, unit: "svazek", costPrice: 60, salePrice: 150, receivedAt: addDays(t, -6), shelfLifeDays: 14 },
-      { id: "s5", name: "Gerbera mix", category: "rezane", qty: 8, unit: "ks", costPrice: 18, salePrice: 55, receivedAt: addDays(t, -7), shelfLifeDays: 7, note: "zlevnit" },
-      { id: "s6", name: "Monstera 19 cm", category: "hrnkove", qty: 4, unit: "ks", costPrice: 180, salePrice: 490, receivedAt: addDays(t, -12), shelfLifeDays: 0 },
-      { id: "s7", name: "Pampas béžová", category: "susene", qty: 25, unit: "ks", costPrice: 35, salePrice: 95, receivedAt: addDays(t, -40), shelfLifeDays: 0 },
-      { id: "s8", name: "Kraftový papír 70 cm", category: "doplnky", qty: 2, unit: "role", costPrice: 320, receivedAt: addDays(t, -30), shelfLifeDays: 0 },
-    ],
+    stock: [],
   };
 }

@@ -66,20 +66,24 @@ záložkami, na počítači boční navigaci.
 
 | Sekce | K čemu |
 |---|---|
-| **Přehled** | Dnešní objednávky, příštích 7 dní, upozornění na zboží s končící trvanlivostí, kdo má svátek, blížící se velké dny (Valentýn, Den matek…), zákazníci s blížícím se svátkem/narozeninami, tržba za měsíc. |
-| **Objednávky** | Kytice na objednávku: zákazník, vyzvednutí / rozvoz s adresou, termín, příležitost, popis kytice, text na kartičku, cena, záloha, stav (nová → potvrzená → v přípravě → hotová → předaná). Hledání a filtry. |
+| **Přehled** | Dnešní objednávky, příštích 7 dní, kdo má svátek, blížící se velké dny (Valentýn, Den matek…), zákazníci s blížícím se svátkem/narozeninami, tržba za měsíc. Připomene otevírací den (po–pá mimo státní svátky, poslední 2 týdny), kde chybí zapsaná tržba — buď ji doplnit, nebo kliknout „bylo zavřeno" (zapíše se nulová tržba s poznámkou). |
+| **Objednávky** | Kytice na objednávku: zákazník, vyzvednutí / rozvoz s adresou, termín, příležitost, popis kytice, text na kartičku, cena, záloha, stav (nová → potvrzená → v přípravě → hotová → předaná). Hledání a filtry. Příležitost není předvybraná, musí se zvolit. Bez ceny formulář upozorní; od 1 500 Kč připomene zálohu a nabídne doplnit polovinu. |
 | **Tisk** | Průvodka pro dílnu / kurýra a kartička s přáním, každá na vlastní stránce (`/admin/objednavky/<id>/tisk`). |
 | **Kalendář** | Týdenní přehled objednávek se svátky a květinovými dny, šipkami po týdnech. |
-| **Peníze — Měsíc** | Denní tržby (hotovost, karta, ostatní) do jednoho formuláře. Sloupcový graf dnů, průměr na otevřený den, nejsilnější den. Měsíční příjmy, výdaje a zisk se počítají samy. Rozpad výdajů po kategoriích. Export tržeb i faktur do CSV pro účetní. |
-| **Peníze — Výplata** | Kolik si majitelka chce měsíčně brát a kolik si opravdu vyplatila (výplata za měsíc, kdy převedeno). Hlavní číslo: **kolik smí tento týden utratit ve velkoobchodě**, aby na výplatu zbylo. Pruh „jak se dělí každých 100 Kč tržby“ (nájem a provoz → výplata → zboží) a srovnání se skutečností z faktur. Limit je i na Přehledu. |
+| **Peníze — Měsíc** | Denní tržby (hotovost, karta, ostatní, Nesnězeno) do jednoho formuláře. Prodej přes Nesnězeno.cz má vlastní kolonku — nepřipočítávat ho ke kartě ani k ostatním. Sloupcový graf dnů, průměr na otevřený den, nejsilnější den. Měsíční příjmy, výdaje a zisk se počítají samy. Rozpad výdajů po kategoriích. Export tržeb i faktur do CSV pro účetní. |
+| **Peníze — Výplata** | Kolik si majitelka chce měsíčně brát a kolik si opravdu vyplatila (výplata za měsíc, kdy převedeno). Hlavní číslo: **kolik smí tento týden utratit ve velkoobchodě**, aby na výplatu zbylo. Pruh „jak se dělí každých 100 Kč tržby“ (nájem a provoz → výplata → zboží), srovnání se skutečností z faktur a **skutečná přirážka** — kolik korun tržby se udělalo z koruny utracené za zboží, proti přirážce z Nastavení. Limit je i na Přehledu. |
 | **Peníze — Faktury** | Přijaté (výdaj) i vydané (příjem) faktury: protistrana, číslo, vystaveno, splatnost, částka, kategorie, zaplaceno. Filtry na nezaplacené a po splatnosti, součty „dluží nám“ a „dlužíme“. Tlačítko **Načíst z fotky / PDF** fakturu vyfocenou mobilem nebo PDF z e-mailu přečte (Gemini Flash-Lite) a předvyplní formulář — dodavatele, číslo, data, částku k úhradě včetně DPH i kategorii; uloží se až po kontrole. Upozorní, když stejná faktura už v seznamu je. Potřebuje `GEMINI_API_KEY` (viz `.env.example`). |
 | **Peníze — Rok** | Příjmy a výdaje po měsících v grafu i tabulce, zisk a marže za rok, srovnání se stejným obdobím loni. |
 | **Zákazníci** | Zakládají se sami z objednávek. Poznámky (oblíbené květiny, alergie), jméno pro svátek a narozeniny — admin pak připomene 14 dní předem. Historie objednávek, tlačítka Zavolat / WhatsApp. |
-| **Sklad** | Položky s množstvím, nákupní cenou (bez DPH, jak je na faktuře) a prodejní cenou, datem naskladnění a trvanlivostí. Hlídá řezané zboží, kterému dochází čas. Rychlé ±1, hodnota skladu. |
-| **Kalkulačka kytice** | Materiál v nákupu × marže + práce + obal, DPH, zaokrouhlení. Nákupní ceny se zadávají bez DPH tak, jak jsou na faktuře z velkoobchodu — krám není plátce, takže kalkulačka DPH (výchozí 21 %) připočte sama a nemusí se dopočítávat z hlavy; zaškrtávátko nad tabulkou to pro jednu kytici vypne. Položky lze přidat ze skladu. Jedním klikem založí objednávku s vypočtenou cenou. |
+| **Kalkulačka kytice** | Materiál v nákupu × marže + práce + obal, DPH, zaokrouhlení. Nákupní ceny se zadávají bez DPH tak, jak jsou na faktuře z velkoobchodu — krám není plátce, takže kalkulačka DPH (výchozí 21 %) připočte sama a nemusí se dopočítávat z hlavy; zaškrtávátko nad tabulkou to pro jednu kytici vypne. Jedním klikem založí objednávku s vypočtenou cenou. |
 | **Svátky a sezóna** | Český kalendář jmen s hledáním, klíčové květinové dny roku (pohyblivé svátky se počítají — Velikonoce, Den matek, advent…), s tipy co objednat a kolik dní předem. |
-| **Péče o květiny** | Tahák pro příjem zboží (voda, řez, výdrž, co se s čím nesnáší) a tisk kartičky „Aby vám kytice vydržela“ složené z květin, které v kytici jsou. |
 | **Nastavení** | Výchozí marže, DPH na prodej a DPH v nákupu, paušály; export a import zálohy (JSON); ukázková data; smazání. |
+
+Sklad admin schválně nemá. U krámu, kde se zboží otočí za pár dní,
+bylo počítání kusů víc práce, než kolik přineslo. Kolik zboží se cestou
+ztratí (uvadne, vyhodí se, prodá se levněji), ukazuje skutečná přirážka
+na Výplatě, spočítaná jen z tržeb a faktur. Data skladu ze starších
+záloh a tabulka `stock` v databázi zůstávají, jen je nic nezobrazuje.
 
 ### Jak se počítá, kolik smí jít na zboží
 
@@ -203,8 +207,12 @@ ne jako hotový výsledek), takže se cizí práce neztratí.
    editoru v Supabase (zkopírovat obsah souboru a spustit), nebo přes
    Supabase CLI (`supabase db push`). Na už běžící databázi stačí pustit
    ty, které v ní ještě nejsou — pro výplatu je to
-   `0006_vyplata.sql`. Pusťte ji **před** nasazením nového webu; dokud
-   v databázi není, stránka Výplata to napíše a nic z ní neuloží.
+   `0006_vyplata.sql`, pro kolonku Nesnězeno `0007_nesnezeno.sql`. Pusťte
+   je **před** nasazením nového webu; dokud v databázi nejsou, stránka
+   Výplata to napíše a nic z ní neuloží a kolonka Nesnězeno se ve
+   formuláři tržby neukáže. `0007` zároveň přesune už zapsané částky
+   Nesnězeno z kolonky ostatní (dny ze sešitu) a z karty (18. 9. 2026)
+   do nové kolonky; součet dne se nemění.
 3. V Supabase → Project Settings → API zkopírujte URL projektu a **tajný**
    klíč (`service_role` / `sb_secret_…`).
 4. Vložte je do `.env.local` (lokálně) a na Vercelu do Environment Variables
@@ -244,7 +252,6 @@ rolí.
 
 - Kalendář jmen: `src/lib/admin/svatky.ts`
 - Klíčové dny roku a tipy: `src/lib/admin/klicove-dny.ts`
-- Péče o květiny: `src/lib/admin/pece.ts`
 - Příležitosti a stavy objednávek, kategorie výdajů: `src/lib/admin/types.ts`
 - Výpočty kolem peněz a export CSV: `src/lib/admin/penize.ts`
 - Schéma databáze: `supabase/migrations/`

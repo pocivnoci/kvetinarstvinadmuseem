@@ -34,7 +34,7 @@ export default function NastaveniPage() {
       if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.orders)) throw new Error("bad");
       if (!window.confirm("Nahradit všechna současná data obsahem zálohy?")) return;
       replace(parsed);
-      setMsg({ tone: "ok", text: `Záloha načtena: ${parsed.orders.length} objednávek, ${parsed.customers?.length ?? 0} zákazníků, ${parsed.stock?.length ?? 0} položek skladu.` });
+      setMsg({ tone: "ok", text: `Záloha načtena: ${parsed.orders.length} objednávek, ${parsed.customers?.length ?? 0} zákazníků, ${parsed.takings?.length ?? 0} dní tržeb.` });
     } catch {
       setMsg({ tone: "danger", text: "Soubor se nepodařilo načíst — není to záloha z tohoto adminu." });
     } finally {
@@ -43,7 +43,7 @@ export default function NastaveniPage() {
   }
 
   function loadSample() {
-    const hasData = doc.orders.length || doc.customers.length || doc.stock.length;
+    const hasData = doc.orders.length || doc.customers.length || doc.takings.length || doc.invoices.length;
     if (hasData && !window.confirm("Ukázková data nahradí vše, co teď v adminu je. Pokračovat?")) return;
     replace(ukazkovaData());
     setMsg({ tone: "ok", text: "Ukázková data načtena. Až budete chtít začít naostro, smažte je tlačítkem níže." });
@@ -177,7 +177,7 @@ export default function NastaveniPage() {
               <dt>Naposledy uloženo</dt>
               <dd>{doc.savedAt.startsWith("1970") ? "—" : new Date(doc.savedAt).toLocaleString("cs-CZ")}</dd>
               <dt>Obsah</dt>
-              <dd>{doc.orders.length} objednávek · {doc.customers.length} zákazníků · {doc.stock.length} položek skladu</dd>
+              <dd>{doc.orders.length} objednávek · {doc.customers.length} zákazníků · {doc.takings.length} dní tržeb · {doc.invoices.length} faktur</dd>
             </dl>
             {!loaded && (
               <p className="notice notice-danger">

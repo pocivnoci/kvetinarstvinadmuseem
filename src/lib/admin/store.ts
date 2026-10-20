@@ -53,6 +53,12 @@ type Snapshot = AdminDoc & {
    * výplata by po obnovení stránky zmizela a nikdo by nevěděl proč.
    */
   payoutsInDb: boolean;
+  /**
+   * Umí databáze uložit Nesnězeno u tržby? Přibylo v migraci 0007. Dokud
+   * v ní není, kolonka se ve formuláři neukáže — zapsaná částka by se
+   * jinak tiše zahodila a den by po obnovení stránky měl menší tržbu.
+   */
+  nesnezenoInDb: boolean;
 };
 
 const SERVER_SNAPSHOT: Snapshot = {
@@ -61,6 +67,7 @@ const SERVER_SNAPSHOT: Snapshot = {
   mode: "local",
   status: "loading",
   payoutsInDb: false,
+  nesnezenoInDb: false,
 };
 
 let snapshot: Snapshot | null = null;
@@ -156,6 +163,12 @@ function srovnat(doc: AdminDoc): AdminDoc {
       const bought = Boolean(s.bought);
       return { ...s, bought, boughtAt: bought ? s.boughtAt ?? ted : undefined };
     }),
+    // Každá tržba nese Nesnězeno, i nulové. Podle toho databáze pozná, že
+    // ukládá novější admin, a nevynuluje částky, které stará záložka nezná.
+    takings: doc.takings.map((t) => ({
+      ...t,
+      nesnezeno: Number.isFinite(t.nesnezeno) && (t.nesnezeno ?? 0) > 0 ? t.nesnezeno : 0,
+    })),
     invoices: doc.invoices.map((i) => {
       const paid = Boolean(i.paid);
       return { ...i, paid, paidAt: paid ? i.paidAt ?? ted.slice(0, 10) : undefined };
@@ -210,19 +223,27 @@ function patch(next: Partial<Snapshot>) {
 }
 
 function docOf(s: Snapshot): AdminDoc {
-  const { ready, mode, status, syncedAt, error, payoutsInDb, ...doc } = s;
+  const { ready, mode, status, syncedAt, error, payoutsInDb, nesnezenoInDb, ...doc } = s;
   void ready;
   void mode;
   void status;
   void syncedAt;
   void error;
   void payoutsInDb;
+  void nesnezenoInDb;
   return doc;
 }
 
 function getSnapshot(): Snapshot {
   if (!snapshot) {
-    snapshot = { ...readLocal(), ready: false, mode: "local", status: "loading", payoutsInDb: false };
+    snapshot = {
+      ...readLocal(),
+      ready: false,
+      mode: "local",
+      status: "loading",
+      payoutsInDb: false,
+      nesnezenoInDb: false,
+    };
   }
   return snapshot;
 }
@@ -233,7 +254,11 @@ function getServerSnapshot(): Snapshot {
 
 /* ── Spojení se serverem ───────────────────────────────────────────── */
 
-type LoadResponse = { mode: SyncMode; doc?: Partial<AdminDoc> & { revision?: number }; error?: string };
+type LoadResponse = {
+  mode: SyncMode;
+  doc?: Partial<AdminDoc> & { revision?: number; schema?: number };
+  error?: string;
+};
 
 async function load(): Promise<void> {
   if (loading) return;
@@ -249,7 +274,7 @@ async function load(): Promise<void> {
     }
 
     if (data.mode === "local") {
-      patch({ ...readLocal(), ready: true, mode: "local", status: "ready", payoutsInDb: true });
+      patch({ ...readLocal(), ready: true, mode: "local", status: "ready", payoutsInDb: true, nesnezenoInDb: true });
       return;
     }
 
@@ -267,6 +292,8 @@ async function load(): Promise<void> {
       error: undefined,
       // Databáze po migraci 0006 vrací pole payouts vždycky, i prázdné.
       payoutsInDb: Array.isArray(data.doc?.payouts),
+      // Číslo schématu posílá databáze od migrace 0007.
+      nesnezenoInDb: (data.doc?.schema ?? 0) >= 7,
     });
     if (pending.length) scheduleSave();
   } catch (e) {
@@ -430,6 +457,8 @@ export function useAdmin() {
     loaded: s.mode === "local" || revision !== null,
     /** Dá se uložit výplata a cíl výplaty? V databázi až po migraci 0006. */
     payoutsInDb: s.payoutsInDb,
+    /** Dá se uložit Nesnězeno u tržby? V databázi až po migraci 0007. */
+    nesnezenoInDb: s.nesnezenoInDb,
     update,
     replace,
     flush,

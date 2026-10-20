@@ -1,4 +1,5 @@
-import { addDays, monthDays, shiftMonth, startOfWeek, todayIso, ymOf } from "./format";
+import { addDays, fromIso, monthDays, shiftMonth, startOfWeek, todayIso, ymOf } from "./format";
+import { statniSvatek } from "./klicove-dny";
 import { GOODS_CATEGORIES, type AdminDoc, type FixedCost, type Invoice, type OwnerPayout, type Takings } from "./types";
 
 /**
@@ -16,7 +17,7 @@ import { GOODS_CATEGORIES, type AdminDoc, type FixedCost, type Invoice, type Own
  */
 
 export function takingsTotal(t: Takings): number {
-  return (t.cash ?? 0) + (t.card ?? 0) + (t.other ?? 0);
+  return (t.cash ?? 0) + (t.card ?? 0) + (t.other ?? 0) + (t.nesnezeno ?? 0);
 }
 
 export function takingsOn(takings: Takings[], date: string): Takings | undefined {
@@ -134,6 +135,33 @@ export function monthSummary(doc: AdminDoc, ym: string): MonthSummary {
     unpaidReceived: received.filter((i) => !i.paid).reduce((s, i) => s + i.amount, 0),
     maxDay: days.reduce((m, d) => Math.max(m, d.total), 0),
   };
+}
+
+/** Kolik dní zpátky se hlídá, jestli je tržba zapsaná. */
+const HLIDAT_DNI = 14;
+
+/**
+ * Otevírací dny (po–pá, mimo státní svátky) za poslední dva týdny, kde
+ * chybí zapsaná tržba. Dnešek ne — ten ještě běží.
+ *
+ * Den, kdy bylo zavřeno, se zapíše jako nulová tržba s poznámkou
+ * „zavřeno" a připomínka zmizí. Bez toho by týdenní limit na zboží
+ * počítal s menší tržbou, než krám opravdu měl, a zisk měsíce by
+ * vycházel horší.
+ */
+export function chybejiciTrzby(doc: AdminDoc, today = todayIso()): string[] {
+  if (doc.takings.length === 0) return [];
+  const prvni = doc.takings.reduce((m, t) => (t.date < m ? t.date : m), doc.takings[0].date);
+  const zapsane = new Set(doc.takings.map((t) => t.date));
+  const out: string[] = [];
+  for (let i = HLIDAT_DNI; i >= 1; i--) {
+    const date = addDays(today, -i);
+    if (date < prvni || zapsane.has(date) || statniSvatek(date)) continue;
+    const dow = fromIso(date).getDay();
+    if (dow === 0 || dow === 6) continue;
+    out.push(date);
+  }
+  return out;
 }
 
 /** Příjmy (tržby + vydané faktury) v rozsahu dat včetně obou krajů. */
@@ -417,7 +445,7 @@ function csv(rows: (string | number)[][]): string {
 export function takingsCsv(doc: AdminDoc, ym: string): string {
   const s = monthSummary(doc, ym);
   const rows: (string | number)[][] = [
-    ["Datum", "Hotovost", "Karta", "Ostatní", "Celkem", "Poznámka"],
+    ["Datum", "Hotovost", "Karta", "Ostatní", "Nesnězeno", "Celkem", "Poznámka"],
     ...s.days
       .filter((d) => d.takings)
       .map((d) => [
@@ -425,10 +453,11 @@ export function takingsCsv(doc: AdminDoc, ym: string): string {
         num(d.takings!.cash),
         num(d.takings!.card),
         num(d.takings!.other),
+        num(d.takings!.nesnezeno ?? 0),
         num(d.total),
         d.takings!.note ?? "",
       ]),
-    ["Celkem", "", "", "", num(s.shopRevenue), ""],
+    ["Celkem", "", "", "", "", num(s.shopRevenue), ""],
   ];
   return csv(rows);
 }

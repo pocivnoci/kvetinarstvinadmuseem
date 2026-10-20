@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAdmin } from "@/lib/admin/store";
 import {
   formatCzk,
@@ -26,10 +27,13 @@ import { MoneyTabs } from "@/components/admin/MoneyTabs";
 import { TakingsForm } from "@/components/admin/TakingsForm";
 import { Card, Empty, Loading, PageHead, Stat } from "@/components/admin/ui";
 
-export default function PenizePage() {
+function Penize() {
   const { doc, ready, update } = useAdmin();
   const today = todayIso();
-  const [ym, setYm] = useState(() => ymOf(today));
+  // ?den=2026-10-19 — odkaz z Přehledu na den, kde chybí zapsaná tržba.
+  const param = useSearchParams().get("den");
+  const den = param && /^\d{4}-\d{2}-\d{2}$/.test(param) && param <= today ? param : undefined;
+  const [ym, setYm] = useState(() => ymOf(den ?? today));
 
   if (!ready) return <Loading />;
 
@@ -137,7 +141,10 @@ export default function PenizePage() {
       </Card>
 
       <Card title="Zapsat tržbu">
-        <TakingsForm defaultDate={isCurrentMonth ? today : `${ym}-01`} />
+        <TakingsForm
+          key={den ?? ""}
+          defaultDate={den && ymOf(den) === ym ? den : isCurrentMonth ? today : `${ym}-01`}
+        />
       </Card>
 
       <div className="grid-2">
@@ -214,6 +221,7 @@ export default function PenizePage() {
                   <th className="num">Hotovost</th>
                   <th className="num">Karta</th>
                   <th className="num">Ostatní</th>
+                  <th className="num">Nesnězeno</th>
                   <th className="num">Celkem</th>
                   <th>Poznámka</th>
                   <th></th>
@@ -229,6 +237,7 @@ export default function PenizePage() {
                     <td className="num">{formatCzk(d.takings!.cash)}</td>
                     <td className="num">{formatCzk(d.takings!.card)}</td>
                     <td className="num">{formatCzk(d.takings!.other)}</td>
+                    <td className="num">{formatCzk(d.takings!.nesnezeno ?? 0)}</td>
                     <td className="num"><strong>{formatCzk(d.total)}</strong></td>
                     <td className="small muted">{d.takings!.note}</td>
                     <td>
@@ -243,6 +252,7 @@ export default function PenizePage() {
                   <td className="num">{formatCzk(rows.reduce((x, d) => x + d.takings!.cash, 0))}</td>
                   <td className="num">{formatCzk(rows.reduce((x, d) => x + d.takings!.card, 0))}</td>
                   <td className="num">{formatCzk(rows.reduce((x, d) => x + d.takings!.other, 0))}</td>
+                  <td className="num">{formatCzk(rows.reduce((x, d) => x + (d.takings!.nesnezeno ?? 0), 0))}</td>
                   <td className="num"><strong>{formatCzk(s.shopRevenue)}</strong></td>
                   <td colSpan={2}></td>
                 </tr>
@@ -252,5 +262,13 @@ export default function PenizePage() {
         )}
       </Card>
     </>
+  );
+}
+
+export default function PenizePage() {
+  return (
+    <Suspense fallback={null}>
+      <Penize />
+    </Suspense>
   );
 }

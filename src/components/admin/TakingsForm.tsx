@@ -18,11 +18,12 @@ export function TakingsForm({
   defaultDate?: string;
   onSaved?: (t: Takings) => void;
 }) {
-  const { doc, update } = useAdmin();
+  const { doc, update, nesnezenoInDb } = useAdmin();
   const [date, setDate] = useState(defaultDate ?? todayIso());
   const [cash, setCash] = useState("");
   const [card, setCard] = useState("");
   const [other, setOther] = useState("");
+  const [nesnezeno, setNesnezeno] = useState("");
   const [note, setNote] = useState("");
   const [saved, setSaved] = useState<string | null>(null);
 
@@ -34,12 +35,21 @@ export function TakingsForm({
     setCash(t ? String(t.cash) : "");
     setCard(t ? String(t.card) : "");
     setOther(t ? String(t.other) : "");
+    setNesnezeno(t?.nesnezeno ? String(t.nesnezeno) : "");
     setNote(t?.note ?? "");
     setSaved(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
 
-  const total = (parseNumber(cash) ?? 0) + (parseNumber(card) ?? 0) + (parseNumber(other) ?? 0);
+  // Kolonka Nesnězeno až s databází, která ji umí uložit (migrace 0007).
+  // Den, kde už částka je, ji ukáže vždycky, ať se při přepsání neztratí.
+  const showNesnezeno = nesnezenoInDb || (existing?.nesnezeno ?? 0) > 0;
+
+  const total =
+    (parseNumber(cash) ?? 0) +
+    (parseNumber(card) ?? 0) +
+    (parseNumber(other) ?? 0) +
+    (showNesnezeno ? parseNumber(nesnezeno) ?? 0 : 0);
 
   function submit(e: FormEvent) {
     e.preventDefault();
@@ -49,6 +59,7 @@ export function TakingsForm({
       cash: parseNumber(cash) ?? 0,
       card: parseNumber(card) ?? 0,
       other: parseNumber(other) ?? 0,
+      nesnezeno: showNesnezeno ? parseNumber(nesnezeno) ?? 0 : 0,
       note: note.trim() || undefined,
     };
     update((d) => ({
@@ -76,6 +87,11 @@ export function TakingsForm({
         <Field label="Ostatní" hint="Wolt, převodem, poukazy.">
           <input type="text" inputMode="decimal" value={other} onChange={(e) => setOther(e.target.value)} placeholder="0" style={{ textAlign: "right" }} />
         </Field>
+        {showNesnezeno && (
+          <Field label="Nesnězeno" hint="Balíčky přes Nesnězeno.cz. Ne do karty.">
+            <input type="text" inputMode="decimal" value={nesnezeno} onChange={(e) => setNesnezeno(e.target.value)} placeholder="0" style={{ textAlign: "right" }} />
+          </Field>
+        )}
         <div className="field">
           <span className="field-label">Celkem</span>
           <div className="stat-value" style={{ fontSize: "1.6rem", paddingTop: "0.2rem" }}>{formatCzk(total)}</div>

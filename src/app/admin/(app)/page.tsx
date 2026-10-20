@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { nowIso, useAdmin } from "@/lib/admin/store";
+import { newId, nowIso, useAdmin } from "@/lib/admin/store";
 import {
   addDays,
   formatCzk,
@@ -14,7 +14,15 @@ import {
   ymOf,
 } from "@/lib/admin/format";
 import { svatekPro } from "@/lib/admin/svatky";
-import { monthSummary, overdueInvoices, payPlan, takingsOn, takingsTotal, weekBudget } from "@/lib/admin/penize";
+import {
+  chybejiciTrzby,
+  monthSummary,
+  overdueInvoices,
+  payPlan,
+  takingsOn,
+  takingsTotal,
+  weekBudget,
+} from "@/lib/admin/penize";
 import { tasksForToday, toggleTask } from "@/lib/admin/ukoly";
 import { nadchazejiciKlicoveDny } from "@/lib/admin/klicove-dny";
 import {
@@ -22,7 +30,6 @@ import {
   monthStats,
   ordersBetween,
   ordersOn,
-  stockAlerts,
 } from "@/lib/admin/select";
 import { Badge, Card, Empty, LinkBtn, Loading, PageHead, Stat, StatusBadge } from "@/components/admin/ui";
 import { Ico } from "@/components/admin/icons";
@@ -35,12 +42,12 @@ export default function DashboardPage() {
 
   const todayOrders = ordersOn(doc.orders, today);
   const week = ordersBetween(doc.orders, addDays(today, 1), addDays(today, 7));
-  const alerts = stockAlerts(doc.stock, today);
   const events = customerEvents(doc.customers, today, 14);
   const stats = monthStats(doc.orders, today);
   const money = monthSummary(doc, ymOf(today));
   const todayTakings = takingsOn(doc.takings, today);
   const overdue = overdueInvoices(doc.invoices, today);
+  const chybiTrzba = chybejiciTrzby(doc, today);
   const plan = doc.settings.ownerPay > 0 ? payPlan(doc, today) : undefined;
   const goodsWeek = plan ? weekBudget(doc, plan, today) : undefined;
   const dnesniUkoly = tasksForToday(doc.tasks, today);
@@ -48,7 +55,16 @@ export default function DashboardPage() {
   const svatek = svatekPro(today);
   const klicove = nadchazejiciKlicoveDny(today, 45);
   const nextDays = [1, 2, 3, 4, 5, 6, 7].map((n) => addDays(today, n));
-  const isEmpty = doc.orders.length === 0 && doc.customers.length === 0 && doc.stock.length === 0;
+  const isEmpty = doc.orders.length === 0 && doc.customers.length === 0 && doc.takings.length === 0;
+
+  /** Zavřený den se zapíše jako nulová tržba, ať se na něj už nepřipomíná. */
+  function zavreno(date: string) {
+    update((d) =>
+      d.takings.some((t) => t.date === date)
+        ? d
+        : { ...d, takings: [...d.takings, { id: newId(), date, cash: 0, card: 0, other: 0, nesnezeno: 0, note: "zavřeno" }] }
+    );
+  }
 
   return (
     <>
@@ -88,19 +104,27 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {alerts.length > 0 && (
+      {chybiTrzba.length > 0 && (
         <div className="notice notice-warn">
-          <strong>Sklad:</strong>{" "}
-          {alerts
-            .map((a) =>
-              a.daysLeft < 0
-                ? `${a.item.name} prošlo (${-a.daysLeft} d)`
-                : a.daysLeft === 0
-                  ? `${a.item.name} končí dnes`
-                  : `${a.item.name} končí zítra`
-            )
-            .join(" · ")}{" "}
-          — <Link href="/admin/sklad" className="link">zlevnit nebo odepsat</Link>
+          <strong>Chybí zapsaná tržba:</strong>{" "}
+          {chybiTrzba.map((date, i) => (
+            <span key={date} style={{ whiteSpace: "nowrap" }}>
+              {i > 0 && " · "}
+              {formatDateShort(date)}{" "}
+              <Link href={`/admin/penize?den=${date}`} className="link">zapsat</Link>
+              {" / "}
+              <button
+                type="button"
+                className="link"
+                onClick={() => zavreno(date)}
+                style={{ background: "none", border: 0, padding: 0, font: "inherit", cursor: "pointer" }}
+              >
+                bylo zavřeno
+              </button>
+            </span>
+          ))}
+          <br />
+          <span className="small">Bez tržby počítá limit na zboží i zisk měsíce s menšími čísly, než krám opravdu měl.</span>
         </div>
       )}
 

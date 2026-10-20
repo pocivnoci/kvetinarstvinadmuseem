@@ -28,9 +28,6 @@ export const Ico = {
   people: (p: P) => (
     <svg {...base} {...p}><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c.5-4 3.5-6 6.5-6s6 2 6.5 6" /><circle cx="17" cy="9" r="2.5" /><path d="M17 14c2.5 0 4.2 1.7 4.5 5" /></svg>
   ),
-  stock: (p: P) => (
-    <svg {...base} {...p}><path d="M3 8l9-4 9 4-9 4z" /><path d="M3 8v8l9 4 9-4V8" /><path d="M12 12v8" /></svg>
-  ),
   calc: (p: P) => (
     <svg {...base} {...p}><rect x="5" y="3" width="14" height="18" rx="1.5" /><path d="M8 7h8" /><path d="M8 12h2M12 12h2M16 12h0M8 16h2M12 16h2M16 16h0" /></svg>
   ),
@@ -39,9 +36,6 @@ export const Ico = {
   ),
   star: (p: P) => (
     <svg {...base} {...p}><path d="m12 3 2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17l-5.4 2.8 1.1-6.1L3.2 9.4l6.1-.8z" /></svg>
-  ),
-  leaf: (p: P) => (
-    <svg {...base} {...p}><path d="M5 19C5 9 11 4 20 4c0 9-5 15-15 15z" /><path d="M5 19c3-5 7-8 11-10" /></svg>
   ),
   money: (p: P) => (
     <svg {...base} {...p}><rect x="2.5" y="6" width="19" height="12" rx="1.5" /><circle cx="12" cy="12" r="2.6" /><path d="M6 9.5h.01M18 14.5h.01" /></svg>

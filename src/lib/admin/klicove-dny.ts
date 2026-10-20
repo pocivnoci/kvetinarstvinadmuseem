@@ -96,3 +96,25 @@ export function nadchazejiciKlicoveDny(fromIso: string, limitDays: number): Klic
   const toIso = localIso(to);
   return all.filter((d) => d.date >= fromIso && d.date <= toIso);
 }
+
+/**
+ * Je to den státního svátku, kdy má krám zavřeno? Pevné svátky plus
+ * Velký pátek a Velikonoční pondělí. Štědrý den sem patří taky — prodej
+ * končí dopoledne a tržba se často nezapisuje.
+ */
+export function statniSvatek(iso: string): boolean {
+  const md = iso.slice(5);
+  if (STATNI_SVATKY.has(md)) return true;
+  const easter = easterSunday(Number(iso.slice(0, 4)));
+  const posun = (n: number) => {
+    const d = new Date(easter);
+    d.setDate(easter.getDate() + n);
+    return localIso(d);
+  };
+  return iso === posun(-2) || iso === posun(1);
+}
+
+const STATNI_SVATKY = new Set([
+  "01-01", "05-01", "05-08", "07-05", "07-06", "09-28",
+  "10-28", "11-17", "12-24", "12-25", "12-26",
+]);
